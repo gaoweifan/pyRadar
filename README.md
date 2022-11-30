@@ -20,7 +20,7 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
 
 ### captureAll.py
 同时采集原始ADC采样的IQ数据及片内DSP预处理好的点云等串口数据的示例代码。
- - 采集原始数据的一般流程
+#### 采集原始数据的一般流程
  1.  (optional)创建从串口接收片内DSP处理好的数据的进程
  2.  通过串口启动雷达（理论上通过网口也能控制，暂未实现）
  3.  通过网口udp发送配置fpga指令
@@ -32,24 +32,24 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
  9.  通过串口关闭雷达 或 通过网口发送重置雷达命令
  10.  (optional)停止接收串口数据
  11.  (optional)解析从串口接收的点云等片内DSP处理好的数据
- - "*.cfg"毫米波雷达配置文件要求
+#### "*.cfg"毫米波雷达配置文件要求
  Default profile in Visualizer disables the LVDS streaming.
  To enable it, please export the chosen profile and set the appropriate enable bits.
  adcbufCfg需如下设置，lvdsStreamCfg的第三个参数需设置为1，具体参见mmwave_sdk_user_guide.pdf
- 1.  adcbufCfg -1 0 1 1 1
- 2.  lvdsStreamCfg -1 0 1 0 
- - "cf.json"数据采集卡配置文件要求
+ - adcbufCfg -1 0 1 1 1
+ - lvdsStreamCfg -1 0 1 0 
+#### "cf.json"数据采集卡配置文件要求
  In default conditions, Ethernet throughput varies up to 325 Mbps speed in a 25-µs Ethernet packet delay. 
  The user can change the Ethernet packet delay from 5 µs to 500 µs to achieve different throughputs.
- 1.  "packetDelay_us":  5 (us)   ~   706 (Mbps)
- 2.  "packetDelay_us": 10 (us)   ~   545 (Mbps)
- 3.  "packetDelay_us": 25 (us)   ~   325 (Mbps)
- 4.  "packetDelay_us": 50 (us)   ~   193 (Mbps)
+ - "packetDelay_us":  5 (us)   ~   706 (Mbps)
+ - "packetDelay_us": 10 (us)   ~   545 (Mbps)
+ - "packetDelay_us": 25 (us)   ~   325 (Mbps)
+ - "packetDelay_us": 50 (us)   ~   193 (Mbps)
 
 ### testDecode.ipynb
 解析原始ADC采样数据及串口数据的示例代码，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
- - 解析LVDS接收的ADC原始IQ数据
-  - 利用numpy对LVDS接收的ADC原始IQ数据进行解析
+#### 解析LVDS接收的ADC原始IQ数据
+##### 利用numpy对LVDS接收的ADC原始IQ数据进行解析
   1.  载入相关库
   2.  设置对应参数
   3.  载入保存的bin数据并解析
@@ -57,8 +57,8 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
   5.  计算Range-FFT
   6.  计算Doppler-FFT
   7.  计算Azimuth-FFT
-  - 利用mmwave.dsp提供的函数对LVDS接收的ADC原始IQ数据进行解析
- - 解析UART接收的片内DSP处理过的点云、doppler等数据
+##### 利用mmwave.dsp提供的函数对LVDS接收的ADC原始IQ数据进行解析
+#### 解析UART接收的片内DSP处理过的点云、doppler等数据
  1.  载入相关库
  2.  载入保存的串口解析数据
  3.  显示cfg文件设置的数据
