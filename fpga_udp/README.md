@@ -1,32 +1,8 @@
 python_example
 ==============
 
-[![Gitter][gitter-badge]][gitter-link]
-
-|      CI              | status |
-|----------------------|--------|
-| Linux/macOS Travis   | [![Travis-CI][travis-badge]][travis-link] |
-| MSVC 2015            | [![AppVeyor][appveyor-badge]][appveyor-link] |
-| conda.recipe         | [![Conda Actions Status][actions-conda-badge]][actions-conda-link] |
-| pip builds           | [![Pip Actions Status][actions-pip-badge]][actions-pip-link] |
-| [`cibuildwheel`][]   | [![Wheels Actions Status][actions-wheels-badge]][actions-wheels-link] |
-
-[gitter-badge]:            https://badges.gitter.im/pybind/Lobby.svg
-[gitter-link]:             https://gitter.im/pybind/Lobby
-[actions-badge]:           https://github.com/pybind/python_example/workflows/Tests/badge.svg
-[actions-conda-link]:      https://github.com/pybind/python_example/actions?query=workflow%3A%22Conda
-[actions-conda-badge]:     https://github.com/pybind/python_example/workflows/Conda/badge.svg
-[actions-pip-link]:        https://github.com/pybind/python_example/actions?query=workflow%3A%22Pip
-[actions-pip-badge]:       https://github.com/pybind/python_example/workflows/Pip/badge.svg
-[actions-wheels-link]:     https://github.com/pybind/python_example/actions?query=workflow%3AWheels
-[actions-wheels-badge]:    https://github.com/pybind/python_example/workflows/Wheels/badge.svg
-[travis-link]:             https://travis-ci.org/pybind/python_example
-[travis-badge]:            https://travis-ci.org/pybind/python_example.svg?branch=master&status=passed
-[appveyor-link]:           https://ci.appveyor.com/project/wjakob/python-example
-<!-- TODO: get a real badge link for appveyor -->
-[appveyor-badge]:          https://travis-ci.org/pybind/python_example.svg?branch=master&status=passed
-
-An example project built with [pybind11](https://github.com/pybind/pybind11).
+A project modified from example built with [pybind11](https://github.com/pybind/pybind11).
+用于通过C语言编写的socket代码从网口接收高速的原始数据。
 This requires Python 3.6+; for older versions of Python, check the commit
 history.
 
@@ -34,7 +10,7 @@ Installation
 ------------
 
  - clone this repository
- - `pip install ./python_example`
+ - `pip install ./fpga_udp`
 
 CI Examples
 -----------
@@ -54,7 +30,7 @@ the extension module to generate beautiful documentation in a variety formats.
 The following command generates HTML-based reference documentation; for other
 formats please refer to the Sphinx manual:
 
- - `cd python_example/docs`
+ - `cd fpga_udp/docs`
  - `make html`
 
 License
@@ -68,8 +44,9 @@ Test call
 ---------
 
 ```python
-import python_example
-python_example.add(1, 2)
+import fpga_udp
+print(fpga_udp.add(1, 2))
+print(fpga_udp.getOverflowCnt())
 ```
 
 [`cibuildwheel`]:          https://cibuildwheel.readthedocs.io
