@@ -1,0 +1,44 @@
+name: Conda
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ["3.6", "3.8"]
+
+    runs-on: ${{ matrix.platform }}
+
+    # The setup-miniconda action needs this to activate miniconda
+    defaults:
+      run:
+        shell: "bash -l {0}"
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Get conda
+        uses: conda-incubator/setup-miniconda@v2.1.1
+        with:
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge
+
+      - name: Prepare
+        run: conda install conda-build conda-verify
+
+      - name: Build
+        run: conda build conda.recipe
+
+      - name: Install
+        run: conda install -c ${CONDA_PREFIX}/conda-bld/ FPGA UDP reader plugin
+
+      - name: Test
+        run: python tests/test.py
