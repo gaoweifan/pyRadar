@@ -18,7 +18,7 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
 
 ## Example
 
-### *captureAll.py*
+### ***captureAll.py***
 同时采集原始ADC采样的IQ数据及片内DSP预处理好的点云等串口数据的示例代码。
 #### 1.采集原始数据的一般流程
  1.  (optional)创建从串口接收片内DSP处理好的数据的进程
@@ -46,7 +46,7 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
     - "packetDelay_us": 25 (us)   ~   325 (Mbps)
     - "packetDelay_us": 50 (us)   ~   193 (Mbps)
 
-### *testDecode.ipynb*
+### ***testDecode.ipynb***
 解析原始ADC采样数据及串口数据的示例代码，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
 #### 1.解析LVDS接收的ADC原始IQ数据
 ##### 利用numpy对LVDS接收的ADC原始IQ数据进行解析
@@ -71,14 +71,14 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
  - 显示多普勒图Doppler Bins
  - 显示方位角图Azimuth (Angle) Bins
 
-### *testParam.ipynb*
+### ***testParam.ipynb***
 毫米波雷达配置参数合理性校验，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
  - 主要校验毫米波雷达需要的cfg文件及DCA采集板需要的cf.json文件的参数配置是否正确。
  - 参数的约束条件来自于IWR1843自身的器件特性，具体请参考IWR1843数据手册、mmwave SDK用户手册、chirp编程手册。
  - 若参数满足约束条件将以青色输出调试信息，若不满足则以紫色或黄色输出。
  - 需要注意的是，本程序约束条件并非完全准确，故特殊情况下即使参数全都满足约束条件，也有概率无法正常运行。
 
-### *testDecodeADCdata.mlx*
+### ***testDecodeADCdata.mlx***
 解析原始ADC采样数据的MATLAB示例代码
  - 设置对应参数
  - 载入保存的bin原始ADC数据
