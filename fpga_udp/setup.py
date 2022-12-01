@@ -29,9 +29,9 @@ ext_modules = [
 setup(
     name="fpga_udp",
     version=__version__,
-    author="Sylvain Corlay",
-    author_email="sylvain.corlay@gmail.com",
-    url="https://github.com/pybind/python_example",
+    author="Weifan Gao",
+    author_email="gaoweifangao@gmail.com",
+    url="https://github.com/gaoweifan/pyRadar",
     description="FPGA UDP reader plugin using pybind11",
     long_description="",
     ext_modules=ext_modules,
