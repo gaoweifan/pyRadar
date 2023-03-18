@@ -93,7 +93,7 @@ int MMWL_sensorStop(unsigned char deviceMap);
 int MMWL_sensorStart(unsigned char deviceMap);
 
 /*Frame configuration*/
-int MMWL_frameConfig(unsigned char deviceMap);
+int MMWL_frameConfig(unsigned char deviceMap, rlUInt16_t numFrames);
 
 /*Chirp configuration*/
 int MMWL_chirpConfig(unsigned char deviceMap);
