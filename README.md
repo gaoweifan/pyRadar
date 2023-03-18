@@ -1,7 +1,7 @@
 # ADC/UART data capturing using xWR1843/AWR2243 with DCA1000
 
-for xWR1843: capture both raw ADC IQ data and processed UART point cloud data simultaneously in Python and C(pybind11) without mmwaveStudio
-for AWR2243: capture raw ADC IQ data in Python and C(pybind11) without mmwaveStudio
+* for xWR1843: capture both raw ADC IQ data and processed UART point cloud data simultaneously in Python and C(pybind11) without mmwaveStudio
+* for AWR2243: capture raw ADC IQ data in Python and C(pybind11) without mmwaveStudio
 
 
 ## Introduction
@@ -65,17 +65,17 @@ for AWR2243: capture raw ADC IQ data in Python and C(pybind11) without mmwaveStu
 
 ## Instructions for Use
 
-#### general
+#### General
 1.  先按照[Prerequisites](#prerequisites)搭建运行环境
 2.  再按[Installation](#installation)安装库
 3.  未提及的模块在运行时若报错请自行查询添加
-#### for xWR1843
+#### For xWR1843
 1.  按[mmwave SDK](https://www.ti.com/tool/MMWAVE-SDK)的说明烧录xwr18xx_mmw_demo程序
 2.  用[mmWave_Demo_Visualizer](https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/)调整参数并保存cfg配置文件
 3.  打开[captureAll.py](#captureallpy)按需求修改并填入cfg配置文件地址及端口号后运行并开始采集数据
 4.  打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
 5.  对参数不满意可以继续用[mmWave_Demo_Visualizer](https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/)调整或用[testParam.ipynb](#testparamipynb)修改并检验参数的合理性
-#### for AWR2243
+#### For AWR2243
 1.  运行[captureADC_AWR2243.py](#captureadc_awr2243py)采集数据
 2.  打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
 3.  对参数不满意可以用[testParam_AWR2243.ipynb](#testparam_awr2243ipynb)修改并检验参数的合理性
