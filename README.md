@@ -87,17 +87,19 @@
 ### ***captureAll.py***
 同时采集原始ADC采样的IQ数据及片内DSP预处理好的点云等串口数据的示例代码（仅xWR1843）。
 #### 1.采集原始数据的一般流程
- 1.  (optional)创建从串口接收片内DSP处理好的数据的进程
- 2.  通过串口启动雷达（理论上通过网口也能控制，暂未实现）
- 3.  通过网口udp发送配置fpga指令
- 4.  通过网口udp发送配置record数据包指令
- 5.  (optional)启动串口接收进程（只进行缓存清零）
- 6.  通过网口udp发送开始采集指令
- 7.  实时数据流处理或离线采集保存
- 8.  通过网口udp发送停止采集指令
- 9.  通过串口关闭雷达 或 通过网口发送重置雷达命令
- 10.  (optional)停止接收串口数据
- 11.  (optional)解析从串口接收的点云等片内DSP处理好的数据
+ 1.  重置雷达与DCA1000(reset_radar、reset_fpga)
+ 2.  通过UART初始化雷达并配置相应参数(TI、setFrameCfg)
+ 3.  (optional)创建从串口接收片内DSP处理好的数据的进程(create_read_process)
+ 4.  通过网口udp发送配置fpga指令(config_fpga)
+ 5.  通过网口udp发送配置record数据包指令(config_record)
+ 6.  (optional)启动串口接收进程（只进行缓存清零）(start_read_process)
+ 7.  通过网口udp发送开始采集指令(stream_start)
+ 8.  通过串口启动雷达（理论上通过FTDI(USB转SPI)也能控制，目前只在AWR2243上实现）(startSensor)
+ 9.  实时处理数据流或离线采集保存(write_frames_to_file)
+ 10.  (optional)通过网口udp发送停止采集指令(stream_stop)
+ 11.  通过串口关闭雷达(stopSensor) 或 通过网口发送重置雷达命令(reset_radar)
+ 12.  (optional)停止接收串口数据(stop_read_process)
+ 13.  (optional)解析从串口接收的点云等片内DSP处理好的数据(post_process_data_buf)
 #### 2."*.cfg"毫米波雷达配置文件要求
  - Default profile in Visualizer disables the LVDS streaming.
  - To enable it, please export the chosen profile and set the appropriate enable bits.

@@ -46,14 +46,16 @@ try:
     radar.AWR2243_init(radar_config_file)
     numframes=100
     radar.AWR2243_setFrameCfg(numframes)  # radar设置frame个数后会自动停止，无需向fpga及radar发送停止命令
-
-    input("press ENTER to start capture...")  # 按回车开始采集
+    
+    # 按回车开始采集
+    input("press ENTER to start capture...")
+    
     # 3. 通过网口udp发送配置fpga指令
     # 4. 通过网口udp发送配置record数据包指令
     '''
-    dca.sys_alive_check()  # 检查fpga是否连通正常工作
-    dca.config_fpga(dca_config_file)  # 3. 配置fpga
-    dca.config_record(dca_config_file)  # 4. 配置record
+    dca.sys_alive_check()             # 检查fpga是否连通正常工作
+    dca.config_fpga(dca_config_file)  # 配置fpga
+    dca.config_record(dca_config_file)# 配置record
     '''
     dca.configure(dca_config_file,radar_config_file)  # 此函数完成上述所有操作
     # 5. 通过网口udp发送开始采集指令
@@ -62,8 +64,8 @@ try:
     # 6. 通过SPI启动雷达
     radar.AWR2243_sensorStart()
 
-    # 7. 实时处理数据流或离线采集保存
-    dca.write_frames_to_file(filename="raw_data_"+startTime.strftime('%Y-%m-%d-%H-%M-%S')+".bin",numframes=numframes) # 7. 从网口接收ADC原始数据+处理数据+保存到文件
+    # 7. 从网口接收ADC原始数据+处理数据+保存到文件
+    dca.write_frames_to_file(filename="raw_data_"+startTime.strftime('%Y-%m-%d-%H-%M-%S')+".bin",numframes=numframes)
     
     # 8. 等待雷达采集结束
     radar.AWR2243_waitSensorStop()
