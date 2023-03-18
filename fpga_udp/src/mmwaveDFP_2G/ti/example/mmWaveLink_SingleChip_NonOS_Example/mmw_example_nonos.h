@@ -190,4 +190,4 @@ int MMWL_App_startSensor(unsigned char deviceMap);
 int MMWL_App_waitSensorStop(unsigned char deviceMap);
 int MMWL_App_stopSensor(unsigned char deviceMap);
 int MMWL_App_poweroff(unsigned char deviceMap);
-int MMWL_App();
+int MMWL_App(const char *configFilename);

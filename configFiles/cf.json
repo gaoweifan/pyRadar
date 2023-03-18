@@ -1,0 +1,10 @@
+{
+  "DCA1000Config": {
+    "dataLoggingMode": "raw",
+    "dataTransferMode": "LVDSCapture",
+    "dataCaptureMode": "ethernetStream",
+    "lvdsMode": 2,
+    "dataFormatMode": 3,
+    "packetDelay_us": 25
+  }
+}

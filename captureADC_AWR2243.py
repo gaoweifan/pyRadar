@@ -41,8 +41,8 @@ try:
     time.sleep(1)
     
     # 2. 通过SPI初始化雷达并配置相应参数
-    dca_config_file = "../configFile/cf.json"
-    radar_config_file = "../configFile/mmwaveconfig.txt"
+    dca_config_file = "configFiles/cf.json"
+    radar_config_file = "configFiles/AWR2243_mmwaveconfig.txt"
     radar.AWR2243_init(radar_config_file)
     numframes=100
     radar.AWR2243_setFrameCfg(numframes)  # radar设置frame个数后会自动停止，无需向fpga及radar发送停止命令

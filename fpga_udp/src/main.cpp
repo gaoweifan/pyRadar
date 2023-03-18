@@ -148,8 +148,8 @@ int AWR2243_poweroff() {
     return MMWL_App_poweroff(RL_DEVICE_MAP_CASCADED_1);
 }
 
-int AWR2243_test_demo_app() {
-    return MMWL_App();
+int AWR2243_test_demo_app(std::string configFilename) {
+    return MMWL_App(configFilename.c_str());
 }
 
 PYBIND11_MODULE(fpga_udp, m) {

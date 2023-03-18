@@ -42,8 +42,8 @@ try:
     dca.reset_fpga()
     print("wait for reset")
     time.sleep(1)
-    dca_config_file = "../configFile/cf.json"
-    radar_config_file = "../configFile/xwr18xx_profile_2022_11_25T03_58_40_485_1TX4RX_bestVelocityResolution.cfg"
+    dca_config_file = "configFiles/cf.json"
+    radar_config_file = "configFiles/xWR1843_profile_3D.cfg"
     numframes=1400
     # 记得改端口号,verbose=True会显示向毫米波雷达板子发送的所有串口指令及响应
     radar = TI(cli_loc='COM4', data_loc='COM5',data_baud=921600,config_file=radar_config_file,verbose=True)
