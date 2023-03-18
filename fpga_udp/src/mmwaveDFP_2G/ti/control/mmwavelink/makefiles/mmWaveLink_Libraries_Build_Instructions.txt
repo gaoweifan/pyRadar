@@ -1,0 +1,38 @@
+###################################################################################
+# mmWaveLink libraries - Build instructions
+###################################################################################
+
+Pre-requisites
+--------------
+1. ti-cgt-arm_18.12.5.LTS (for R4F, R5F and M4 platforms)
+   http://www.ti.com/tool/download/ARM-CGT-18
+2. xdctools_3_50_08_24_core (for creating directories etc.)
+   http://software-dl.ti.com/dsps/dsps_public_sw/sdo_sb/targetcontent/rtsc/3_50_08_24/index_FDS.html
+3. ti-cgt-c6000_8.3.3 (for C66 and C674 platforms)
+   http://www.ti.com/tool/download/C6000-CGT-8-3/8.3.3
+
+Instructions
+-------------
+1. Navigate to <dfp_package>/ti/control/mmwavelink/makefiles folder.
+2. Open setenv.bat (for windows) / setenv.sh (for linux) and set the environment variables according to the PC filesystem.
+   The platforms for which the mmWaveLink library is to be built is included in the MMWAVE_BUILD_PLATFORM variable.
+   By default, all the platforms are included.
+3. Open a command prompt at the same location and execute the (setenv.bat / setenv.sh) file. 
+   Once successful, navigate one level back to mmwavelink folder and enter the appropriate command (as per below) to generate the libraries.
+   Enter "gmake help" (for windows) / "make help" (for linux) to list the commands supported. 
+4. The libraries will be generated at <dfp_package>/ti/control/mmwavelink/lib folder.
+
+Commands supported
+------------------
+1. Build the mmWaveLink library for all platforms
+   "gmake all" / "make all"
+2. Clean the mmWaveLink objects for all platforms
+   "gmake clean" / "make clean"
+3. Build the mmWaveLink library for the specified platform
+   "gmake r4f" / "make r4f"
+4. Build the mmWaveLink library for one or more platforms
+   "gmake r4f r5f m4" / "make r4f r5f m4"
+5. Clean the mmWaveLink objects for the specified platform
+   "gmake r4fClean" / "make r4fClean"
+6. Clean the mmWaveLink library for one or more platforms
+   "gmake r4fClean r5fClean m4Clean" / "make r4fClean r5fClean m4Clean"

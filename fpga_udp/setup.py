@@ -1,10 +1,9 @@
-import sys
-import platform
-
-from pybind11 import get_cmake_dir
 # Available at setup time due to pyproject.toml
 from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
+import platform
+from glob import glob
+import os
 
 __version__ = "0.0.1"
 
@@ -19,19 +18,43 @@ __version__ = "0.0.1"
 
 ext_modules = [
     Pybind11Extension("fpga_udp",
-        ["src/main.cpp",
-        "src/WzSerialportPlus/"+platform.system()+"/WzSerialportPlus.cpp"],
+        ["src/main.cpp"]+
+        # serial port lib
+        ["src/WzSerialportPlus/"+platform.system()+"/WzSerialportPlus.cpp"]+
+        # mmwave DFP SingleChip NonOS demo
+        sorted(glob("src/mmwaveDFP_2G/ti/example/mmWaveLink_SingleChip_NonOS_Example/*.cpp"))+
+        sorted(glob("src/mmwaveDFP_2G/ti/example/mmWaveLink_SingleChip_NonOS_Example/*.c"))+
+        # mmwave DFP mmWaveLink Library
+        sorted(glob("src/mmwaveDFP_2G/ti/control/mmwavelink/src/*.c"))+
+        # mmwave DFP mmWaveLink FTDI Library
+        ["src/mmwaveDFP_2G/FTDILib/SourceCode/mmwl_port_ftdi.cpp"],
+
+                       # serial port lib
+        include_dirs = ["src/WzSerialportPlus/"+platform.system()]+
+                       # mmwave DFP SingleChip NonOS demo
+                       sorted(glob("src/mmwaveDFP_2G/ti/example/mmWaveLink_SingleChip_NonOS_Example/"))+
+                       # mmwave DFP mmWaveLink Library
+                       ["src/mmwaveDFP_2G/ti/control/mmwavelink/"]+
+                       sorted(glob("src/mmwaveDFP_2G/ti/control/mmwavelink/include/"))+
+                       # mmwave DFP mmWaveLink FTDI Library
+                       ["src/mmwaveDFP_2G/FTDILib/SourceCode/"]+
+                       ["src/FTDI_D2XX/"+platform.system()]+
+                       # mmwave DFP firmware
+                       ["src/mmwaveDFP_2G/firmware/"],
+        # extra_compile_args=['-pthread'],
+        extra_link_args=['-pthread'],
+        library_dirs = ["src/FTDI_D2XX/"+platform.system()+"/"+platform.machine()],
         # Example: passing in the version to the compiled code
         define_macros = [('VERSION_INFO', __version__)],
-        ),
+    ),
 ]
 
 setup(
     name="fpga_udp",
     version=__version__,
-    author="Sylvain Corlay",
-    author_email="sylvain.corlay@gmail.com",
-    url="https://github.com/pybind/python_example",
+    author="Weifan Gao",
+    author_email="gaoweifangao@gmail.com",
+    url="https://github.com/gaoweifan/pyRadar",
     description="FPGA UDP reader plugin using pybind11",
     long_description="",
     ext_modules=ext_modules,
@@ -40,5 +63,5 @@ setup(
     # level" feature, but in the future it may provide more features.
     cmdclass={"build_ext": build_ext},
     zip_safe=False,
-    python_requires=">=3.6",
+    python_requires=">=3.7",
 )

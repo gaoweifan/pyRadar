@@ -7,12 +7,12 @@
     #include <Winsock2.h>
     #include <ws2tcpip.h>
     #pragma comment(lib, "Ws2_32.lib")
-    #include "WzSerialportPlus/Windows/WzSerialportPlus.h"
 #elif __linux__
     #include <sys/socket.h>
     #include <netinet/in.h>
-    #include "WzSerialportPlus/Linux/WzSerialportPlus.h"
 #endif
+#include "WzSerialportPlus.h"
+#include "mmw_example_nonos.h"
 
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
@@ -119,9 +119,41 @@ py::array_t<uint8_t> read_data_udp(int sock_fd, int packetNum, int packetSize, i
     return result;
 }
 
+int AWR2243_init(std::string configFilename) {
+    return MMWL_App_init(RL_DEVICE_MAP_CASCADED_1, configFilename);
+}
+int AWR2243_setFrameCfg(int numFrames) {
+    return MMWL_App_setFrameCfg(RL_DEVICE_MAP_CASCADED_1, numFrames);
+}
+
+int AWR2243_sensorStart() {
+    return MMWL_App_startSensor(RL_DEVICE_MAP_CASCADED_1);
+}
+int AWR2243_waitSensorStop() {
+    return MMWL_App_waitSensorStop(RL_DEVICE_MAP_CASCADED_1);
+}
+int AWR2243_sensorStop() {
+    return MMWL_App_stopSensor(RL_DEVICE_MAP_CASCADED_1);
+}
+
+int AWR2243_sensorStartCont() {
+    return MMWL_App_startCont(RL_DEVICE_MAP_CASCADED_1);
+}
+int AWR2243_sensorStopCont() {
+    return MMWL_App_stopCont(RL_DEVICE_MAP_CASCADED_1);
+}
+
+int AWR2243_poweroff() {
+    return MMWL_App_poweroff(RL_DEVICE_MAP_CASCADED_1);
+}
+
+int AWR2243_test_demo_app() {
+    return MMWL_App();
+}
+
 PYBIND11_MODULE(fpga_udp, m) {
     m.doc() = R"pbdoc(
-        FPGA UDP reader plugin
+        FPGA UDP reader & mmwavelink API plugin
         -----------------------
 
         .. currentmodule:: fpga_udp
@@ -136,6 +168,15 @@ PYBIND11_MODULE(fpga_udp, m) {
            radar_stop_read_thread
            getOverflowCnt
            read_data_udp
+           AWR2243_init
+           AWR2243_setFrameCfg
+           AWR2243_sensorStart
+           AWR2243_waitSensorStop
+           AWR2243_sensorStop
+           AWR2243_sensorStartCont
+           AWR2243_sensorStopCont
+           AWR2243_poweroff
+           AWR2243_test_demo_app
     )pbdoc";
 
     m.def("radar_start_read_thread", &radar_start_read_thread);
@@ -160,6 +201,17 @@ PYBIND11_MODULE(fpga_udp, m) {
         timeout_s:\ttime out for udp in sec
     )pbdoc");
 
+    m.def("AWR2243_init",&AWR2243_init);
+    m.def("AWR2243_setFrameCfg",&AWR2243_setFrameCfg);
+    m.def("AWR2243_sensorStart",&AWR2243_sensorStart);
+    m.def("AWR2243_waitSensorStop",&AWR2243_waitSensorStop);
+    m.def("AWR2243_sensorStop",&AWR2243_sensorStop);
+    m.def("AWR2243_sensorStartCont",&AWR2243_sensorStartCont);
+    m.def("AWR2243_sensorStopCont",&AWR2243_sensorStopCont);
+    m.def("AWR2243_poweroff",&AWR2243_poweroff);
+    m.def("AWR2243_poweroff",&AWR2243_poweroff);
+    m.def("AWR2243_test_demo_app",&AWR2243_test_demo_app);
+    
     m.def("add", &add, R"pbdoc(
         Add two numbers
     )pbdoc");

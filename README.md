@@ -1,4 +1,4 @@
-# ADC/UART data capturing using IWR1843 with DCA1000
+# ADC/UART data capturing using xWR1843/AWR2243 with DCA1000
 
 capture both raw ADC IQ data and processed UART point cloud data simultaneously in pure python code (with a little C code)
 
@@ -7,19 +7,62 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
 
 该模块分为两部分，mmwave和fpga_udp。
 1.  mmwave修改自[OpenRadar](https://github.com/PreSenseRadar/OpenRadar)，用于配置文件读取、串口数据发送与接收、原始数据解析等。
-2.  fpga_udp修改自[pybind11 example](https://github.com/pybind/python_example)，用于通过C语言编写的socket代码从网口接收高速的原始数据。
+2.  fpga_udp修改自[pybind11 example](https://github.com/pybind/python_example)以及[mmWave-DFP-2G](https://www.ti.com/tool/MMWAVE-DFP)，用于通过C语言编写的socket代码从网口接收DCA1000发回的高速的原始数据。对于AWR2243这种没有片上DSP及ARM核的型号，还实现了利用FTDI通过USB发送指令用SPI控制AWR2243的固件写入、参数配置等操作。
+
+
+## Prerequisites
+
+### Hardware
+#### for xWR1843
+* Connect the micro-USB port (UART) on the xWR1843 to your system
+* Connect the xWR1843 to a 5V barrel jack
+* Set power connector on the DCA1000 to RADAR_5V_IN
+* boot in Functional Mode: SOP[2:0]=001
+  * either place jumpers on pins marked as SOP0 or toggle SOP0 switches to ON, all others remain OFF
+* Connect the RJ45 to your system
+* Set a fixed IP to the local interface: 192.168.33.30
+#### for AWR2243
+* Connect the micro-USB port (FTDI) on the DCA1000 to your system
+* Connect the AWR2243 to a 5V barrel jack
+* Set power connector on the DCA1000 to RADAR_5V_IN
+* Put the device in SOP0
+  * Jumper on SOP0, all others disconnected
+* Connect the RJ45 to your system
+* Set a fixed IP to the local interface: 192.168.33.30
+
+### Software
+#### Windows
+ - Microsoft Visual C++ 14.0 or greater is required. Get it with "[Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)" and choose "Desktop development with C++"
+ - FTDI D2XX driver and DLL is needed. Download version [2.12.36.4](https://www.ftdichip.com/Drivers/CDM/CDM%20v2.12.36.4%20WHQL%20Certified.zip) or newer from [official website](https://ftdichip.com/drivers/d2xx-drivers/) and install `ftdibus.inf`.
+#### Linux
+ - `sudo apt install python3-dev`
+ - FTDI D2XX driver and .so lib is needed. Download version 1.4.27 or newer from [official website](https://ftdichip.com/drivers/d2xx-drivers/) based on your architecture. e.g. [X86](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_32-1.4.27.tgz), [X64](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_64-1.4.27.tgz), [armv7](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v7-hf-1.4.27.tgz), [aarch64](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v8-1.4.27.tgz), etc.
+ Then you'll need to install the library:
+```
+tar -xzvf libftd2xx-arm-v8-1.4.27.tgz
+cd libftd2xx-arm-v8-1.4.27/release
+sudo cp ftd2xx.h /usr/local/include
+sudo cp WinTypes.h /usr/local/include
+cd build
+sudo cp libftd2xx.so.1.4.27 /usr/local/lib
+sudo chmod 0755 /usr/local/lib/libftd2xx.so.1.4.27
+sudo ln -sf /usr/local/lib/libftd2xx.so.1.4.27 /usr/local/lib/libftd2xx.so
+sudo ldconfig -v
+```
 
 
 ## Installation
 
  - clone this repository
+ - `python3 -m pip install --upgrade pip`
+ - `python3 -m pip install --upgrade setuptools`
  - `pip install ./fpga_udp`
 
 
 ## Example
 
 ### ***captureAll.py***
-同时采集原始ADC采样的IQ数据及片内DSP预处理好的点云等串口数据的示例代码。
+同时采集原始ADC采样的IQ数据及片内DSP预处理好的点云等串口数据的示例代码（仅IWR1843）。
 #### 1.采集原始数据的一般流程
  1.  (optional)创建从串口接收片内DSP处理好的数据的进程
  2.  通过串口启动雷达（理论上通过网口也能控制，暂未实现）
@@ -47,7 +90,7 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
     - "packetDelay_us": 50 (us)   ~   193 (Mbps)
 
 ### ***testDecode.ipynb***
-解析原始ADC采样数据及串口数据的示例代码，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
+解析原始ADC采样数据及串口数据（仅IWR1843）的示例代码，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
 #### 1.解析LVDS接收的ADC原始IQ数据
 ##### 利用numpy对LVDS接收的ADC原始IQ数据进行解析
  - 载入相关库
@@ -72,11 +115,14 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
  - 显示方位角图Azimuth (Angle) Bins
 
 ### ***testParam.ipynb***
-毫米波雷达配置参数合理性校验，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
+IWR1843毫米波雷达配置参数合理性校验，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
  - 主要校验毫米波雷达需要的cfg文件及DCA采集板需要的cf.json文件的参数配置是否正确。
  - 参数的约束条件来自于IWR1843自身的器件特性，具体请参考IWR1843数据手册、mmwave SDK用户手册、chirp编程手册。
  - 若参数满足约束条件将以青色输出调试信息，若不满足则以紫色或黄色输出。
  - 需要注意的是，本程序约束条件并非完全准确，故特殊情况下即使参数全都满足约束条件，也有概率无法正常运行。
+
+### ***testParam_AWR2243.ipynb***
+AWR2243毫米波雷达配置参数合理性校验。
 
 ### ***testDecodeADCdata.mlx***
 解析原始ADC采样数据的MATLAB示例代码
