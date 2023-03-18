@@ -36,19 +36,19 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
  - FTDI D2XX driver and DLL is needed. Download version [2.12.36.4](https://www.ftdichip.com/Drivers/CDM/CDM%20v2.12.36.4%20WHQL%20Certified.zip) or newer from [official website](https://ftdichip.com/drivers/d2xx-drivers/) and install `ftdibus.inf`.
 #### Linux
  - `sudo apt install python3-dev`
- - FTDI D2XX driver and .so lib is needed. Download version 1.4.27 or newer from [official website](https://ftdichip.com/drivers/d2xx-drivers/) based on your architecture. e.g. [X86](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_32-1.4.27.tgz), [X64](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_64-1.4.27.tgz), [armv7](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v7-hf-1.4.27.tgz), [aarch64](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v8-1.4.27.tgz), etc.
+ - FTDI D2XX driver and .so lib is needed. Download version 1.4.27 or newer from [official website](https://ftdichip.com/drivers/d2xx-drivers/) based on your architecture, e.g. [X86](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_32-1.4.27.tgz), [X64](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_64-1.4.27.tgz), [armv7](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v7-hf-1.4.27.tgz), [aarch64](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v8-1.4.27.tgz), etc.
  - Then you'll need to install the library:
-  - ```
-    tar -xzvf libftd2xx-arm-v8-1.4.27.tgz
-    cd libftd2xx-arm-v8-1.4.27/release
-    sudo cp ftd2xx.h /usr/local/include
-    sudo cp WinTypes.h /usr/local/include
-    cd build
-    sudo cp libftd2xx.so.1.4.27 /usr/local/lib
-    sudo chmod 0755 /usr/local/lib/libftd2xx.so.1.4.27
-    sudo ln -sf /usr/local/lib/libftd2xx.so.1.4.27 /usr/local/lib/libftd2xx.so
-    sudo ldconfig -v
-    ```
+   - ```
+     tar -xzvf libftd2xx-arm-v8-1.4.27.tgz
+     cd libftd2xx-arm-v8-1.4.27/release
+     sudo cp ftd2xx.h /usr/local/include
+     sudo cp WinTypes.h /usr/local/include
+     cd build
+     sudo cp libftd2xx.so.1.4.27 /usr/local/lib
+     sudo chmod 0755 /usr/local/lib/libftd2xx.so.1.4.27
+     sudo ln -sf /usr/local/lib/libftd2xx.so.1.4.27 /usr/local/lib/libftd2xx.so
+     sudo ldconfig -v
+     ```
 
 
 ## Installation
@@ -57,6 +57,23 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
  - `python3 -m pip install --upgrade pip`
  - `python3 -m pip install --upgrade setuptools`
  - `pip install ./fpga_udp`
+
+
+## Instructions for Use
+
+1.  先按照[Prerequisites](#prerequisites)搭建运行环境
+2.  再按[Installation](#installation)安装库
+3.  未提及的模块在运行时若报错请自行查询添加
+4.  for xWR1843
+ - 按[mmwave SDK](https://www.ti.com/tool/MMWAVE-SDK)的说明烧录xwr18xx_mmw_demo程序
+ - 用[mmWave_Demo_Visualizer](https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/)调整参数并保存cfg配置文件
+ - 打开[captureAll.py](#captureallpy)按需求修改并填入cfg配置文件地址及端口号后运行并开始采集数据
+ - 打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
+ - 对参数不满意可以继续用[mmWave_Demo_Visualizer](https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/)调整或用[testParam.ipynb](#testparamipynb)修改并检验参数的合理性
+5.  for AWR2243
+ - 运行[captureADC_AWR2243.py](#captureadc_awr2243py)采集数据
+ - 打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
+ - 对参数不满意可以用[testParam_AWR2243.ipynb](#testparam_awr2243ipynb)修改并检验参数的合理性
 
 
 ## Example
@@ -106,12 +123,7 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
 #### 2."mmwaveconfig.txt"毫米波雷达配置文件要求
  - TBD
 #### 3."cf.json"数据采集卡配置文件要求
- - In default conditions, Ethernet throughput varies up to 325 Mbps speed in a 25-µs Ethernet packet delay. 
- - The user can change the Ethernet packet delay from 5 µs to 500 µs to achieve different throughputs.
-    - "packetDelay_us":  5 (us)   ~   706 (Mbps)
-    - "packetDelay_us": 10 (us)   ~   545 (Mbps)
-    - "packetDelay_us": 25 (us)   ~   325 (Mbps)
-    - "packetDelay_us": 50 (us)   ~   193 (Mbps)
+ - 同上
 
 ### ***testDecode.ipynb***
 解析原始ADC采样数据及串口数据（仅IWR1843）的示例代码，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
@@ -146,7 +158,7 @@ IWR1843毫米波雷达配置参数合理性校验，需要用Jupyter(推荐VS Co
  - 需要注意的是，本程序约束条件并非完全准确，故特殊情况下即使参数全都满足约束条件，也有概率无法正常运行。
 
 ### ***testParam_AWR2243.ipynb***
-AWR2243毫米波雷达配置参数合理性校验。
+同上，AWR2243毫米波雷达配置参数的合理性校验。
 
 ### ***testDecodeADCdata.mlx***
 解析原始ADC采样数据的MATLAB示例代码
@@ -164,14 +176,3 @@ AWR2243毫米波雷达配置参数合理性校验。
 
 ### TBD.py
 TBD
-
-
-## Environmental Requirements
-
-1.  TBD
-
-
-## Instructions for Use
-
-1.  先按照要求搭建运行环境，未提及的模块在运行时若报错请自己查询添加
-2.  TBD
