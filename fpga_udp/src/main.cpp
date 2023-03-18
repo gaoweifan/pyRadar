@@ -12,8 +12,9 @@
     #include <netinet/in.h>
 #endif
 #include "WzSerialportPlus.h"
+extern "C" {
 #include "mmw_example_nonos.h"
-
+}
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
 
@@ -120,7 +121,7 @@ py::array_t<uint8_t> read_data_udp(int sock_fd, int packetNum, int packetSize, i
 }
 
 int AWR2243_init(std::string configFilename) {
-    return MMWL_App_init(RL_DEVICE_MAP_CASCADED_1, configFilename);
+    return MMWL_App_init(RL_DEVICE_MAP_CASCADED_1, configFilename.c_str());
 }
 int AWR2243_setFrameCfg(int numFrames) {
     return MMWL_App_setFrameCfg(RL_DEVICE_MAP_CASCADED_1, numFrames);

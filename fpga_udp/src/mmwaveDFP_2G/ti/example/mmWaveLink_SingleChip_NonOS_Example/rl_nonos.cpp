@@ -42,7 +42,7 @@
 #include <mmwavelink.h>
 #include "rl_nonos.h"
 #ifdef _WIN32
-    #include <synchapi.h>
+    #include <windows.h>
 #elif __linux__
     #include <thread>
 #endif
