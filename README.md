@@ -1,13 +1,17 @@
 # ADC/UART data capturing using xWR1843/AWR2243 with DCA1000
 
-capture both raw ADC IQ data and processed UART point cloud data simultaneously in pure python code (with a little C code)
+for xWR1843: capture both raw ADC IQ data and processed UART point cloud data simultaneously in Python and C(pybind11) without mmwaveStudio
+for AWR2243: capture raw ADC IQ data in Python and C(pybind11) without mmwaveStudio
 
 
 ## Introduction
 
-该模块分为两部分，mmwave和fpga_udp。
-1.  mmwave修改自[OpenRadar](https://github.com/PreSenseRadar/OpenRadar)，用于配置文件读取、串口数据发送与接收、原始数据解析等。
-2.  fpga_udp修改自[pybind11 example](https://github.com/pybind/python_example)以及[mmWave-DFP-2G](https://www.ti.com/tool/MMWAVE-DFP)，用于通过C语言编写的socket代码从网口接收DCA1000发回的高速的原始数据。对于AWR2243这种没有片上DSP及ARM核的型号，还实现了利用FTDI通过USB发送指令用SPI控制AWR2243的固件写入、参数配置等操作。
+* 该模块分为两部分，mmwave和fpga_udp:
+  * mmwave修改自[OpenRadar](https://github.com/PreSenseRadar/OpenRadar)，用于配置文件读取、串口数据发送与接收、原始数据解析等。
+  * fpga_udp修改自[pybind11 example](https://github.com/pybind/python_example)以及[mmWave-DFP-2G](https://www.ti.com/tool/MMWAVE-DFP)，用于通过C语言编写的socket代码从网口接收DCA1000发回的高速的原始数据。对于AWR2243这种没有片上DSP及ARM核的型号，还实现了利用FTDI通过USB发送指令用SPI控制AWR2243的固件写入、参数配置等操作。
+* TI的毫米波雷达主要分两类，只有射频前端的和自带片上ARM及DSP/HWA的。前者型号有[AWR1243](https://www.ti.com/product/AWR1243)、[AWR2243](https://www.ti.com/product/AWR2243)等，后者型号有[xWR1443](https://www.ti.com/product/IWR1443)、[xWR6443](https://www.ti.com/product/IWR6443)、[xWR1843](https://www.ti.com/product/IWR1843)、[xWR6843](https://www.ti.com/product/IWR6843)、[AWR2944](https://www.ti.com/product/AWR2944)等。
+  * 对于只有射频前端的雷达传感器，一般是通过SPI/I2C接口向其发送控制及配置指令，并通过CSI2/LVDS接口输出原始数据。其中SPI接口可以用DCA1000板载的FTDI芯片转为USB协议直接用电脑控制，LVDS接口的数据也能用DCA1000板载的FPGA采集并转为UDP包通过以太网传输。本仓库实现了上述所有操作。
+  * 对于自带片上ARM及DSP的雷达传感器，则可以烧录控制程序，用片上ARM对雷达传感器进行配置，用片上DSP处理原始数据并得到点云等数据，通过UART传输。其中原始数据除了送入片上DSP，还能配置为通过LVDS接口输出，并利用DCA1000板载的FPGA采集。本仓库实现了上述所有操作。当然，自带片上ARM及DSP的雷达传感器也有SPI/I2C等接口，也可以利用该接口对雷达传感器进行配置，并通过DCA1000板载的FTDI将SPI转为USB用电脑控制。[mmwaveStudio](https://www.ti.com/tool/MMWAVE-STUDIO)就是这样做的，但本仓库暂未实现该方法，可参考[mmWave-DFP](https://www.ti.com/tool/MMWAVE-DFP)自行实现。
 
 
 ## Prerequisites
@@ -61,19 +65,20 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
 
 ## Instructions for Use
 
+#### general
 1.  先按照[Prerequisites](#prerequisites)搭建运行环境
 2.  再按[Installation](#installation)安装库
 3.  未提及的模块在运行时若报错请自行查询添加
-4.  for xWR1843
- - 按[mmwave SDK](https://www.ti.com/tool/MMWAVE-SDK)的说明烧录xwr18xx_mmw_demo程序
- - 用[mmWave_Demo_Visualizer](https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/)调整参数并保存cfg配置文件
- - 打开[captureAll.py](#captureallpy)按需求修改并填入cfg配置文件地址及端口号后运行并开始采集数据
- - 打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
- - 对参数不满意可以继续用[mmWave_Demo_Visualizer](https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/)调整或用[testParam.ipynb](#testparamipynb)修改并检验参数的合理性
-5.  for AWR2243
- - 运行[captureADC_AWR2243.py](#captureadc_awr2243py)采集数据
- - 打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
- - 对参数不满意可以用[testParam_AWR2243.ipynb](#testparam_awr2243ipynb)修改并检验参数的合理性
+#### for xWR1843
+1.  按[mmwave SDK](https://www.ti.com/tool/MMWAVE-SDK)的说明烧录xwr18xx_mmw_demo程序
+2.  用[mmWave_Demo_Visualizer](https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/)调整参数并保存cfg配置文件
+3.  打开[captureAll.py](#captureallpy)按需求修改并填入cfg配置文件地址及端口号后运行并开始采集数据
+4.  打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
+5.  对参数不满意可以继续用[mmWave_Demo_Visualizer](https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/)调整或用[testParam.ipynb](#testparamipynb)修改并检验参数的合理性
+#### for AWR2243
+1.  运行[captureADC_AWR2243.py](#captureadc_awr2243py)采集数据
+2.  打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
+3.  对参数不满意可以用[testParam_AWR2243.ipynb](#testparam_awr2243ipynb)修改并检验参数的合理性
 
 
 ## Example
