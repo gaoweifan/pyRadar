@@ -37,18 +37,18 @@ capture both raw ADC IQ data and processed UART point cloud data simultaneously 
 #### Linux
  - `sudo apt install python3-dev`
  - FTDI D2XX driver and .so lib is needed. Download version 1.4.27 or newer from [official website](https://ftdichip.com/drivers/d2xx-drivers/) based on your architecture. e.g. [X86](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_32-1.4.27.tgz), [X64](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_64-1.4.27.tgz), [armv7](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v7-hf-1.4.27.tgz), [aarch64](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v8-1.4.27.tgz), etc.
- Then you'll need to install the library:
-```
-tar -xzvf libftd2xx-arm-v8-1.4.27.tgz
-cd libftd2xx-arm-v8-1.4.27/release
-sudo cp ftd2xx.h /usr/local/include
-sudo cp WinTypes.h /usr/local/include
-cd build
-sudo cp libftd2xx.so.1.4.27 /usr/local/lib
-sudo chmod 0755 /usr/local/lib/libftd2xx.so.1.4.27
-sudo ln -sf /usr/local/lib/libftd2xx.so.1.4.27 /usr/local/lib/libftd2xx.so
-sudo ldconfig -v
-```
+ - Then you'll need to install the library:
+  - ```
+    tar -xzvf libftd2xx-arm-v8-1.4.27.tgz
+    cd libftd2xx-arm-v8-1.4.27/release
+    sudo cp ftd2xx.h /usr/local/include
+    sudo cp WinTypes.h /usr/local/include
+    cd build
+    sudo cp libftd2xx.so.1.4.27 /usr/local/lib
+    sudo chmod 0755 /usr/local/lib/libftd2xx.so.1.4.27
+    sudo ln -sf /usr/local/lib/libftd2xx.so.1.4.27 /usr/local/lib/libftd2xx.so
+    sudo ldconfig -v
+    ```
 
 
 ## Installation
@@ -62,7 +62,7 @@ sudo ldconfig -v
 ## Example
 
 ### ***captureAll.py***
-同时采集原始ADC采样的IQ数据及片内DSP预处理好的点云等串口数据的示例代码（仅IWR1843）。
+同时采集原始ADC采样的IQ数据及片内DSP预处理好的点云等串口数据的示例代码（仅xWR1843）。
 #### 1.采集原始数据的一般流程
  1.  (optional)创建从串口接收片内DSP处理好的数据的进程
  2.  通过串口启动雷达（理论上通过网口也能控制，暂未实现）
@@ -81,6 +81,30 @@ sudo ldconfig -v
  - adcbufCfg需如下设置，lvdsStreamCfg的第三个参数需设置为1，具体参见mmwave_sdk_user_guide.pdf
     - adcbufCfg -1 0 1 1 1
     - lvdsStreamCfg -1 0 1 0 
+#### 3."cf.json"数据采集卡配置文件要求
+ - In default conditions, Ethernet throughput varies up to 325 Mbps speed in a 25-µs Ethernet packet delay. 
+ - The user can change the Ethernet packet delay from 5 µs to 500 µs to achieve different throughputs.
+    - "packetDelay_us":  5 (us)   ~   706 (Mbps)
+    - "packetDelay_us": 10 (us)   ~   545 (Mbps)
+    - "packetDelay_us": 25 (us)   ~   325 (Mbps)
+    - "packetDelay_us": 50 (us)   ~   193 (Mbps)
+
+### ***captureADC_AWR2243.py***
+采集原始ADC采样的IQ数据的示例代码（仅AWR2243）。
+#### 1.AWR2243采集原始数据的一般流程
+ 1. 重置雷达与DCA1000(reset_radar、reset_fpga)
+ 2. 通过SPI初始化雷达并配置相应参数(AWR2243_init、AWR2243_setFrameCfg)(linux下需要root权限)
+ 3. 通过网口udp发送配置fpga指令(config_fpga)
+ 4. 通过网口udp发送配置record数据包指令(config_record)
+ 5. 通过网口udp发送开始采集指令(stream_start)
+ 6. 通过SPI启动雷达(AWR2243_sensorStart)
+ 7. 实时处理数据流或离线采集保存(write_frames_to_file)
+ 8. (optional, 若numFrame==0则不能有)等待雷达采集结束(AWR2243_waitSensorStop)
+ 9. (optional, 若numFrame==0则必须有)通过网口udp发送停止采集指令(stream_stop)
+ 10. (optional, 若numFrame==0则必须有)通过SPI停止雷达(AWR2243_sensorStop)
+ 11. 通过SPI关闭雷达电源与配置文件(AWR2243_poweroff)
+#### 2."mmwaveconfig.txt"毫米波雷达配置文件要求
+ - TBD
 #### 3."cf.json"数据采集卡配置文件要求
  - In default conditions, Ethernet throughput varies up to 325 Mbps speed in a 25-µs Ethernet packet delay. 
  - The user can change the Ethernet packet delay from 5 µs to 500 µs to achieve different throughputs.
