@@ -189,6 +189,99 @@ class DCA1000:
         UINT16_IN_FRAME = BYTES_IN_FRAME // 2
 
     @staticmethod
+    def AWR2243_read_config (config_file_name):
+        global CFG_PARAMS
+        global ADC_PARAMS
+        config = open(config_file_name,'r')
+        curProfileId=0
+        chirpStartIdxFCF=0
+        chirpEndIdxFCF=0
+        for line in config:
+            #print("**** line from config file: \n" + line)
+            List = line.replace(" ","").split("=")
+                            
+            if 'channelTx' == List[0]:
+                CFG_PARAMS['txAntMask'] = int(List[1].split(";")[0])
+                numTxChan = 0
+                for chanIdx in range (3):
+                    if (CFG_PARAMS['txAntMask'] >> 1) & 1 == 1:
+                        numTxChan = numTxChan + 1
+                CFG_PARAMS['numTxChan'] = numTxChan
+                ADC_PARAMS['tx'] = numTxChan
+            if 'channelRx' == List[0]:
+                CFG_PARAMS['rxAntMask'] = int(List[1].split(";")[0])
+                numRxChan = 0
+                for chanIdx in range (4):
+                    if (CFG_PARAMS['rxAntMask'] >> chanIdx) & 1 == 1:
+                        numRxChan = numRxChan + 1
+                CFG_PARAMS['numRxChan'] = numRxChan
+                ADC_PARAMS['rx'] = numRxChan
+            if 'adcBitsD' == List[0]:
+                ADC_PARAMS['bytes']=2
+            if 'adcFmt' == List[0]:
+                ADC_PARAMS['IQ']=2
+            if 'dataRate' == List[0]:
+                dataRate = int(List[1].split(";")[0])
+                if dataRate==0b0001: # 0001b - 600 Mbps (DDR only)
+                    CFG_PARAMS['lvdsBW']=600
+                if dataRate==0b0010: # 0010b - 450 Mbps (SDR, DDR)
+                    CFG_PARAMS['lvdsBW']=450
+                if dataRate==0b0011: # 0011b - 400 Mbps (DDR only)
+                    CFG_PARAMS['lvdsBW']=400
+                if dataRate==0b0100: # 0100b - 300 Mbps (SDR, DDR)
+                    CFG_PARAMS['lvdsBW']=300
+                if dataRate==0b0101: # 0101b - 225 Mbps (DDR only)
+                    CFG_PARAMS['lvdsBW']=225
+                if dataRate==0b0110: # 0110b - 150 Mbps (DDR only)
+                    CFG_PARAMS['lvdsBW']=150
+            if 'laneEn' == List[0]:
+                numlaneEn = 0
+                for laneIdx in range (4):
+                    if (int(List[1].split(";")[0]) >> laneIdx) & 1 == 1:
+                        numlaneEn = numlaneEn + 1
+                CFG_PARAMS['numlaneEn'] = numlaneEn
+            if 'profileId' == List[0]:
+                curProfileId = int(List[1].split(";")[0])
+            if 'startFreqConst' == List[0]:
+                if curProfileId==0:#只取第一个profile
+                    ADC_PARAMS['startFreq'] = int(List[1].split(";")[0]) * (3.6 / (1<<26))
+            if 'idleTimeConst' == List[0]:
+                if curProfileId==0:#只取第一个profile
+                    ADC_PARAMS['idleTime'] = int(List[1].split(";")[0])/100
+            if 'adcStartTimeConst' == List[0]:
+                if curProfileId==0:#只取第一个profile
+                    ADC_PARAMS['adc_valid_start_time'] = int(List[1].split(";")[0])/100
+            if 'rampEndTime' == List[0]:
+                if curProfileId==0:#只取第一个profile
+                    ADC_PARAMS['rampEndTime'] = int(List[1].split(";")[0])/100
+            if 'freqSlopeConst' == List[0]:
+                if curProfileId==0:#只取第一个profile
+                    ADC_PARAMS['freq_slope'] = int(List[1].split(";")[0]) * (3.6e3 * 900 / (1<<26))
+            if 'txStartTime' == List[0]:
+                if curProfileId==0:#只取第一个profile
+                    ADC_PARAMS['txStartTime'] = int(List[1].split(";")[0])/100
+            if 'numAdcSamples' == List[0]:
+                if curProfileId==0:#只取第一个profile
+                    ADC_PARAMS['samples'] = int(List[1].split(";")[0])
+            if 'digOutSampleRate' == List[0]:
+                if curProfileId==0:#只取第一个profile
+                    ADC_PARAMS['sample_rate'] = int(List[1].split(";")[0])
+            if 'rxGain' == List[0]:
+                curProfileId+=1 #避免后面frameCfg的numAdcSamples被当作profile的
+            if 'chirpStartIdxFCF' == List[0]:
+                chirpStartIdxFCF = int(List[1].split(";")[0])
+            if 'chirpEndIdxFCF' == List[0]:
+                chirpEndIdxFCF = int(List[1].split(";")[0])
+            if 'loopCount' == List[0]:
+                ADC_PARAMS['chirps'] = int(List[1].split(";")[0])*(chirpEndIdxFCF-chirpStartIdxFCF+1)#临时措施，待更正
+            if 'periodicity' == List[0]:
+                ADC_PARAMS['frame_periodicity'] = int(List[1].split(";")[0])/200000
+        LVDSDataSizePerChirp = ADC_PARAMS['samples']*ADC_PARAMS['rx']*ADC_PARAMS['IQ']*ADC_PARAMS['bytes']+52
+        LVDSDataSizePerChirp = math.ceil(LVDSDataSizePerChirp/256)*256
+        maxSendBytesPerChirp = (ADC_PARAMS['idleTime']+ADC_PARAMS['rampEndTime'])*CFG_PARAMS['numlaneEn']*CFG_PARAMS['lvdsBW']/8
+        return (LVDSDataSizePerChirp,maxSendBytesPerChirp,ADC_PARAMS,CFG_PARAMS)
+
+    @staticmethod
     def read_config (config_file_name):
         """!
         This function read config from test profile file and fills up global variables to contain the configuration
