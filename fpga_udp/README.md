@@ -1,8 +1,7 @@
 fpga_udp
 ========
 
-A project modified from [example](https://github.com/pybind/python_example/) built with [pybind11](https://github.com/pybind/pybind11), 用于通过C语言编写的socket代码从网口接收高速的原始数据。This requires Python 3.6+; for older versions of Python, check the commit
-history.
+A project modified from [example](https://github.com/pybind/python_example/) built with [pybind11](https://github.com/pybind/pybind11), 用于通过C语言编写的socket代码从网口接收高速的原始数据。This requires Python 3.7+.
 
 Installation
 ------------

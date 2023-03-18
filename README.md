@@ -60,7 +60,8 @@
  - clone this repository
  - `python3 -m pip install --upgrade pip`
  - `python3 -m pip install --upgrade setuptools`
- - `pip install ./fpga_udp`
+ - for Windows:`pip install ./fpga_udp`
+ - for Linux:`sudo pip install ./fpga_udp`
 
 
 ## Instructions for Use

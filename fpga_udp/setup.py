@@ -41,9 +41,8 @@ ext_modules = [
                        ["src/FTDI_D2XX/"+platform.system()]+
                        # mmwave DFP firmware
                        ["src/mmwaveDFP_2G/firmware/"],
-        # extra_compile_args=['-pthread'],
-        extra_link_args=['-pthread'],
         library_dirs = ["src/FTDI_D2XX/"+platform.system()+"/"+platform.machine()],
+        libraries=['ftd2xx'],
         # Example: passing in the version to the compiled code
         define_macros = [('VERSION_INFO', __version__)],
     ),

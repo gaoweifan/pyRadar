@@ -58,7 +58,7 @@
 #include <iostream>
 #include <time.h>
 #ifdef _WIN32
-    #pragma comment(lib,"ftd2xx.lib")
+    // #pragma comment(lib,"ftd2xx.lib")
     #include <share.h>
 #elif __linux__
 	#include <mutex>
