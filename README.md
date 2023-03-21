@@ -44,7 +44,7 @@
  - Then you'll need to install the library:
    - ```
      tar -xzvf libftd2xx-arm-v8-1.4.27.tgz
-     cd libftd2xx-arm-v8-1.4.27/release
+     cd release
      sudo cp ftd2xx.h /usr/local/include
      sudo cp WinTypes.h /usr/local/include
      cd build
@@ -58,10 +58,14 @@
 ## Installation
 
  - clone this repository
- - `python3 -m pip install --upgrade pip`
- - `python3 -m pip install --upgrade setuptools`
- - for Windows:`pip install ./fpga_udp`
- - for Linux:`sudo pip install ./fpga_udp`
+ - for Windows:
+   - `python3 -m pip install --upgrade pip`
+   - `python3 -m pip install --upgrade setuptools`
+   - `python3 -m pip install ./fpga_udp`
+ - for Linux:
+   - `sudo python3 -m pip install --upgrade pip`
+   - `sudo python3 -m pip install --upgrade setuptools`
+   - `sudo python3 -m pip install ./fpga_udp`
 
 
 ## Instructions for Use
