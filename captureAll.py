@@ -95,7 +95,7 @@ try:
     # 未解析的串口原始数据在radar.byteBuffer这个变量内
     # print(radar.byteBuffer)
     # 将解析后的串口数据保存到文件，加载可用np.load('xxx.npy', allow_pickle=True)
-    # np.save('DSP_Processed_data.npy', DSP_Processed_data)
+    # np.save("DSP_data_"+startTime.strftime('%Y-%m-%d-%H-%M-%S')+".npy", DSP_Processed_data)
     # print('file saved to DSP_Processed_data.npy')
 
 except Exception as e:
