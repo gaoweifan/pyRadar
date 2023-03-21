@@ -27,7 +27,9 @@ ext_modules = [
         # mmwave DFP mmWaveLink Library
         sorted(glob("src/mmwaveDFP_2G/ti/control/mmwavelink/src/*.c"))+
         # mmwave DFP mmWaveLink FTDI Library
-        ["src/mmwaveDFP_2G/FTDILib/SourceCode/mmwl_port_ftdi.cpp"],
+        ["src/mmwaveDFP_2G/FTDILib/SourceCode/mmwl_port_ftdi.cpp"]+
+        # pevents Library
+        ["src/pevents/pevents.cpp"],
 
                        # serial port lib
         include_dirs = ["src/WzSerialportPlus/"+platform.system()]+
@@ -40,7 +42,9 @@ ext_modules = [
                        ["src/mmwaveDFP_2G/FTDILib/SourceCode/"]+
                        ["src/FTDI_D2XX/"+platform.system()]+
                        # mmwave DFP firmware
-                       ["src/mmwaveDFP_2G/firmware/"],
+                       ["src/mmwaveDFP_2G/firmware/"]+
+                       # pevents Library
+                       ["src/pevents/"],
         library_dirs = ["src/FTDI_D2XX/"+platform.system()+"/"+platform.machine()],
         libraries=['ftd2xx'],
         # Example: passing in the version to the compiled code

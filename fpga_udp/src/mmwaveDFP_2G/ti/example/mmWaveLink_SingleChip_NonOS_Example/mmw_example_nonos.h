@@ -41,7 +41,7 @@
 */
 #include <mmwavelink.h>
 #include "mmwl_port_ftdi.h"
-#include "rl_nonos.h"
+// #include "rl_nonos.h"
 
 /******************************************************************************
 * MACROS

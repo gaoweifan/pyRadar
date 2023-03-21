@@ -40,6 +40,9 @@
 *******************************************************************************
 */
 #include <mmwavelink.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /******************************************************************************
 * MACROS
@@ -407,3 +410,7 @@ void MMWL_closeConfigFile();
 
 /*Trim the string trailing and leading whitespace*/
 char *MMWL_trim(char * s);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */

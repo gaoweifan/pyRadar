@@ -1,6 +1,6 @@
 *********************************************************************************************
 * This application showcases the basic radar features of AWR2243 ES 1.0/ES1.1 mmWave device *
-*  and mmWaveLink APIs usage on External Host environment with Non-OS environment.          *
+*  and mmWaveLink APIs usage on External Host environment for the same.                     *
 *********************************************************************************************
 
 Note:
@@ -10,7 +10,7 @@ Note:
 How to run:
     1. Connect AWR2243 ES 1.0/ES 1.1 boosterpack and DCA1000 EVM to PC.
     2. Erase sFlash before running this application.
-    3. Run mmwavelink_example_nonos.exe.
+    3. Run mmwavelink_example.exe.
     
 Execution flow of the application:
     1. Application sets the device in SOP4 mode (in the case of SPI) or SOP7 mode (in the case of I2C).

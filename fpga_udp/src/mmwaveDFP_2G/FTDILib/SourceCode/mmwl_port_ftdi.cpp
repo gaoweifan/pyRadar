@@ -394,9 +394,8 @@ int             rls_spiPhase = 0;
 int             rls_hostIntrThreadLoop = 1;
 int             rls_hostIntrExitThread = 0;
 int             rls_numOfRunningSPIThreads = 0;
-extern "C"{
+
 unsigned char i2cAddr[RLS_NUM_CONNECTED_DEVICES_MAX] = { 0 };
-}
 void DEBUG_PRINT(const char *fmt, ...)
 {
 //    std::cout << &fmt << std::endl;

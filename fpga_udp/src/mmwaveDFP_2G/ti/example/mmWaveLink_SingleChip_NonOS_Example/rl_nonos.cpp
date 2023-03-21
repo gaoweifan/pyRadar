@@ -340,9 +340,13 @@ rlNonOsRetVal_t rlNonOsMainLoopTask(void)
 rlInt32_t rlAppSleep(rlUInt32_t delay)
 {
     #ifdef _WIN32
-        Sleep(delay);
+        Sleep(delay/5);
     #elif __linux__
-        std::this_thread::sleep_for(std::chrono::milliseconds(delay));
+        std::this_thread::sleep_for(std::chrono::milliseconds(delay/5));
+    #else
+        rlUInt32_t i;
+        for(i=0; i< delay*10000; i++);
+        return 0;
     #endif
     return 0;
 }

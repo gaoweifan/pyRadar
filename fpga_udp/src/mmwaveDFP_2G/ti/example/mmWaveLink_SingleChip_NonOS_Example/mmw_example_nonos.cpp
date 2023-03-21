@@ -36,7 +36,7 @@
 */
 
 
-#define NON_OS_ENVIRONMENT
+// #define NON_OS_ENVIRONMENT
 
 /******************************************************************************
 * INCLUDE FILES
@@ -171,7 +171,9 @@ FILE *AdvChirpLUTDataPtr = NULL;
    between the PING and the PONG buffer */
 unsigned char gDynAdvChirpLUTBufferDir = 0;
 
+extern "C" {
 uint64_t computeCRC(uint8_t *p, uint32_t len, uint8_t width);
+}
 
 /* Function to compare dynamically configured chirp data */
 int MMWL_chirpParamCompare(rlChirpCfg_t * chirpData);
@@ -313,8 +315,13 @@ int MMWL_SwapResetAndPowerOn(rlUInt8_t deviceMap)
 		/* Wait for MSS Boot error status if flash is not connected */
 		while ((mmwl_bMssEsmFault == 0U) || (mmwl_bMssBootErrStatus == 0U))
 		{
-			rlNonOsMainLoopTask();
-			rlAppSleep(5);
+            #ifdef NON_OS_ENVIRONMENT
+            rlNonOsMainLoopTask();
+            rlAppSleep(5);
+            #else
+            osiSleep(1); /*Sleep 1 msec*/
+            #endif
+			
 			timeOutCnt++;
 			if (timeOutCnt > MMWL_API_START_TIMEOUT)
 			{
@@ -351,8 +358,12 @@ int MMWL_SwapResetAndPowerOn(rlUInt8_t deviceMap)
         timeOutCnt = 0;
         while (mmwl_bInitComp == 0)
         {
-			rlNonOsMainLoopTask();
-			rlAppSleep(5);
+			#ifdef NON_OS_ENVIRONMENT
+            rlNonOsMainLoopTask();
+            rlAppSleep(5);
+            #else
+            osiSleep(1); /*Sleep 1 msec*/
+            #endif
             timeOutCnt++;
             if (timeOutCnt > MMWL_API_INIT_TIMEOUT)
             {
@@ -624,7 +635,7 @@ int MMWL_computeCRC(unsigned char* data, unsigned int dataLen, unsigned char crc
     memcpy(outCrc, &crcResult, (2 << crcLen));
     return 0;
 }
-extern unsigned long i2cAddr[RLS_NUM_CONNECTED_DEVICES_MAX];
+extern unsigned char i2cAddr[RLS_NUM_CONNECTED_DEVICES_MAX];
 /** @fn int MMWL_powerOnMaster(deviceMap)
 *
 *   @brief Power on Master API.
@@ -716,6 +727,7 @@ int MMWL_powerOnMaster(unsigned char deviceMap)
 
     Refer to \ref rlOsiCbs_t for interface details
     */
+    #ifdef NON_OS_ENVIRONMENT
     /* Mutex */
     clientCtx.osiCb.mutex.rlOsiMutexCreate = rlLockObjCreate;
     clientCtx.osiCb.mutex.rlOsiMutexLock = rlLockObjLock;
@@ -733,7 +745,26 @@ int MMWL_powerOnMaster(unsigned char deviceMap)
     
     /* Sleep/Delay Callback*/
     clientCtx.timerCb.rlDelay = (RL_P_OS_DELAY_FUNC_PTR)rlAppSleep;
+    #else
+    /* Mutex */
+    clientCtx.osiCb.mutex.rlOsiMutexCreate = (rlInt32_t (*)(void**, rlInt8_t*))osiLockObjCreate;
+    clientCtx.osiCb.mutex.rlOsiMutexLock = (rlInt32_t (*)(void**, rlOsiTime_t))osiLockObjLock;
+    clientCtx.osiCb.mutex.rlOsiMutexUnLock = (rlInt32_t (*)(void**))osiLockObjUnlock;
+    clientCtx.osiCb.mutex.rlOsiMutexDelete = (rlInt32_t (*)(void**))osiLockObjDelete;
 
+    /* Semaphore */
+    clientCtx.osiCb.sem.rlOsiSemCreate = (rlInt32_t (*)(void**, rlInt8_t*))osiSyncObjCreate;
+    clientCtx.osiCb.sem.rlOsiSemWait = (rlInt32_t (*)(void**, rlOsiTime_t))osiSyncObjWait;
+    clientCtx.osiCb.sem.rlOsiSemSignal = (rlInt32_t (*)(void**))osiSyncObjSignal;
+    clientCtx.osiCb.sem.rlOsiSemDelete = (rlInt32_t (*)(void**))osiSyncObjDelete;
+
+    /* Spawn Task */
+    clientCtx.osiCb.queue.rlOsiSpawn = (RL_P_OS_SPAWN_FUNC_PTR)osiExecute;
+
+    /* Sleep/Delay Callback*/
+    clientCtx.timerCb.rlDelay = (RL_P_OS_DELAY_FUNC_PTR)osiSleep;
+    #endif
+    
 	/* Logging in mmWavelink*/
 	if (rlDevGlobalCfgArgs.EnableMmwlLogging == 1)
 	{	
@@ -776,8 +807,12 @@ int MMWL_powerOnMaster(unsigned char deviceMap)
     */
     while (mmwl_bInitComp == 0U)
     {
+        #ifdef NON_OS_ENVIRONMENT
         rlNonOsMainLoopTask();
         rlAppSleep(5);
+        #else
+        osiSleep(1); /*Sleep 1 msec*/
+        #endif
         timeOutCnt++;
         if (timeOutCnt > MMWL_API_INIT_TIMEOUT)
         {
@@ -965,8 +1000,12 @@ int MMWL_rfEnable(unsigned char deviceMap)
     retVal = rlDeviceRfStart(deviceMap);
     while (mmwl_bStartComp == 0U)
     {
-		rlNonOsMainLoopTask();
-		rlAppSleep(5);
+		#ifdef NON_OS_ENVIRONMENT
+        rlNonOsMainLoopTask();
+        rlAppSleep(5);
+        #else
+        osiSleep(1); /*Sleep 1 msec*/
+        #endif
         timeOutCnt++;
         if (timeOutCnt > MMWL_API_START_TIMEOUT)
         {
@@ -1391,8 +1430,12 @@ int MMWL_rfInit(unsigned char deviceMap)
 				printf("Calibration Data Restore Configuration success for deviceMap %u \n\n", deviceMap);
 				while (mmwl_bRfInitComp == 0U)
 				{
-					rlNonOsMainLoopTask();
-					rlAppSleep(5);
+					#ifdef NON_OS_ENVIRONMENT
+                    rlNonOsMainLoopTask();
+                    rlAppSleep(5);
+                    #else
+                    osiSleep(1); /*Sleep 1 msec*/
+                    #endif
 					timeOutCnt++;
 					if (timeOutCnt > MMWL_API_RF_INIT_TIMEOUT)
 					{
@@ -1407,8 +1450,12 @@ int MMWL_rfInit(unsigned char deviceMap)
     retVal = rlRfInit(deviceMap);
     while (mmwl_bRfInitComp == 0U)
     {
-		rlNonOsMainLoopTask();
-		rlAppSleep(5);
+		#ifdef NON_OS_ENVIRONMENT
+        rlNonOsMainLoopTask();
+        rlAppSleep(5);
+        #else
+        osiSleep(1); /*Sleep 1 msec*/
+        #endif
         timeOutCnt++;
         if (timeOutCnt > MMWL_API_RF_INIT_TIMEOUT)
         {
@@ -2089,35 +2136,9 @@ int MMWL_getDynChirpConfig(unsigned char deviceMap)
 }
 
 /* Ping LUT buffer offset (starts at 0 bytes and ends at 52 bytes) */
-rlAdvChirpDynLUTAddrOffCfg_t advChirpDynLUTOffsetCfg1 = 
-{
-	.addrMaskEn = 0x3FF, /* enable for all LUT parameters */
-	.lutAddressOffset[0U] = 0,
-	.lutAddressOffset[1U] = 4,
-	.lutAddressOffset[2U] = 12,
-	.lutAddressOffset[3U] = 16,
-	.lutAddressOffset[4U] = 24,
-	.lutAddressOffset[5U] = 32,
-	.lutAddressOffset[6U] = 36,
-	.lutAddressOffset[7U] = 40,
-	.lutAddressOffset[8U] = 44,
-	.lutAddressOffset[9U] = 48
-};
+rlAdvChirpDynLUTAddrOffCfg_t advChirpDynLUTOffsetCfg1;
 /* Pong LUT buffer offset (starts at 100 bytes and ends at 152 bytes) */
-rlAdvChirpDynLUTAddrOffCfg_t advChirpDynLUTOffsetCfg2 = 
-{
-	.addrMaskEn = 0x3FF, /* enable for all LUT parameters */
-	.lutAddressOffset[0U] = 100,
-	.lutAddressOffset[1U] = 104,
-	.lutAddressOffset[2U] = 112,
-	.lutAddressOffset[3U] = 116,
-	.lutAddressOffset[4U] = 124,
-	.lutAddressOffset[5U] = 132,
-	.lutAddressOffset[6U] = 136,
-	.lutAddressOffset[7U] = 140,
-	.lutAddressOffset[8U] = 144,
-	.lutAddressOffset[9U] = 148
-};
+rlAdvChirpDynLUTAddrOffCfg_t advChirpDynLUTOffsetCfg2;
 
 /** @fn int MMWL_advChirpConfigAll(unsigned char deviceMap)
 *
@@ -2207,7 +2228,7 @@ int MMWL_advChirpConfigAll(unsigned char deviceMap)
 	rlFillLUTParamsArgs.chirpParamSize = AdvChirpCfgArgs.lutChirpParamSize;
 	rlFillLUTParamsArgs.inputSize = AdvChirpCfgArgs.numOfPatterns;
 	rlFillLUTParamsArgs.lutGlobalOffset = lutOffsetInNBytes;
-	retVal = rlDevSetFillLUTBuff(&rlFillLUTParamsArgs, &ProfileCfgData[0], &AdvChirpLUTData[lutOffsetInNBytes], &lutOffsetInNBytes);
+	retVal = rlDevSetFillLUTBuff(&rlFillLUTParamsArgs, (rlInt8_t *)&ProfileCfgData[0], &AdvChirpLUTData[lutOffsetInNBytes], &lutOffsetInNBytes);
 
 	/* Start Frequency (Param Index = 1) */
 	/* Fixed start frequency delta dither (-20000) LSB's = (-20000 * 3.6 GHz) / 2^26 = -0.0010728 GHz, the delta dither
@@ -2461,7 +2482,7 @@ int MMWL_advChirpConfigAll(unsigned char deviceMap)
 	rlFillLUTParamsArgs.chirpParamSize = AdvChirpCfgArgs.lutChirpParamSize;
 	rlFillLUTParamsArgs.inputSize = AdvChirpCfgArgs.numOfPatterns;
 	rlFillLUTParamsArgs.lutGlobalOffset = lutOffsetInNBytes;
-	retVal = rlDevSetFillLUTBuff(&rlFillLUTParamsArgs, &TxEnCfgData[0], &AdvChirpLUTData[lutOffsetInNBytes], &lutOffsetInNBytes);
+	retVal = rlDevSetFillLUTBuff(&rlFillLUTParamsArgs, (rlInt8_t *)&TxEnCfgData[0], &AdvChirpLUTData[lutOffsetInNBytes], &lutOffsetInNBytes);
 
 	/* BPM Enable (Param Index = 6) */
 	/* Fixed delta dither is not supported for BPM Enable parameter */
@@ -2503,7 +2524,7 @@ int MMWL_advChirpConfigAll(unsigned char deviceMap)
 	rlFillLUTParamsArgs.chirpParamSize = AdvChirpCfgArgs.lutChirpParamSize;
 	rlFillLUTParamsArgs.inputSize = AdvChirpCfgArgs.numOfPatterns;
 	rlFillLUTParamsArgs.lutGlobalOffset = lutOffsetInNBytes;
-	retVal = rlDevSetFillLUTBuff(&rlFillLUTParamsArgs, &BpmEnCfgData[0], &AdvChirpLUTData[lutOffsetInNBytes], &lutOffsetInNBytes);
+	retVal = rlDevSetFillLUTBuff(&rlFillLUTParamsArgs, (rlInt8_t *)&BpmEnCfgData[0], &AdvChirpLUTData[lutOffsetInNBytes], &lutOffsetInNBytes);
 
 	/* TX0 Phase shifter (Param Index = 7) */
 	/* Fixed TX0 phase shifter delta dither (512) LSB's = (512 * 360) degrees / 2^16 = 2.8125 degrees, the delta dither
@@ -3171,8 +3192,12 @@ int MMWL_gpadcMeasConfig(unsigned char deviceMap)
     {
         while (mmwl_bGpadcDataRcv == 0U)
         {
+            #ifdef NON_OS_ENVIRONMENT
             rlNonOsMainLoopTask();
             rlAppSleep(5);
+            #else
+            osiSleep(1); /*Sleep 1 msec*/
+            #endif
             timeOutCnt++;
             if (timeOutCnt > MMWL_API_RF_INIT_TIMEOUT)
             {
@@ -3206,8 +3231,12 @@ int MMWL_sensorStart(unsigned char deviceMap)
 	retVal = rlFrameStartStop(deviceMap, &data);
     while (mmwl_bSensorStarted == 0U)
     {
+        #ifdef NON_OS_ENVIRONMENT
         rlNonOsMainLoopTask();
         rlAppSleep(5);
+        #else
+        osiSleep(1); /*Sleep 1 msec*/
+        #endif
         timeOutCnt++;
         if (timeOutCnt > MMWL_API_RF_INIT_TIMEOUT)
         {
@@ -3231,21 +3260,28 @@ int MMWL_sensorStart(unsigned char deviceMap)
 int MMWL_sensorStop(unsigned char deviceMap)
 {
     int retVal = RL_RET_CODE_OK, timeOutCnt =0;
-	rlFrameTrigger_t data = { 0 };
-	/* Stop the frame after the current frame is over */
-	data.startStop = 0;
-    retVal = rlFrameStartStop(deviceMap, &data);
-    if (retVal == RL_RET_CODE_OK)
+    if (mmwl_bSensorStarted == 1U)
     {
-        while (mmwl_bSensorStarted == 1U)
+        rlFrameTrigger_t data = { 0 };
+        /* Stop the frame after the current frame is over */
+        data.startStop = 0;
+        retVal = rlFrameStartStop(deviceMap, &data);
+        if (retVal == RL_RET_CODE_OK)
         {
-            rlNonOsMainLoopTask();
-            rlAppSleep(8);
-            timeOutCnt++;
-            if (timeOutCnt > MMWL_API_RF_INIT_TIMEOUT)
+            while (mmwl_bSensorStarted == 1U)
             {
-                retVal = RL_RET_CODE_RESP_TIMEOUT;
-                break;
+                #ifdef NON_OS_ENVIRONMENT
+                rlNonOsMainLoopTask();
+                rlAppSleep(8);
+                #else
+                osiSleep(1); /*Sleep 1 msec*/
+                #endif
+                timeOutCnt++;
+                if (timeOutCnt > MMWL_API_RF_INIT_TIMEOUT)
+                {
+                    retVal = RL_RET_CODE_RESP_TIMEOUT;
+                    break;
+                }
             }
         }
     }
@@ -3384,8 +3420,37 @@ int MMWL_DynAdvConfig(unsigned int deviceMap)
            to update new chirp config to come in effect for next frames */
 
 		   /* wait for few frames worth of time */
-		rlNonOsMainLoopTask();
+        #ifdef NON_OS_ENVIRONMENT
+        rlNonOsMainLoopTask();
 		rlAppSleep(15 * framePeriodicity);
+        #else
+        osiSleep(3 * framePeriodicity);
+        #endif
+
+        /* Ping LUT buffer offset (starts at 0 bytes and ends at 52 bytes) */
+        advChirpDynLUTOffsetCfg1.addrMaskEn = 0x3FF; /* enable for all LUT parameters */
+        advChirpDynLUTOffsetCfg1.lutAddressOffset[0U] = 0;
+        advChirpDynLUTOffsetCfg1.lutAddressOffset[1U] = 4;
+        advChirpDynLUTOffsetCfg1.lutAddressOffset[2U] = 12;
+        advChirpDynLUTOffsetCfg1.lutAddressOffset[3U] = 16;
+        advChirpDynLUTOffsetCfg1.lutAddressOffset[4U] = 24;
+        advChirpDynLUTOffsetCfg1.lutAddressOffset[5U] = 32;
+        advChirpDynLUTOffsetCfg1.lutAddressOffset[6U] = 36;
+        advChirpDynLUTOffsetCfg1.lutAddressOffset[7U] = 40;
+        advChirpDynLUTOffsetCfg1.lutAddressOffset[8U] = 44;
+        advChirpDynLUTOffsetCfg1.lutAddressOffset[9U] = 48;
+        /* Pong LUT buffer offset (starts at 100 bytes and ends at 152 bytes) */
+        advChirpDynLUTOffsetCfg2.addrMaskEn = 0x3FF; /* enable for all LUT parameters */
+        advChirpDynLUTOffsetCfg2.lutAddressOffset[0U] = 100;
+        advChirpDynLUTOffsetCfg2.lutAddressOffset[1U] = 104;
+        advChirpDynLUTOffsetCfg2.lutAddressOffset[2U] = 112;
+        advChirpDynLUTOffsetCfg2.lutAddressOffset[3U] = 116;
+        advChirpDynLUTOffsetCfg2.lutAddressOffset[4U] = 124;
+        advChirpDynLUTOffsetCfg2.lutAddressOffset[5U] = 132;
+        advChirpDynLUTOffsetCfg2.lutAddressOffset[6U] = 136;
+        advChirpDynLUTOffsetCfg2.lutAddressOffset[7U] = 140;
+        advChirpDynLUTOffsetCfg2.lutAddressOffset[8U] = 144;
+        advChirpDynLUTOffsetCfg2.lutAddressOffset[9U] = 148;
 
         if (gDynAdvChirpLUTBufferDir == 0) /* PING Buffer */
         {
@@ -3426,8 +3491,12 @@ int MMWL_DynAdvConfig(unsigned int deviceMap)
 		/* wait for another few mSec so that dynamic advance chirp offset come in effect,
 		 If above API reached to BSS at the end of frame then new chirp config will come in effect
 		 during next frame only */
-		rlNonOsMainLoopTask();
+        #ifdef NON_OS_ENVIRONMENT
+        rlNonOsMainLoopTask();
 		rlAppSleep(10 * framePeriodicity);
+        #else
+        osiSleep(2 * framePeriodicity);
+        #endif
 	}
 
 	return retVal;
@@ -4026,8 +4095,12 @@ int MMWL_App_startCont(unsigned char deviceMap)
         printf("Continuous mode Config successful for deviceMap %u \n\n", deviceMap);
     }
     
+    #ifdef NON_OS_ENVIRONMENT
     rlNonOsMainLoopTask();
     rlAppSleep(5000);
+    #else
+    osiSleep(1000);
+    #endif
     
     /* Start continuous streaming for the device */
     retVal = MMWL_ContModeEnable(deviceMap, 1);
@@ -4121,8 +4194,12 @@ int MMWL_App_waitSensorStop(unsigned char deviceMap)
     /* Wait for the frame end async event from the device */
     while (mmwl_bSensorStarted != 0x0)
     {
+        #ifdef NON_OS_ENVIRONMENT
         rlNonOsMainLoopTask();
         rlAppSleep(5);
+        #else
+        osiSleep(1);
+        #endif
     }
     return retVal;
 }
@@ -4217,8 +4294,12 @@ int MMWL_App(const char *configFilename)
         MMWL_App_startCont(deviceMap);
         
         /* Let the device stream for some more time */
-		rlNonOsMainLoopTask();
-		rlAppSleep(25000);
+        #ifdef NON_OS_ENVIRONMENT
+        rlNonOsMainLoopTask();
+        rlAppSleep(25000);
+        #else
+        osiSleep(5000);
+        #endif
 
         /* Stop continuous streaming for the device */
         MMWL_App_stopCont(deviceMap);
@@ -4236,8 +4317,12 @@ int MMWL_App(const char *configFilename)
             level before implementing the application. */
     
             /* wait for few frames worth of time before updating profile config */
-		    rlNonOsMainLoopTask();
-		    rlAppSleep(30 * framePeriodicity);
+            #ifdef NON_OS_ENVIRONMENT
+            rlNonOsMainLoopTask();
+            rlAppSleep(30 * framePeriodicity);
+            #else
+            osiSleep(3*framePeriodicity);
+            #endif
     
             /* update few of existing profile parameters */
             profileCfgArgs[0].rxGain = 158; /* 30 dB gain and 36 dB Gain target */
@@ -4263,8 +4348,12 @@ int MMWL_App(const char *configFilename)
             /* wait for few frames worth of time before reading profile config.
             Dynamic profile configuration will come in effect during next frame, so wait for that time
             before reading back profile config */
-		    rlNonOsMainLoopTask();
-		    rlAppSleep(20 * framePeriodicity);
+		    #ifdef NON_OS_ENVIRONMENT
+            rlNonOsMainLoopTask();
+            rlAppSleep(20 * framePeriodicity);
+            #else
+            osiSleep(2*framePeriodicity);
+            #endif
     
             /* To verify that profile configuration parameters are applied to device while frame is ongoing,
             read back profile configurationn from device */
@@ -4296,8 +4385,12 @@ int MMWL_App(const char *configFilename)
             new chirp config to come in effect for next frames */
     
             /* wait for few frames worth of time */
-		    rlNonOsMainLoopTask();
-		    rlAppSleep(30 * framePeriodicity);
+		    #ifdef NON_OS_ENVIRONMENT
+            rlNonOsMainLoopTask();
+            rlAppSleep(30 * framePeriodicity);
+            #else
+            osiSleep(3*framePeriodicity);
+            #endif
     
             retVal = MMWL_setDynChirpConfig(deviceMap);
             if (retVal != RL_RET_CODE_OK)
@@ -4327,8 +4420,12 @@ int MMWL_App(const char *configFilename)
             /* wait for another few mSec so that dynamic chirp come in effect,
             If above API reached to BSS at the end of frame then new chirp config will come in effect
             during next frame only */
-		    rlNonOsMainLoopTask();
-		    rlAppSleep(50 * framePeriodicity);
+		    #ifdef NON_OS_ENVIRONMENT
+            rlNonOsMainLoopTask();
+            rlAppSleep(50 * framePeriodicity);
+            #else
+            osiSleep(2*framePeriodicity);
+            #endif
     
             /* read back Chirp config, which should be same as configured in dynChirpConfig for same segment */
             retVal = MMWL_getDynChirpConfig(deviceMap);
@@ -4353,8 +4450,12 @@ int MMWL_App(const char *configFilename)
 				printf("Dynamic Advance chirp LUT offset update failed with error code %d", retVal);
 				break;
 			}
-			rlNonOsMainLoopTask();
-			rlAppSleep(5);
+            #ifdef NON_OS_ENVIRONMENT
+            rlNonOsMainLoopTask();
+            rlAppSleep(5);
+            #else
+            osiSleep(1);
+            #endif
 		}
     }
     /* Note- Before Calling this API user must feed in input signal to device's pins,
