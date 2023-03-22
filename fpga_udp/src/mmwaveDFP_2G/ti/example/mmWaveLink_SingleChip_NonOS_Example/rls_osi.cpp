@@ -54,7 +54,7 @@
 
 
 typedef void (*P_OS_CALLBACK_FUNCTION)(UINT32);
-std::atomic<long>       rls_globalLockMutexCounter = 0;
+std::atomic<long>       rls_globalLockMutexCounter(0);
 osiLockObj_t* 			rls_pGloblaLockObj = NULL;
 
 int osiSleep(UINT32 Duration)
@@ -233,11 +233,13 @@ int osiLockObjCreate(osiLockObj_t* 		pLockObj, char* pName)
 			return OSI_OPERATION_FAILED;
 		}
 	#elif __linux__
-        int result = pthread_mutex_init(pLockObj, NULL);
+		pthread_mutex_t *mutex = new pthread_mutex_t;
+        int result = pthread_mutex_init(mutex, NULL);
 		if (result != 0) 
 		{
 			return OSI_OPERATION_FAILED;
 		}
+		*pLockObj = mutex;
 	#endif
 
 	if (strcmp(pName, "GlobalLockObj") == 0)
@@ -256,11 +258,7 @@ int osiLockObjDelete(osiLockObj_t* pLockObj)
 {
 	BOOL RetVal;
 
-	#ifdef _WIN32
 	if (NULL == pLockObj || NULL == *pLockObj)
-	#elif __linux__
-	if (NULL == pLockObj)
-	#endif
 	{
 		return OSI_INVALID_PARAMS;
 	}
@@ -282,7 +280,7 @@ int osiLockObjDelete(osiLockObj_t* pLockObj)
 	#ifdef _WIN32
 		RetVal = CloseHandle(*pLockObj);
 	#elif __linux__
-        RetVal = pthread_mutex_destroy(pLockObj)==0;
+        RetVal = pthread_mutex_destroy(*pLockObj)==0;
 	#endif
 
 	if (FALSE != RetVal)
@@ -299,11 +297,7 @@ int osiLockObjLock(osiLockObj_t* pLockObj , osiTime_t Timeout)
 {
 	UINT32 RetVal;	
 
-    #ifdef _WIN32
 	if (NULL == pLockObj || NULL == *pLockObj)
-	#elif __linux__
-	if (NULL == pLockObj)
-	#endif
 	{
 		return OSI_INVALID_PARAMS;
 	}
@@ -326,7 +320,7 @@ int osiLockObjLock(osiLockObj_t* pLockObj , osiTime_t Timeout)
 			ts.tv_sec++;
 			ts.tv_nsec -= 1000000000;
 		}
-        RetVal = pthread_mutex_timedlock(pLockObj, &ts);
+        RetVal = pthread_mutex_timedlock(*pLockObj, &ts);
 	#endif
 
 	/* Decrement the global lock counter  */
@@ -361,11 +355,7 @@ int osiLockObjUnlock(osiLockObj_t* pLockObj)
 {
 	BOOL RetVal;
 	
-	#ifdef _WIN32
 	if (NULL == pLockObj || NULL == *pLockObj)
-	#elif __linux__
-	if (NULL == pLockObj)
-	#endif
 	{
 		return OSI_INVALID_PARAMS;
 	}
@@ -373,7 +363,7 @@ int osiLockObjUnlock(osiLockObj_t* pLockObj)
 	#ifdef _WIN32
 		RetVal = ReleaseMutex(*pLockObj);
 	#elif __linux__
-		RetVal = pthread_mutex_unlock(pLockObj)==0;
+		RetVal = pthread_mutex_unlock(*pLockObj)==0;
 	#endif
 	
 	if (FALSE != RetVal)

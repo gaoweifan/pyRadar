@@ -121,7 +121,7 @@ typedef neosmart::neosmart_event_t osiSyncObj_t;
 #ifdef _WIN32
 typedef HANDLE osiLockObj_t;
 #elif __linux__
-typedef pthread_mutex_t osiLockObj_t;
+typedef pthread_mutex_t *osiLockObj_t;
 #endif
 
 

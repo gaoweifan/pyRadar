@@ -47,6 +47,7 @@ ext_modules = [
                        ["src/pevents/"],
         library_dirs = ["src/FTDI_D2XX/"+platform.system()+"/"+platform.machine()],
         libraries=['ftd2xx'],
+        # extra_compile_args=['-g'],
         # Example: passing in the version to the compiled code
         define_macros = [('VERSION_INFO', __version__)],
     ),
