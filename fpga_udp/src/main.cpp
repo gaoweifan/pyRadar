@@ -136,6 +136,7 @@ PYBIND11_MODULE(fpga_udp, m) {
            radar_stop_read_thread
            getOverflowCnt
            read_data_udp
+           AWR2243_firmwareDownload
            AWR2243_init
            AWR2243_setFrameCfg
            AWR2243_sensorStart
@@ -169,8 +170,18 @@ PYBIND11_MODULE(fpga_udp, m) {
         timeout_s:\ttime out for udp in sec
     )pbdoc");
 
+    m.def("AWR2243_firmwareDownload",[](){
+        return MMWL_App_firmwareDownload(RL_DEVICE_MAP_CASCADED_1);
+    }, R"pbdoc(
+        This function downloads meta image patch to external serial flash.
+        Once the flashing operation is successful, 
+        it is not necessary to download the meta image in the subsequent power cycles.
+        If no flash connected or not downloaded successfully, you must set downloadFw=true
+        when you call AWR2243_init and set EnableFwDownload=1 in mmwaveconfig.txt and
+        MMWL_FILETYPE_META_IMG = 0 in mmw_example_nonos.h.
+    )pbdoc");
     m.def("AWR2243_init",[](std::string configFilename){
-        return MMWL_App_init(RL_DEVICE_MAP_CASCADED_1, configFilename.c_str());
+        return MMWL_App_init(RL_DEVICE_MAP_CASCADED_1, configFilename.c_str(), false);
     });
     m.def("AWR2243_setFrameCfg",[](int numFrames){
         return MMWL_App_setFrameCfg(RL_DEVICE_MAP_CASCADED_1, numFrames);

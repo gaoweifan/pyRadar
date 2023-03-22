@@ -81,9 +81,13 @@
 4.  打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
 5.  对参数不满意可以继续用[mmWave_Demo_Visualizer](https://dev.ti.com/gallery/view/mmwave/mmWave_Demo_Visualizer/ver/3.6.0/)调整或用[testParam.ipynb](#testparamipynb)修改并检验参数的合理性
 #### For AWR2243
-1.  运行[captureADC_AWR2243.py](#captureadc_awr2243py)采集数据
-2.  打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
-3.  对参数不满意可以用[testParam_AWR2243.ipynb](#testparam_awr2243ipynb)修改并检验参数的合理性
+1.  烧录固件补丁至外部flash（该操作只需要执行一次，重启不会丢固件）
+  - for Windows: `python3 -c "import fpga_udp;fpga_udp.AWR2243_firmwareDownload()"`
+  - for Linux: `sudo python3 -c "import fpga_udp;fpga_udp.AWR2243_firmwareDownload()"`
+  - 看见"MSS Patch version [ 2. 2. 2. 0]"则烧录成功
+2.  打开[captureADC_AWR2243.py](#captureadc_awr2243py)按需求修改并填入txt配置文件地址并开始采集数据
+3.  打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
+4.  对参数不满意可以用[testParam_AWR2243.ipynb](#testparam_awr2243ipynb)修改并检验参数的合理性
 
 
 ## Example

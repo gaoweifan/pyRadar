@@ -646,7 +646,7 @@ extern unsigned char i2cAddr[RLS_NUM_CONNECTED_DEVICES_MAX];
 *
 *   Power on Master API.
 */
-int MMWL_powerOnMaster(unsigned char deviceMap)
+int MMWL_powerOnMaster(unsigned char deviceMap, bool downloadFwMode)
 {
     int retVal = RL_RET_CODE_OK, timeOutCnt = 0;
     /*
@@ -660,8 +660,13 @@ int MMWL_powerOnMaster(unsigned char deviceMap)
      */
     rlClientCbs_t clientCtx = { 0 };
 
-    /*Read all the parameters from config file*/
-    MMWL_readPowerOnMaster(&clientCtx);
+    if (downloadFwMode){
+        clientCtx.crcType=1;
+        clientCtx.ackTimeout=50000;
+    }else{
+        /*Read all the parameters from config file*/
+        MMWL_readPowerOnMaster(&clientCtx);
+    }
 
     /* store CRC Type which has been read from mmwaveconfig.txt file */
     gAwr2243CrcType = clientCtx.crcType;
@@ -856,7 +861,10 @@ int MMWL_fileWrite(unsigned char deviceMap,
 int MMWL_fileDownload(unsigned char deviceMap,
                   unsigned int fileLen)
 {
-    unsigned int imgLen = fileLen;
+	/* By default xwr22xx_metaImage.h will not contain the CRC which is present at
+	   the end of corresponding bin file.
+	   Hence, the 4 bytes of CRC is to be added while downloading the image to sFlash */
+    unsigned int imgLen = fileLen + 4; 
     int ret_val = -1;
     int mmwl_iRemChunks = 0;
     unsigned short usChunkLen = 0U;
@@ -868,6 +876,8 @@ int MMWL_fileDownload(unsigned char deviceMap,
     /*First Chunk*/
     unsigned char firstChunk[MMWL_FW_CHUNK_SIZE];
     unsigned char* pmmwl_imgBuffer = NULL;
+	unsigned char CRCBuffer[4] = { 0 };
+	unsigned char* pCRC_Buffer = NULL;
 
 	if (gMmwaveSensorEs1_1 == AWR2243_ES1_1)
 	{
@@ -881,6 +891,16 @@ int MMWL_fileDownload(unsigned char deviceMap,
 		*/
 		pmmwl_imgBuffer = (unsigned char*)&metaImage[0];
 	}
+	pCRC_Buffer = &CRCBuffer[0];
+
+	//Calculating 32-bit CRC for the metaimage
+	MMWL_computeCRC(pmmwl_imgBuffer, fileLen, 1, pCRC_Buffer);
+
+	/* Attaching 4 bytes of CRC at the end of the last chunk */
+	*(pmmwl_imgBuffer + MMWL_META_IMG_FILE_SIZE) = CRCBuffer[0];
+	*(pmmwl_imgBuffer + MMWL_META_IMG_FILE_SIZE + 1) = CRCBuffer[1];
+	*(pmmwl_imgBuffer + MMWL_META_IMG_FILE_SIZE + 2) = CRCBuffer[2];
+	*(pmmwl_imgBuffer + MMWL_META_IMG_FILE_SIZE + 3) = CRCBuffer[3];
 
     if(pmmwl_imgBuffer == NULL)
     {
@@ -904,10 +924,15 @@ int MMWL_fileDownload(unsigned char deviceMap,
         usFirstChunkLen = imgLen + 8;
     }
 
+	/* SPI to sFlash file download - Filetype must be set to 4 */
     *((unsigned int*)&firstChunk[0]) = (unsigned int)MMWL_FILETYPE_META_IMG;
     *((unsigned int*)&firstChunk[4]) = (unsigned int)imgLen;
     memcpy((char*)&firstChunk[8], (char*)pmmwl_imgBuffer,
                 usFirstChunkLen - 8);
+
+	/* Set mmWaveLink ACK timeout to 3-4 sec since the device will erase the sFlash
+	   and send ACK for the first chunk SPI command */
+	rlDeviceConfigureAckTimeout(10000);
 
     ret_val = MMWL_fileWrite(deviceMap, (mmwl_iRemChunks-1), usFirstChunkLen,
                               firstChunk);
@@ -957,6 +982,8 @@ int MMWL_fileDownload(unsigned char deviceMap,
 
         mmwl_iRemChunks--;
     }
+	/* Revert back to the original ACK timeout for the remaining chunks */
+	rlDeviceConfigureAckTimeout(1000);
      printf("Done!\n\n");
     return ret_val;
 }
@@ -1028,7 +1055,8 @@ int MMWL_rfEnable(unsigned char deviceMap)
         printf("RF Patch Version [%2d.%2d.%2d.%2d] \nMSS Patch version [%2d.%2d.%2d.%2d]\n\n",
             verArgs.rf.patchMajor, verArgs.rf.patchMinor, ((verArgs.rf.patchBuildDebug & 0xF0) >> 4), (verArgs.rf.patchBuildDebug & 0x0F),
             verArgs.master.patchMajor, verArgs.master.patchMinor, ((verArgs.master.patchBuildDebug & 0xF0) >> 4), (verArgs.master.patchBuildDebug & 0x0F));
-
+        if(verArgs.rf.patchMajor==0 || verArgs.master.patchMajor==0)
+            printf("[Warning!!!!!]: No patch detected, please download firmware first!\n\n");
 		retVal = rlGetRfDieId(deviceMap, &dieId);
     }
     return retVal;
@@ -3661,18 +3689,134 @@ int MMWL_ResetDevice(unsigned char deviceMap)
 	return retVal;
 }
 
+/** @fn int MMWL_App_firmwareDownload(unsigned char deviceMap)
+*
+*   @brief mmWaveLink Application firmware download. 
+*          You only need to download once, there's no need to do it again after power cycle.
+*
+*   @param[in] deviceMap - Device Index
+*
+*   @return int Success - 0, Failure - Error Code
+*
+*   mmWaveLink Application initialization.
+*/
+int MMWL_App_firmwareDownload(unsigned char deviceMap)
+{
+    int retVal = RL_RET_CODE_OK;
+    rlVersion_t verArgs = {0};
+
+	retVal = MMWL_SOPControl(deviceMap, 4);/* Set SOP 4 mode for SPI */
+    if (retVal != RL_RET_CODE_OK)
+	{
+		printf("Device map %u : SOP 4 mode failed with error %d\n\n", deviceMap, retVal);
+		return retVal;
+	}
+	else
+	{
+		printf("Device map %u : SOP 4 mode successful\n\n", deviceMap);
+	}
+
+	retVal = MMWL_ResetDevice(deviceMap);
+	if (retVal != RL_RET_CODE_OK)
+	{
+		printf("Device map %u : Device reset failed with error %d \n\n", deviceMap,
+			retVal);
+		return retVal;
+	}
+	else
+	{
+		printf("Device map %u : Device reset successful\n\n", deviceMap);
+	}
+
+    /*  \subsection     api_sequence1     Seq 1 - Call Power ON API
+    The mmWaveLink driver initializes the internal components, creates Mutex/Semaphore,
+    initializes buffers, register interrupts, bring mmWave front end out of reset.
+    */
+    retVal = MMWL_powerOnMaster(deviceMap, true);
+    if (retVal != RL_RET_CODE_OK)
+    {
+        printf("mmWave Device Power on failed for deviceMap %u with error %d \n\n",
+                deviceMap, retVal);
+        return retVal;
+    }
+    else
+    {
+        printf("mmWave Device Power on success for deviceMap %u \n\n",
+                deviceMap);
+    }
+
+	retVal = rlDeviceGetMssVersion(deviceMap, &verArgs.master);
+    retVal += rlDeviceGetMmWaveLinkVersion(&verArgs.mmWaveLink);
+    printf("MSS version [%2d.%2d.%2d.%2d] \nmmWaveLink version [%2d.%2d.%2d.%2d]\n\n",
+        verArgs.master.fwMajor, verArgs.master.fwMinor, verArgs.master.fwBuild, verArgs.master.fwDebug,
+        verArgs.mmWaveLink.major, verArgs.mmWaveLink.minor, verArgs.mmWaveLink.build, verArgs.mmWaveLink.debug);
+    printf("MSS Patch version [%2d.%2d.%2d.%2d]\n\n",
+        verArgs.master.patchMajor, verArgs.master.patchMinor, ((verArgs.master.patchBuildDebug & 0xF0) >> 4), (verArgs.master.patchBuildDebug & 0x0F));
+	/* For AWR2243 ES1.0 MSS FW version '2.2.0.3' and ES1.1: '2.2.1.7' */
+	if ((verArgs.master.fwBuild == 1) && (verArgs.master.fwDebug == 7))
+	{
+		printf("AWR2243 ES1.1\n\n");
+	}
+	else
+	{
+		printf("AWR2243 ES1.0\n\n");
+	}
+
+    /*  \subsection     api_sequence2     Seq 2 - Download Firmware/patch
+    The mmWave device firmware is ROMed and also can be stored in External serial Flash.
+    */
+
+    printf("========================== Firmware Download ==========================\n\n");
+    retVal = MMWL_firmwareDownload(deviceMap);
+    if (retVal != RL_RET_CODE_OK)
+    {
+        printf("Firmware update failed for deviceMap %u with error %d \n\n",
+            deviceMap, retVal);
+        return retVal;
+    }
+    else
+    {
+        printf("Firmware update successful for deviceMap %u \n\n",
+            deviceMap);
+    }
+    printf("=====================================================================\n\n");
+
+    retVal = rlDeviceGetMssVersion(deviceMap, &verArgs.master);
+    retVal += rlDeviceGetMmWaveLinkVersion(&verArgs.mmWaveLink);
+    printf("MSS version [%2d.%2d.%2d.%2d] \nmmWaveLink version [%2d.%2d.%2d.%2d]\n\n",
+        verArgs.master.fwMajor, verArgs.master.fwMinor, verArgs.master.fwBuild, verArgs.master.fwDebug,
+        verArgs.mmWaveLink.major, verArgs.mmWaveLink.minor, verArgs.mmWaveLink.build, verArgs.mmWaveLink.debug);
+    printf("MSS Patch version [%2d.%2d.%2d.%2d]\n\n",
+        verArgs.master.patchMajor, verArgs.master.patchMinor, ((verArgs.master.patchBuildDebug & 0xF0) >> 4), (verArgs.master.patchBuildDebug & 0x0F));
+
+    /* Switch off the device */
+    retVal = MMWL_powerOff(deviceMap);
+    if (retVal != RL_RET_CODE_OK)
+    {
+        printf("Device power off failed for deviceMap %u with error code %d \n\n",
+                deviceMap, retVal);
+    }
+    else
+    {
+        printf("Device power off success for deviceMap %u \n\n", deviceMap);
+    }
+
+    return retVal;
+}
+
 /** @fn int MMWL_App_init(unsigned char deviceMap, const char *configFilename)
 *
 *   @brief mmWaveLink Application init.
 *
 *   @param[in] deviceMap - Device Index
 *   @param[in] configFilename - configuration file path
+*   @param[in] downloadFw - download firmware if true
 *
 *   @return int Success - 0, Failure - Error Code
 *
 *   mmWaveLink Application initialization.
 */
-int MMWL_App_init(unsigned char deviceMap, const char *configFilename)
+int MMWL_App_init(unsigned char deviceMap, const char *configFilename, bool downloadFw)
 {
     int retVal = RL_RET_CODE_OK;
     int SOPmode = 0;
@@ -3760,35 +3904,37 @@ int MMWL_App_init(unsigned char deviceMap, const char *configFilename)
     step is necessary if firmware needs to be patched and patch is not stored in serial
     Flash
     */
-	if (rlDevGlobalCfgArgs.EnableFwDownload)
-	{
-		printf("========================== Firmware Download ==========================\n\n");
-		retVal = MMWL_firmwareDownload(deviceMap);
-		if (retVal != RL_RET_CODE_OK)
-		{
-			printf("Firmware update failed for deviceMap %u with error %d \n\n",
-				deviceMap, retVal);
-			return retVal;
-		}
-		else
-		{
-			printf("Firmware update successful for deviceMap %u \n\n",
-				deviceMap);
-		}
-		printf("=====================================================================\n\n");
-	}
+    if (downloadFw){
+        if (rlDevGlobalCfgArgs.EnableFwDownload)
+        {
+            printf("========================== Firmware Download ==========================\n\n");
+            retVal = MMWL_firmwareDownload(deviceMap);
+            if (retVal != RL_RET_CODE_OK)
+            {
+                printf("Firmware update failed for deviceMap %u with error %d \n\n",
+                    deviceMap, retVal);
+                return retVal;
+            }
+            else
+            {
+                printf("Firmware update successful for deviceMap %u \n\n",
+                    deviceMap);
+            }
+            printf("=====================================================================\n\n");
+        }
 
-	/* for AWR2243 ES1.0 sample only */
-	if (gMmwaveSensorEs1_1 == AWR2243_ES1_0) 
-	{
-		/* Swap reset and power on the device */
-		retVal = MMWL_SwapResetAndPowerOn(deviceMap);
-		if (retVal != RL_RET_CODE_OK)
-		{
-			printf("Could not restart the device\n\n");
-			return retVal;
-		}
-	}
+        /* for AWR2243 ES1.0 sample only */
+        if (gMmwaveSensorEs1_1 == AWR2243_ES1_0) 
+        {
+            /* Swap reset and power on the device */
+            retVal = MMWL_SwapResetAndPowerOn(deviceMap);
+            if (retVal != RL_RET_CODE_OK)
+            {
+                printf("Could not restart the device\n\n");
+                return retVal;
+            }
+        }
+    }
     /* Change CRC Type of Async Event generated by MSS to what is being requested by user in mmwaveconfig.txt */
     retVal = MMWL_setDeviceCrcType(deviceMap);
     if (retVal != RL_RET_CODE_OK)
@@ -4277,7 +4423,7 @@ int MMWL_App(const char *configFilename)
     int retVal = RL_RET_CODE_OK;
     unsigned char deviceMap = RL_DEVICE_MAP_CASCADED_1;
 	
-    retVal = MMWL_App_init(deviceMap, configFilename);
+    retVal = MMWL_App_init(deviceMap, configFilename, true);
     if (retVal != RL_RET_CODE_OK)
         return -1;
     

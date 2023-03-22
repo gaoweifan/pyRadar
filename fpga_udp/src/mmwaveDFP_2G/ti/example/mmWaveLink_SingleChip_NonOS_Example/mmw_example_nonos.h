@@ -58,7 +58,7 @@
 #define DEFAULT_MASTER_DEVICE                 (0U)
 
 /* Firmware File Type */
-#define MMWL_FILETYPE_META_IMG                (0U)
+#define MMWL_FILETYPE_META_IMG                (4U)
 
 /******************************************************************************
 * GLOBAL VARIABLES
@@ -179,10 +179,11 @@ int MMWL_advChirpLUTTx2PhShiftConfig(unsigned char deviceMap);
 int MMWL_saveAdvChirpLUTDataToFile(unsigned char deviceMap);
 
 /*Poweron Master*/
-int MMWL_powerOnMaster(unsigned char deviceMap);
+int MMWL_powerOnMaster(unsigned char deviceMap, bool downloadFwMode=false);
 
 /*mmWaveLink Application*/
-int MMWL_App_init(unsigned char deviceMap, const char *configFilename);
+int MMWL_App_firmwareDownload(unsigned char deviceMap);
+int MMWL_App_init(unsigned char deviceMap, const char *configFilename, bool downloadFw=false);
 int MMWL_App_setFrameCfg(unsigned char deviceMap, rlUInt16_t numFrames);
 int MMWL_App_startCont(unsigned char deviceMap);
 int MMWL_App_stopCont(unsigned char deviceMap);
