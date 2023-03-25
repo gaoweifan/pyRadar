@@ -115,12 +115,19 @@
     - adcbufCfg -1 0 1 1 1
     - lvdsStreamCfg -1 0 1 0 
 #### 3."cf.json"数据采集卡配置文件要求
- - In default conditions, Ethernet throughput varies up to 325 Mbps speed in a 25-µs Ethernet packet delay. 
- - The user can change the Ethernet packet delay from 5 µs to 500 µs to achieve different throughputs.
-    - "packetDelay_us":  5 (us)   ~   706 (Mbps)
-    - "packetDelay_us": 10 (us)   ~   545 (Mbps)
-    - "packetDelay_us": 25 (us)   ~   325 (Mbps)
-    - "packetDelay_us": 50 (us)   ~   193 (Mbps)
+ - 具体信息请查阅TI_DCA1000EVM_CLI_Software_UserGuide.pdf
+ - lvds Mode:
+    - LVDS mode specifies the lane config for LVDS. This field is valid only when dataTransferMode is "LVDSCapture".
+    - The valid options are
+    - • 1 (4lane)
+    - • 2 (2lane)
+ - packet delay:
+    - In default conditions, Ethernet throughput varies up to 325 Mbps speed in a 25-µs Ethernet packet delay. 
+    - The user can change the Ethernet packet delay from 5 µs to 500 µs to achieve different throughputs.
+       - "packetDelay_us":  5 (us)   ~   706 (Mbps)
+       - "packetDelay_us": 10 (us)   ~   545 (Mbps)
+       - "packetDelay_us": 25 (us)   ~   325 (Mbps)
+       - "packetDelay_us": 50 (us)   ~   193 (Mbps)
 
 ### ***captureADC_AWR2243.py***
 采集原始ADC采样的IQ数据的示例代码（仅AWR2243）。
