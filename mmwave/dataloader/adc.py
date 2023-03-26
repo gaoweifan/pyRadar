@@ -196,6 +196,11 @@ class DCA1000:
         curProfileId=0
         chirpStartIdxFCF=0
         chirpEndIdxFCF=0
+        loopCount=0
+        chirpStartIdx_buf=[]
+        chirpEndIdx_buf=[]
+        profileIdCPCFG_buf=[]
+        txEnable_buf=[]
         for line in config:
             #print("**** line from config file: \n" + line)
             List = line.replace(" ","").split("=")
@@ -204,10 +209,9 @@ class DCA1000:
                 CFG_PARAMS['txAntMask'] = int(List[1].split(";")[0])
                 numTxChan = 0
                 for chanIdx in range (3):
-                    if (CFG_PARAMS['txAntMask'] >> 1) & 1 == 1:
+                    if (CFG_PARAMS['txAntMask'] >> chanIdx) & 1 == 1:
                         numTxChan = numTxChan + 1
                 CFG_PARAMS['numTxChan'] = numTxChan
-                ADC_PARAMS['tx'] = numTxChan
             if 'channelRx' == List[0]:
                 CFG_PARAMS['rxAntMask'] = int(List[1].split(";")[0])
                 numRxChan = 0
@@ -240,6 +244,8 @@ class DCA1000:
                     if (int(List[1].split(";")[0]) >> laneIdx) & 1 == 1:
                         numlaneEn = numlaneEn + 1
                 CFG_PARAMS['numlaneEn'] = numlaneEn
+            
+            # profile cfg
             if 'profileId' == List[0]:
                 curProfileId = int(List[1].split(";")[0])
             if 'startFreqConst' == List[0]:
@@ -268,14 +274,41 @@ class DCA1000:
                     ADC_PARAMS['sample_rate'] = int(List[1].split(";")[0])
             if 'rxGain' == List[0]:
                 curProfileId+=1 #避免后面frameCfg的numAdcSamples被当作profile的
+            
+            # chirp cfg
+            if 'chirpStartIdx' == List[0]:
+                chirpStartIdx_buf.append(int(List[1].split(";")[0]))
+            if 'chirpEndIdx' == List[0]:
+                chirpEndIdx_buf.append(int(List[1].split(";")[0]))
+            if 'profileIdCPCFG' == List[0]:
+                profileIdCPCFG_buf.append(int(List[1].split(";")[0]))
+            if 'txEnable' == List[0]:
+                txEnable_buf.append(int(List[1].split(";")[0]))
+
+            # frame cfg
             if 'chirpStartIdxFCF' == List[0]:
                 chirpStartIdxFCF = int(List[1].split(";")[0])
             if 'chirpEndIdxFCF' == List[0]:
                 chirpEndIdxFCF = int(List[1].split(";")[0])
             if 'loopCount' == List[0]:
-                ADC_PARAMS['chirps'] = int(List[1].split(";")[0])*(chirpEndIdxFCF-chirpStartIdxFCF+1)#临时措施，待更正
+                loopCount = int(List[1].split(";")[0])
             if 'periodicity' == List[0]:
                 ADC_PARAMS['frame_periodicity'] = int(List[1].split(";")[0])/200000
+        
+        ADC_PARAMS['tx'] = len(txEnable_buf)
+        
+        if ADC_PARAMS['tx'] > CFG_PARAMS['numTxChan']:
+            raise ValueError("exceed max tx num, check channelTx and chirp cfg")
+        tmp_chirpNum = chirpEndIdx_buf[0]-chirpStartIdx_buf[0]+1
+        all_chirpNum = tmp_chirpNum
+        for i in range(ADC_PARAMS['tx']-1):
+            all_chirpNum += chirpEndIdx_buf[i+1]-chirpStartIdx_buf[i+1]+1
+            if tmp_chirpNum != chirpEndIdx_buf[i+1]-chirpStartIdx_buf[i+1]+1:
+                raise ValueError("AWR2243_read_config does not support different chirp number in different tx ant yet.")
+        if all_chirpNum != chirpEndIdxFCF-chirpStartIdxFCF+1:
+            raise ValueError("chirp number in frame cfg and all chirp cfgs mismatched")
+        ADC_PARAMS['chirps'] = loopCount*tmp_chirpNum
+        
         LVDSDataSizePerChirp = ADC_PARAMS['samples']*ADC_PARAMS['rx']*ADC_PARAMS['IQ']*ADC_PARAMS['bytes']+52
         LVDSDataSizePerChirp = math.ceil(LVDSDataSizePerChirp/256)*256
         maxSendBytesPerChirp = (ADC_PARAMS['idleTime']+ADC_PARAMS['rampEndTime'])*CFG_PARAMS['numlaneEn']*CFG_PARAMS['lvdsBW']/8

@@ -336,7 +336,7 @@ void MMWL_readFrameConfig(rlFrameCfg_t *frameCfgArgs);
 void MMWL_readAdvFrameConfig(rlAdvFrameCfg_t *rlAdvFrameCfgArgs);
 
 /*read chirp configurations*/
-void MMWL_readChirpConfig(rlChirpCfg_t *chirpCfgArgs, int chirpCfgCnt);
+int MMWL_readChirpConfig(rlChirpCfg_t *chirpCfgArgs, int chirpCfgCnt);
 
 /*read profile configurations*/
 void MMWL_readProfileConfig(rlProfileCfg_t *profileCfgArgs, int profileCfgCnt);

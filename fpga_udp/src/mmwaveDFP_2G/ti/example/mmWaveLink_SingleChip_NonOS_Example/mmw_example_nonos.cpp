@@ -90,7 +90,7 @@
 #define MAX_GET_CHIRP_CONFIG_IDX              14
 
 /* To enable TX2 */
-#define ENABLE_TX2                             1
+// #define ENABLE_TX2                             1
 
 /* LUT Buffer size for Advanced chirp 
    Max size = 12KB (12*1024) */
@@ -1158,9 +1158,9 @@ int MMWL_channelConfig(unsigned char deviceMap,
     /*read arguments from config file*/
     MMWL_readChannelConfig(&rfChanCfgArgs, cascade);
 
-#if (ENABLE_TX2)
-    rfChanCfgArgs.txChannelEn |= (1 << 2); // Enable TX2
-#endif
+// #if (ENABLE_TX2)
+//     rfChanCfgArgs.txChannelEn |= (1 << 2); // Enable TX2
+// #endif
 
     printf("Calling rlSetChannelConfig With [%d]Rx and [%d]Tx Channel Enabled \n\n",
            rfChanCfgArgs.rxChannelEn, rfChanCfgArgs.txChannelEn);
@@ -1969,30 +1969,26 @@ int MMWL_profileConfig(unsigned char deviceMap)
 */
 int MMWL_chirpConfig(unsigned char deviceMap)
 {
-    int i, retVal = RL_RET_CODE_OK;
-    rlChirpCfg_t setChirpCfgArgs[2] = {0};
-
-    rlChirpCfg_t getChirpCfgArgs[MAX_GET_CHIRP_CONFIG_IDX+1] = {0};
+    int i, cnt, retVal = RL_RET_CODE_OK;
+    rlChirpCfg_t setChirpCfgArgs[512] = {0};
 
     /*read chirpCfgArgs from config file*/
-    MMWL_readChirpConfig(&setChirpCfgArgs[0], 2);
+    cnt=MMWL_readChirpConfig(&setChirpCfgArgs[0], 512);
 
-    printf("Calling rlSetChirpConfig with \nProfileId[%d]\nStart Idx[%d]\nEnd Idx[%d] \n\n",
+    for(i=0;i<cnt;i++){
+        printf("Chirp cfg %d calling rlSetChirpConfig with \nProfileId[%d]\nStart Idx[%d]\nEnd Idx[%d] \n\n", i+1,
                 setChirpCfgArgs[0].profileId, setChirpCfgArgs[0].chirpStartIdx,
                 setChirpCfgArgs[0].chirpEndIdx);
-
-	printf("Calling rlSetChirpConfig with \nProfileId[%d]\nStart Idx[%d]\nEnd Idx[%d] \n\n",
-		setChirpCfgArgs[1].profileId, setChirpCfgArgs[1].chirpStartIdx,
-		setChirpCfgArgs[1].chirpEndIdx);
+    }
 
     /* With this API we can configure max 512 chirp in one call */
-    retVal = rlSetChirpConfig(deviceMap, 2U, &setChirpCfgArgs[0U]);
+    retVal = rlSetChirpConfig(deviceMap, cnt, &setChirpCfgArgs[0U]);
 
     /* read back Chirp config, to verify that setChirpConfig actually set to Device
       @Note - This examples read back (10+1) num of chirp config for demonstration,
                which user can raise to match with their requirement */
-    retVal = rlGetChirpConfig(deviceMap, setChirpCfgArgs[0].chirpStartIdx,
-                              setChirpCfgArgs[0].chirpStartIdx + MAX_GET_CHIRP_CONFIG_IDX, &getChirpCfgArgs[0]);
+    rlChirpCfg_t* getChirpCfgArgs = new rlChirpCfg_t[cnt]();// assume each chirp cfg contains only one chirp
+    retVal = rlGetChirpConfig(deviceMap, 0, cnt-1, &getChirpCfgArgs[0]);
     if (retVal != RL_RET_CODE_OK)
     {
         printf("GetChirp Configuration failed for deviceMap %u with error %d \n\n",
@@ -2000,24 +1996,25 @@ int MMWL_chirpConfig(unsigned char deviceMap)
     }
     else
     {
-        for (i=0; i <= MAX_GET_CHIRP_CONFIG_IDX; i++)
+        for (i=0; i < cnt; i++)
         {
             /* @Note- This check assumes that all chirp configs are configured by single setChirpCfgArgs[0] */
             /* compare each chirpConfig parameters to lastly configured via rlDynChirpConfig API */
-            if ((getChirpCfgArgs[i].profileId != setChirpCfgArgs[0].profileId) || \
-                (getChirpCfgArgs[i].freqSlopeVar != setChirpCfgArgs[0].freqSlopeVar) || \
-                (getChirpCfgArgs[i].txEnable != setChirpCfgArgs[0].txEnable) || \
-                (getChirpCfgArgs[i].startFreqVar != setChirpCfgArgs[0].startFreqVar) || \
-                (getChirpCfgArgs[i].idleTimeVar != setChirpCfgArgs[0].idleTimeVar) || \
-                (getChirpCfgArgs[i].adcStartTimeVar != setChirpCfgArgs[0].adcStartTimeVar))
+            if ((getChirpCfgArgs[i].profileId != setChirpCfgArgs[i].profileId) || \
+                (getChirpCfgArgs[i].freqSlopeVar != setChirpCfgArgs[i].freqSlopeVar) || \
+                (getChirpCfgArgs[i].txEnable != setChirpCfgArgs[i].txEnable) || \
+                (getChirpCfgArgs[i].startFreqVar != setChirpCfgArgs[i].startFreqVar) || \
+                (getChirpCfgArgs[i].idleTimeVar != setChirpCfgArgs[i].idleTimeVar) || \
+                (getChirpCfgArgs[i].adcStartTimeVar != setChirpCfgArgs[i].adcStartTimeVar))
             {
-                    printf("*** Failed - Parameters are mismatched GetChirpConfig compare to rlSetChirpConfig *** \n\n");
+                    printf("*** Failed - Parameters are mismatched GetChirpConfig compare to rlSetChirpConfig *** \n");
+                    printf("note: current validation assume each chirp cfg contains only one chirp\n");
                     break;
             }
 
         }
 
-        if (i > MAX_GET_CHIRP_CONFIG_IDX)
+        if (i == cnt)
         {
             printf("Get chirp configurations are matching with parameters configured during rlSetChirpConfig \n\n");
         }

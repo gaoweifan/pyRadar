@@ -907,14 +907,14 @@ void MMWL_readProfileConfig(rlProfileCfg_t *profileCfgArgs, int profileCfgCnt)
 *   @param[in] rlChirpCfg_t *chirpCfgArgs
 *   @param[in] int chirpCfgCnt
 *
-*   @return int Success - 0, Failure - Error Code
+*   @return int Chirp Config count
 *
 *   API to read chirp configuration params
 */
 
-void MMWL_readChirpConfig(rlChirpCfg_t *chirpCfgArgs, int chirpCfgCnt)
+int MMWL_readChirpConfig(rlChirpCfg_t *chirpCfgArgs, int chirpCfgCnt)
 {
-    int readAllParams = 0;
+    int readAllParams = 0,cnt=0;
     char *s, buff[256], name[STRINGLEN], value[STRINGLEN], *ptr;
     /*seek the pointer to starting of the file so that
     we dont miss any parameter*/
@@ -983,9 +983,11 @@ void MMWL_readChirpConfig(rlChirpCfg_t *chirpCfgArgs, int chirpCfgCnt)
 			{
 				// Jump to next chirpCfgArgs pointer
 				chirpCfgArgs++;
+                cnt++;
 			}
         }
     }
+    return cnt;
 }
 
 /** @fn void MMWL_readFrameConfig(rlFrameCfg_t *frameCfgArgs)
