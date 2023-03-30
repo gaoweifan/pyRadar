@@ -2,6 +2,7 @@
 #include <pybind11/numpy.h>
 #include <iostream>
 #include <thread>
+#include <chrono>
 #include <mutex>
 #ifdef _WIN32
     #include <Winsock2.h>
@@ -77,13 +78,11 @@ void radar_stop_read_thread(){
     serial_buf_mutex.unlock();
 }
 
-py::array_t<uint8_t> read_data_udp(int sock_fd, int packetNum, int packetSize, int timeout_s){
+void _read_data_udp_thread(int sock_fd, int packetNum, int packetSize, int timeout_s, py::buffer_info &buf){
     if(packetSize%2 != 0){
         throw std::runtime_error("[fpga_udp]Number of packetSize must be even");
     }
-    /* No pointer is passed, so NumPy will allocate the buffer */
-    auto result = py::array_t<uint8_t>(packetSize*packetNum);
-    py::buffer_info buf = result.request();
+    
     uint8_t *buf_ptr = static_cast<uint8_t *>(buf.ptr);
 
     // Time out
@@ -114,7 +113,15 @@ py::array_t<uint8_t> read_data_udp(int sock_fd, int packetNum, int packetSize, i
             break;
         }
     }
-    
+}
+
+py::array_t<uint8_t> read_data_udp_block(int sock_fd, int packetNum, int packetSize, int timeout_s){
+    /* No pointer is passed, so NumPy will allocate the buffer */
+    auto result = py::array_t<uint8_t>(packetSize*packetNum);
+    py::buffer_info buf = result.request();
+
+    std::thread udp_thread(_read_data_udp_thread,sock_fd,packetNum,packetSize,timeout_s,std::ref(buf));
+    udp_thread.join();
 
     return result;
 }
@@ -161,7 +168,7 @@ PYBIND11_MODULE(fpga_udp, m) {
         serial_buf_mutex.unlock();
     });
 
-    m.def("read_data_udp", &read_data_udp, R"pbdoc(
+    m.def("read_data_udp", &read_data_udp_block, R"pbdoc(
         read UDP packet from FPGA as fast as written in C.
 
         sockfd:\tan open file descriptor of a socket
