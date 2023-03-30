@@ -2,7 +2,7 @@
 #include <pybind11/numpy.h>
 #include <iostream>
 #include <thread>
-#include <chrono>
+#include <future>
 #include <mutex>
 #ifdef _WIN32
     #include <Winsock2.h>
@@ -26,6 +26,9 @@ int overflowCnt=0;
 int packetNum_g=1000, packetSize_g=1456;
 uint8_t *serial_buf_ptr=NULL;
 std::mutex serial_buf_mutex;
+std::mutex udp_mutex;
+std::mutex udp_async_mutex;
+std::future<pybind11::array_t<uint8_t>> udp_val;
 
 int add(int i, int j) {
     return i+j;
@@ -78,7 +81,9 @@ void radar_stop_read_thread(){
     serial_buf_mutex.unlock();
 }
 
-void _read_data_udp_thread(int sock_fd, int packetNum, int packetSize, int timeout_s, py::buffer_info &buf){
+void _read_data_udp(int sock_fd, int packetNum, int packetSize, int timeout_s, py::buffer_info &buf){
+    udp_mutex.lock();
+
     if(packetSize%2 != 0){
         throw std::runtime_error("[fpga_udp]Number of packetSize must be even");
     }
@@ -113,17 +118,39 @@ void _read_data_udp_thread(int sock_fd, int packetNum, int packetSize, int timeo
             break;
         }
     }
+
+    udp_mutex.unlock();
 }
 
-py::array_t<uint8_t> read_data_udp_block(int sock_fd, int packetNum, int packetSize, int timeout_s){
+py::array_t<uint8_t> read_data_udp(int sock_fd, int packetNum, int packetSize, int timeout_s){
     /* No pointer is passed, so NumPy will allocate the buffer */
     auto result = py::array_t<uint8_t>(packetSize*packetNum);
     py::buffer_info buf = result.request();
 
-    std::thread udp_thread(_read_data_udp_thread,sock_fd,packetNum,packetSize,timeout_s,std::ref(buf));
+    _read_data_udp(sock_fd,packetNum,packetSize,timeout_s,buf);
+
+    return result;
+}
+
+py::array_t<uint8_t> read_data_udp_block_thread(int sock_fd, int packetNum, int packetSize, int timeout_s){
+    /* No pointer is passed, so NumPy will allocate the buffer */
+    auto result = py::array_t<uint8_t>(packetSize*packetNum);
+    py::buffer_info buf = result.request();
+
+    std::thread udp_thread(_read_data_udp,sock_fd,packetNum,packetSize,timeout_s,std::ref(buf));
     udp_thread.join();
 
     return result;
+}
+
+void read_data_udp_async_start(int sock_fd, int packetNum, int packetSize, int timeout_s){
+    udp_async_mutex.lock();
+    udp_val = std::async(std::launch::async, read_data_udp, sock_fd,packetNum,packetSize,timeout_s);
+}
+
+py::array_t<uint8_t> read_data_udp_async_wait(){
+    udp_async_mutex.unlock();
+    return udp_val.get();
 }
 
 PYBIND11_MODULE(fpga_udp, m) {
@@ -138,11 +165,17 @@ PYBIND11_MODULE(fpga_udp, m) {
 
            add
            subtract
+
            radar_start_read_thread
            get_radar_buf
            radar_stop_read_thread
            getOverflowCnt
+           
            read_data_udp
+           read_data_udp_block_thread
+           read_data_udp_async_start
+           read_data_udp_async_wait
+
            AWR2243_firmwareDownload
            AWR2243_init
            AWR2243_setFrameCfg
@@ -168,13 +201,32 @@ PYBIND11_MODULE(fpga_udp, m) {
         serial_buf_mutex.unlock();
     });
 
-    m.def("read_data_udp", &read_data_udp_block, R"pbdoc(
+    m.def("read_data_udp", &read_data_udp, R"pbdoc(
         read UDP packet from FPGA as fast as written in C.
 
         sockfd:\tan open file descriptor of a socket
         packetNum:\tA total of packetNum packets will be read
         packetSize:\tand the size of each packet is packetSize
         timeout_s:\ttime out for udp in sec
+    )pbdoc");
+    m.def("read_data_udp_block_thread", &read_data_udp_block_thread, R"pbdoc(
+        read UDP packet from FPGA using thread, block untill data transfer finished.
+
+        sockfd:\tan open file descriptor of a socket
+        packetNum:\tA total of packetNum packets will be read
+        packetSize:\tand the size of each packet is packetSize
+        timeout_s:\ttime out for udp in sec
+    )pbdoc");
+    m.def("read_data_udp_async_start", &read_data_udp_async_start, R"pbdoc(
+        read UDP packet from FPGA using async, return immediately.
+
+        sockfd:\tan open file descriptor of a socket
+        packetNum:\tA total of packetNum packets will be read
+        packetSize:\tand the size of each packet is packetSize
+        timeout_s:\ttime out for udp in sec
+    )pbdoc");
+    m.def("read_data_udp_async_wait", &read_data_udp_async_wait, R"pbdoc(
+        read UDP packet from FPGA using async, wait previous async task finished.
     )pbdoc");
 
     m.def("AWR2243_firmwareDownload",[](){
