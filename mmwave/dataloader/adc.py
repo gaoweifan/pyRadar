@@ -722,7 +722,7 @@ class DCA1000:
         # global receivedPacketNum
         data=recvQueue.pop(0)
         packet_data=np.frombuffer(data[10:], dtype=np.uint16)
-        firstPacketNum = struct.unpack('<1l', data[:4])[0]
+        firstPacketNum = struct.unpack('<1L', data[:4])[0]
         print(f"First Packet ID - {firstPacketNum}")
         receivedPacketNum=[firstPacketNum]
         receivedData=np.zeros(UINT16_IN_PACKET*maxPacketNum, dtype=np.uint16)
@@ -730,7 +730,7 @@ class DCA1000:
         while(recvQueue):
             data=recvQueue.pop(0)
             packet_data=np.frombuffer(data[10:], dtype=np.uint16)
-            packetNum = struct.unpack('<1l', data[:4])[0]
+            packetNum = struct.unpack('<1L', data[:4])[0]
             idx = packetNum-firstPacketNum
             if (idx+1>maxPacketNum or idx<1):
                 continue
@@ -754,20 +754,26 @@ class DCA1000:
 
         return databuf
 
-    def fastRead_in_Cpp(self,numframes=1):
+    def fastRead_in_Cpp(self,numframes=1,timeOut=2,sortInC=True):
         packetNum = math.ceil(PACKETS_IN_FRAME*numframes)
 
-        recvData = fpga_udp.read_data_udp(self.data_socket.fileno(),packetNum,BYTES_OF_PACKET,2)
-        print("all received, post processing packets...")
-
-        recvData = np.reshape(recvData,(packetNum,BYTES_OF_PACKET))
-        recvQueue = list(map(lambda x:bytes(x),recvData))
+        recvData = fpga_udp.read_data_udp(self.data_socket.fileno(),packetNum,BYTES_OF_PACKET,timeOut,sortInC)
         
-        receivedData,firstPacketNum,receivedPacketNum=self.postProcPacket(recvQueue,packetNum)
-        databuf=receivedData[0:numframes*UINT16_IN_FRAME]
-        print("received packet num:%d,expected packet num:%d"%(len(receivedPacketNum),packetNum))
+        if sortInC: # sort packet using C code (True) or python (False)
+            receivedPacketNum=fpga_udp.get_receivedPacketNum()
+            print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(receivedPacketNum,packetNum,(packetNum-receivedPacketNum)/packetNum))
+            return recvData
+        else:
+            print("all received, post processing packets...")
 
-        return databuf
+            recvData = np.reshape(recvData,(packetNum,BYTES_OF_PACKET))
+            recvQueue = list(map(lambda x:bytes(x),recvData))
+            
+            receivedData,firstPacketNum,receivedPacketNum=self.postProcPacket(recvQueue,packetNum)
+            databuf=receivedData[0:numframes*UINT16_IN_FRAME]
+            print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(len(receivedPacketNum),packetNum,(packetNum-len(receivedPacketNum))/packetNum))
+
+            return databuf
 
     def write_frames_to_file(self,filename="raw_data.bin",numframes=1):
         # data_buf = self.read()

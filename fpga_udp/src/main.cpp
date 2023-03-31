@@ -23,18 +23,20 @@ namespace py = pybind11;
 WzSerialportPlus radar_serial_port;
 int memidx=0;
 int overflowCnt=0;
-int packetNum_g=1000, packetSize_g=1456;
+int packetSize_g=1456;
+uint32_t packetNum_g=1000;
 uint8_t *serial_buf_ptr=NULL;
 std::mutex serial_buf_mutex;
 std::mutex udp_mutex;
 std::mutex udp_async_mutex;
 std::future<pybind11::array_t<uint8_t>> udp_val;
+uint32_t receivedPacketNum_g=0,firstPacketNum_g=0,lastPacketNum_g=0;
 
 int add(int i, int j) {
     return i+j;
 }
 
-bool radar_start_read_thread(std::string portName, int baudrate, int packetNum, int packetSize){
+bool radar_start_read_thread(std::string portName, int baudrate, uint32_t packetNum, int packetSize){
     if(serial_buf_ptr!=NULL)
         return false;
     serial_buf_ptr = new uint8_t[packetSize*packetNum];//initialize buffer
@@ -81,7 +83,7 @@ void radar_stop_read_thread(){
     serial_buf_mutex.unlock();
 }
 
-void _read_data_udp(int sock_fd, int packetNum, int packetSize, int timeout_s, py::buffer_info &buf){
+void _read_data_udp(int sock_fd, uint32_t packetNum, int packetSize, int timeout_s, py::buffer_info &buf){
     udp_mutex.lock();
 
     if(packetSize%2 != 0){
@@ -122,17 +124,44 @@ void _read_data_udp(int sock_fd, int packetNum, int packetSize, int timeout_s, p
     udp_mutex.unlock();
 }
 
-py::array_t<uint8_t> read_data_udp(int sock_fd, int packetNum, int packetSize, int timeout_s){
+py::array_t<uint8_t> postProc_packet_sort(py::buffer_info &buf, uint32_t packetNum, int packetSize, uint32_t &receivedPacketNum, uint32_t &firstPacketNum, uint32_t &lastPacketNum){
+    int payloadSize = packetSize-10;
+    auto result = py::array_t<uint8_t>(payloadSize*packetNum);
+    py::buffer_info sort_buf = result.request();
+    uint8_t *sort_buf_ptr = static_cast<uint8_t *>(sort_buf.ptr);
+    uint8_t *buf_ptr = static_cast<uint8_t *>(buf.ptr);
+    uint32_t seqNum=0,idx=0;
+
+    firstPacketNum = *(uint32_t *)buf_ptr;
+    receivedPacketNum = 0;
+
+    for(uint32_t i=0;i<packetNum;i++){
+        seqNum=*(uint32_t *)&buf_ptr[i*packetSize];//4 bytes of sequence number for every packet
+        idx = seqNum-firstPacketNum;
+        //byteCnt=*(uint32_t *)&buf_ptr[i*packetSize+4];//6 bytes of byte count – provides information about number of bytes transmitted till last packet.
+        memcpy(&sort_buf_ptr[idx*payloadSize], &buf_ptr[i*packetSize+10], payloadSize);//1456 bytes of payload
+        receivedPacketNum++;
+    }
+
+    lastPacketNum = seqNum;
+    // printf("[fpga_udp]received packet num:%d,expected packet num:%d\n",receivedPacketNum,packetNum);
+
+    return result;
+}
+
+py::array_t<uint8_t> read_data_udp(int sock_fd, uint32_t packetNum, int packetSize, int timeout_s, bool sort){
     /* No pointer is passed, so NumPy will allocate the buffer */
     auto result = py::array_t<uint8_t>(packetSize*packetNum);
     py::buffer_info buf = result.request();
 
     _read_data_udp(sock_fd,packetNum,packetSize,timeout_s,buf);
 
+    if(sort) return postProc_packet_sort(buf, packetNum, packetSize,receivedPacketNum_g,firstPacketNum_g,lastPacketNum_g);
+
     return result;
 }
 
-py::array_t<uint8_t> read_data_udp_block_thread(int sock_fd, int packetNum, int packetSize, int timeout_s){
+py::array_t<uint8_t> read_data_udp_block_thread(int sock_fd, uint32_t packetNum, int packetSize, int timeout_s, bool sort){
     /* No pointer is passed, so NumPy will allocate the buffer */
     auto result = py::array_t<uint8_t>(packetSize*packetNum);
     py::buffer_info buf = result.request();
@@ -140,12 +169,14 @@ py::array_t<uint8_t> read_data_udp_block_thread(int sock_fd, int packetNum, int 
     std::thread udp_thread(_read_data_udp,sock_fd,packetNum,packetSize,timeout_s,std::ref(buf));
     udp_thread.join();
 
+    if(sort) return postProc_packet_sort(buf, packetNum, packetSize,receivedPacketNum_g,firstPacketNum_g,lastPacketNum_g);
+
     return result;
 }
 
-void read_data_udp_async_start(int sock_fd, int packetNum, int packetSize, int timeout_s){
+void read_data_udp_async_start(int sock_fd, uint32_t packetNum, int packetSize, int timeout_s, bool sort){
     udp_async_mutex.lock();
-    udp_val = std::async(std::launch::async, read_data_udp, sock_fd,packetNum,packetSize,timeout_s);
+    udp_val = std::async(std::launch::async, read_data_udp, sock_fd,packetNum,packetSize,timeout_s,sort);
 }
 
 py::array_t<uint8_t> read_data_udp_async_wait(){
@@ -170,7 +201,7 @@ PYBIND11_MODULE(fpga_udp, m) {
            get_radar_buf
            radar_stop_read_thread
            getOverflowCnt
-           
+
            read_data_udp
            read_data_udp_block_thread
            read_data_udp_async_start
@@ -228,6 +259,9 @@ PYBIND11_MODULE(fpga_udp, m) {
     m.def("read_data_udp_async_wait", &read_data_udp_async_wait, R"pbdoc(
         read UDP packet from FPGA using async, wait previous async task finished.
     )pbdoc");
+    m.def("get_receivedPacketNum", []() {return receivedPacketNum_g;});
+    m.def("get_firstPacketNum", []() {return firstPacketNum_g;});
+    m.def("get_lastPacketNum", []() {return lastPacketNum_g;});
 
     m.def("AWR2243_firmwareDownload",[](){
         return MMWL_App_firmwareDownload(RL_DEVICE_MAP_CASCADED_1);
