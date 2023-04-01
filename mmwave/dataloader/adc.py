@@ -763,6 +763,7 @@ class DCA1000:
         recvData = fpga_udp.read_data_udp_block_thread(self.data_socket.fileno(),numframes,BYTES_IN_FRAME,BYTES_OF_PACKET,timeOut,sortInC)
         
         if sortInC: # sort packet using C code (True) or python (False)
+            recvData = np.ndarray(shape=-1,dtype=np.int16, buffer=recvData) # convert to int16
             receivedPacketNum=fpga_udp.get_receivedPacketNum()
             expectedPacketNum=fpga_udp.get_expectedPacketNum()
             firstPacketNum=fpga_udp.get_firstPacketNum()
@@ -783,6 +784,17 @@ class DCA1000:
 
             return databuf
         
+    def fastRead_in_Cpp_noDisp(self,numframes=1,timeOut=2):
+        recvData = fpga_udp.read_data_udp_block_thread(self.data_socket.fileno(),numframes,BYTES_IN_FRAME,BYTES_OF_PACKET,timeOut,True)
+        recvData = np.ndarray(shape=-1,dtype=np.int16, buffer=recvData) # convert to int16
+        # receivedPacketNum=fpga_udp.get_receivedPacketNum()
+        # expectedPacketNum=fpga_udp.get_expectedPacketNum()
+        # firstPacketNum=fpga_udp.get_firstPacketNum()
+        # lastPacketNum=fpga_udp.get_lastPacketNum()
+        # print("first Packet Num:%d,last Packet Num:%d"%(firstPacketNum,lastPacketNum))
+        # print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(receivedPacketNum,expectedPacketNum,(expectedPacketNum-receivedPacketNum)/expectedPacketNum*100))
+        return recvData
+        
     def fastRead_in_Cpp_async_start(self,numframes=1,timeOut=2,sortInC=True):
         fpga_udp.read_data_udp_async_start(self.data_socket.fileno(),numframes,BYTES_IN_FRAME,BYTES_OF_PACKET,timeOut,sortInC)
         return (numframes,sortInC)
@@ -792,6 +804,7 @@ class DCA1000:
         print("min Packet Num:",minPacketNum)
         recvData = fpga_udp.read_data_udp_async_wait()
         if sortInC: # sort packet using C code (True) or python (False)
+            recvData = np.ndarray(shape=-1,dtype=np.int16, buffer=recvData) # convert to int16
             receivedPacketNum=fpga_udp.get_receivedPacketNum()
             expectedPacketNum=fpga_udp.get_expectedPacketNum()
             firstPacketNum=fpga_udp.get_firstPacketNum()

@@ -152,6 +152,15 @@
 #### 3."cf.json"数据采集卡配置文件要求
  - 同上
 
+### ***realTimeProc_AWR2243.py***
+实时采集原始ADC采样的IQ数据并在线处理的示例代码（仅AWR2243）。
+#### 1.AWR2243采集原始数据的一般流程
+ - 同上（numFrame=0）
+#### 2."mmwaveconfig.txt"毫米波雷达配置文件要求
+ - TBD
+#### 3."cf.json"数据采集卡配置文件要求
+ - 同上
+
 ### ***testDecode.ipynb***
 解析原始ADC采样数据及串口数据（仅IWR1843）的示例代码，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
 #### 1.解析LVDS接收的ADC原始IQ数据
@@ -177,6 +186,18 @@
  - 显示多普勒图Doppler Bins
  - 显示方位角图Azimuth (Angle) Bins
 
+### ***testDecode_AWR2243.ipynb***
+解析原始ADC采样数据（仅AWR2243）的示例代码，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
+#### 1.解析LVDS接收的ADC原始IQ数据
+##### 利用numpy对LVDS接收的ADC原始IQ数据进行解析
+ - 载入相关库
+ - 设置对应参数
+ - 载入保存的bin数据并解析
+ - 绘制时域IQ波形
+ - 计算Range-FFT
+ - 计算Doppler-FFT
+ - 计算Azimuth-FFT
+ 
 ### ***testParam.ipynb***
 IWR1843毫米波雷达配置参数合理性校验，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
  - 主要校验毫米波雷达需要的cfg文件及DCA采集板需要的cf.json文件的参数配置是否正确。

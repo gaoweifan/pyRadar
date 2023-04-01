@@ -32,6 +32,8 @@ std::mutex udp_mutex;
 std::mutex udp_async_mutex;
 std::future<pybind11::array_t<uint8_t>> udp_val;
 uint32_t receivedPacketNum_g=0,firstPacketNum_g=0,lastPacketNum_g=0,expectedPacketNum_g=0;
+// py::array_t<uint8_t> doubleBuffer[2];
+// bool firstBufFull=false;
 
 int add(int i, int j) {
     return i+j;
@@ -185,6 +187,14 @@ py::array_t<uint8_t> postProc_packet_sort(py::array_t<uint8_t> buf, uint32_t fra
 
     return result;
 }
+
+// void _read_data_udp_buffered(int sock_fd, uint32_t bufFrameNum, int bytesInFrame, int packetSize, int timeout_s){
+//     uint32_t maxPacketNum = ((bufFrameNum+1)*bytesInFrame)/(packetSize-10)+1;
+//     firstBufFull=false;
+//     auto packetBuf = py::array_t<uint8_t>(maxPacketNum*packetSize);
+//     doubleBuffer[0] = py::array_t<uint8_t>(bufFrameNum*bytesInFrame);
+//     doubleBuffer[1] = py::array_t<uint8_t>(bufFrameNum*bytesInFrame);
+// }
 
 py::array_t<uint8_t> read_data_udp(int sock_fd, uint32_t frameNum, int bytesInFrame, int packetSize, int timeout_s, bool sort){
     uint32_t maxPacketNum = ((frameNum+1)*bytesInFrame)/(packetSize-10)+1;
