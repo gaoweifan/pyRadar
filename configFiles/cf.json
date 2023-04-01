@@ -5,6 +5,6 @@
     "dataCaptureMode": "ethernetStream",
     "lvdsMode": 1,
     "dataFormatMode": 3,
-    "packetDelay_us": 25
+    "packetDelay_us": 5
   }
 }

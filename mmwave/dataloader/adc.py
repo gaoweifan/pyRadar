@@ -723,6 +723,7 @@ class DCA1000:
         data=recvQueue.pop(0)
         packet_data=np.frombuffer(data[10:], dtype=np.uint16)
         firstPacketNum = struct.unpack('<1L', data[:4])[0]
+        lastPacketNum = firstPacketNum
         print(f"First Packet ID - {firstPacketNum}")
         receivedPacketNum=[firstPacketNum]
         receivedData=np.zeros(UINT16_IN_PACKET*maxPacketNum, dtype=np.uint16)
@@ -736,7 +737,8 @@ class DCA1000:
                 continue
             receivedPacketNum.append(packetNum)
             receivedData[UINT16_IN_PACKET*idx:UINT16_IN_PACKET*(idx+1)]=packet_data
-        print(f"Last Packet ID - {packetNum}")
+        lastPacketNum = max(receivedPacketNum)
+        print(f"Last Packet ID - {lastPacketNum}")
         return receivedData,firstPacketNum,receivedPacketNum
     
     def fastRead_from0(self,numframes=1):
@@ -755,23 +757,58 @@ class DCA1000:
         return databuf
 
     def fastRead_in_Cpp(self,numframes=1,timeOut=2,sortInC=True):
-        packetNum = math.ceil(PACKETS_IN_FRAME*numframes)
+        minPacketNum = math.ceil(PACKETS_IN_FRAME*numframes)
+        print("min Packet Num:",minPacketNum)
 
-        recvData = fpga_udp.read_data_udp(self.data_socket.fileno(),packetNum,BYTES_OF_PACKET,timeOut,sortInC)
+        recvData = fpga_udp.read_data_udp_block_thread(self.data_socket.fileno(),numframes,BYTES_IN_FRAME,BYTES_OF_PACKET,timeOut,sortInC)
         
         if sortInC: # sort packet using C code (True) or python (False)
             receivedPacketNum=fpga_udp.get_receivedPacketNum()
-            print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(receivedPacketNum,packetNum,(packetNum-receivedPacketNum)/packetNum))
+            expectedPacketNum=fpga_udp.get_expectedPacketNum()
+            firstPacketNum=fpga_udp.get_firstPacketNum()
+            lastPacketNum=fpga_udp.get_lastPacketNum()
+            print("first Packet Num:%d,last Packet Num:%d"%(firstPacketNum,lastPacketNum))
+            print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(receivedPacketNum,expectedPacketNum,(expectedPacketNum-receivedPacketNum)/expectedPacketNum*100))
             return recvData
         else:
             print("all received, post processing packets...")
 
-            recvData = np.reshape(recvData,(packetNum,BYTES_OF_PACKET))
+            recvData = np.reshape(recvData,(-1,BYTES_OF_PACKET))
             recvQueue = list(map(lambda x:bytes(x),recvData))
             
-            receivedData,firstPacketNum,receivedPacketNum=self.postProcPacket(recvQueue,packetNum)
+            receivedData,firstPacketNum,receivedPacketNum=self.postProcPacket(recvQueue,minPacketNum)
             databuf=receivedData[0:numframes*UINT16_IN_FRAME]
-            print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(len(receivedPacketNum),packetNum,(packetNum-len(receivedPacketNum))/packetNum))
+            # np.save("test",receivedPacketNum)
+            print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(len(receivedPacketNum),minPacketNum,(minPacketNum-len(receivedPacketNum))/minPacketNum*100))
+
+            return databuf
+        
+    def fastRead_in_Cpp_async_start(self,numframes=1,timeOut=2,sortInC=True):
+        fpga_udp.read_data_udp_async_start(self.data_socket.fileno(),numframes,BYTES_IN_FRAME,BYTES_OF_PACKET,timeOut,sortInC)
+        return (numframes,sortInC)
+    
+    def fastRead_in_Cpp_async_wait(self,numframes=1,sortInC=True):
+        minPacketNum = math.ceil(PACKETS_IN_FRAME*numframes)
+        print("min Packet Num:",minPacketNum)
+        recvData = fpga_udp.read_data_udp_async_wait()
+        if sortInC: # sort packet using C code (True) or python (False)
+            receivedPacketNum=fpga_udp.get_receivedPacketNum()
+            expectedPacketNum=fpga_udp.get_expectedPacketNum()
+            firstPacketNum=fpga_udp.get_firstPacketNum()
+            lastPacketNum=fpga_udp.get_lastPacketNum()
+            print("first Packet Num:%d,last Packet Num:%d"%(firstPacketNum,lastPacketNum))
+            print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(receivedPacketNum,expectedPacketNum,(expectedPacketNum-receivedPacketNum)/expectedPacketNum*100))
+            return recvData
+        else:
+            print("all received, post processing packets...")
+
+            recvData = np.reshape(recvData,(-1,BYTES_OF_PACKET))
+            recvQueue = list(map(lambda x:bytes(x),recvData))
+            
+            receivedData,firstPacketNum,receivedPacketNum=self.postProcPacket(recvQueue,minPacketNum)
+            databuf=receivedData[0:numframes*UINT16_IN_FRAME]
+            # np.save("test",receivedPacketNum)
+            print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(len(receivedPacketNum),minPacketNum,(minPacketNum-len(receivedPacketNum))/minPacketNum*100))
 
             return databuf
 
@@ -941,7 +978,7 @@ class DCA1000:
         data, addr = self.data_socket.recvfrom(MAX_BYTES_PER_PACKET)  # MAX_PACKET_SIZE
         packet_num = struct.unpack('<1l', data[:4])[0]
         byte_count = struct.unpack('>Q', b'\x00\x00' + data[4:10][::-1])[0]
-        packet_data = np.frombuffer(data[10:], dtype=np.uint16)
+        packet_data = np.frombuffer(data[10:], dtype=np.int16)
         # packet_data = data[10:]
         return packet_num, byte_count, packet_data
 

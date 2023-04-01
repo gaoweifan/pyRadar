@@ -4,6 +4,7 @@
 #include <thread>
 #include <future>
 #include <mutex>
+#include <cmath>
 #ifdef _WIN32
     #include <Winsock2.h>
     #include <ws2tcpip.h>
@@ -30,7 +31,7 @@ std::mutex serial_buf_mutex;
 std::mutex udp_mutex;
 std::mutex udp_async_mutex;
 std::future<pybind11::array_t<uint8_t>> udp_val;
-uint32_t receivedPacketNum_g=0,firstPacketNum_g=0,lastPacketNum_g=0;
+uint32_t receivedPacketNum_g=0,firstPacketNum_g=0,lastPacketNum_g=0,expectedPacketNum_g=0;
 
 int add(int i, int j) {
     return i+j;
@@ -83,14 +84,15 @@ void radar_stop_read_thread(){
     serial_buf_mutex.unlock();
 }
 
-void _read_data_udp(int sock_fd, uint32_t packetNum, int packetSize, int timeout_s, py::buffer_info &buf){
+void _read_data_udp(int sock_fd, uint32_t frameNum, int bytesInFrame, int packetSize, int &lastFrameRemainBytes, int timeout_s, py::array_t<uint8_t> buf){
     udp_mutex.lock();
 
     if(packetSize%2 != 0){
         throw std::runtime_error("[fpga_udp]Number of packetSize must be even");
     }
-    
-    uint8_t *buf_ptr = static_cast<uint8_t *>(buf.ptr);
+
+    py::buffer_info buf_info = buf.request();
+    uint8_t *buf_ptr = static_cast<uint8_t *>(buf_info.ptr);
 
     // Time out
     #ifdef __linux__
@@ -109,12 +111,34 @@ void _read_data_udp(int sock_fd, uint32_t packetNum, int packetSize, int timeout
     socklen_t src_len = sizeof(src);
     memset(&src, 0, sizeof(src));
 
-    for(int i=0;i<packetNum;i++){
+    uint32_t seqNum=0;
+    uint64_t bytesCnt;
+    int receivePacketLen=0,lastFrameTransferedBytes;
+
+    // Wait for start of next frame
+    do{
+        receivePacketLen=recvfrom(sockfd, (char*)&buf_ptr[0], packetSize, 0, (sockaddr*)&src, &src_len);
+        if (receivePacketLen < 0){      //blocking receive timeout
+            printf("[fpga_udp]udp time out\n");
+            udp_mutex.unlock();
+            lastFrameRemainBytes=-1;
+            return;
+        }
+        seqNum = *(uint32_t *)buf_ptr;//first 4 bytes: sequence number for every packet
+        bytesCnt = (seqNum-1)*(packetSize-10);
+        lastFrameTransferedBytes = bytesCnt % bytesInFrame;
+        lastFrameRemainBytes = (bytesInFrame-lastFrameTransferedBytes) % bytesInFrame;
+    }while(lastFrameRemainBytes>=packetSize-10);
+    
+    expectedPacketNum_g = ceil((lastFrameRemainBytes + frameNum*bytesInFrame)/((double)(packetSize-10)));
+
+    // Read in the rest of the frame
+    for(int i=1;i<expectedPacketNum_g;i++){
         int idx = i*packetSize;
-        // if(!(idx<packetSize*packetNum)){
+        // if(idx>=packetSize*packetNum){
         //     throw std::runtime_error("Array Index Out Of Bounds!");
         // }
-        int receivePacketLen=recvfrom(sockfd, (char*)&buf_ptr[idx], packetSize, 0, (sockaddr*)&src, &src_len);
+        receivePacketLen=recvfrom(sockfd, (char*)&buf_ptr[idx], packetSize, 0, (sockaddr*)&src, &src_len);
         if (receivePacketLen < 0){      //blocking receive timeout
             printf("[fpga_udp]udp time out\n");
             break;
@@ -124,59 +148,74 @@ void _read_data_udp(int sock_fd, uint32_t packetNum, int packetSize, int timeout
     udp_mutex.unlock();
 }
 
-py::array_t<uint8_t> postProc_packet_sort(py::buffer_info &buf, uint32_t packetNum, int packetSize, uint32_t &receivedPacketNum, uint32_t &firstPacketNum, uint32_t &lastPacketNum){
-    int payloadSize = packetSize-10;
-    auto result = py::array_t<uint8_t>(payloadSize*packetNum);
-    py::buffer_info sort_buf = result.request();
-    uint8_t *sort_buf_ptr = static_cast<uint8_t *>(sort_buf.ptr);
-    uint8_t *buf_ptr = static_cast<uint8_t *>(buf.ptr);
+py::array_t<uint8_t> postProc_packet_sort(py::array_t<uint8_t> buf, uint32_t frameNum, int bytesInFrame, int packetSize, int lastFrameRemainBytes, uint32_t &receivedPacketNum, uint32_t &firstPacketNum, uint32_t &lastPacketNum){
+    int payloadSize = packetSize-10, cpySize;
+    uint32_t packetNum = ceil((lastFrameRemainBytes + frameNum*bytesInFrame)/((double)(packetSize-10)));
     uint32_t seqNum=0,idx=0;
 
-    firstPacketNum = *(uint32_t *)buf_ptr;
-    receivedPacketNum = 0;
+    auto result = py::array_t<uint8_t>(frameNum*bytesInFrame);
+    py::buffer_info sort_buf_info = result.request();
+    uint8_t *sort_buf_ptr = static_cast<uint8_t *>(sort_buf_info.ptr);
 
-    for(uint32_t i=0;i<packetNum;i++){
+    py::buffer_info buf_info = buf.request();
+    uint8_t *buf_ptr = static_cast<uint8_t *>(buf_info.ptr);
+
+    //first packet
+    firstPacketNum = *(uint32_t *)buf_ptr;//4 bytes of sequence number for every packet
+    cpySize = payloadSize-lastFrameRemainBytes;
+    memcpy(sort_buf_ptr, &buf_ptr[lastFrameRemainBytes], cpySize);
+    receivedPacketNum = 1;
+
+    //rest packet
+    for(uint32_t i=1;i<packetNum;i++){
         seqNum=*(uint32_t *)&buf_ptr[i*packetSize];//4 bytes of sequence number for every packet
-        idx = seqNum-firstPacketNum;
         //byteCnt=*(uint32_t *)&buf_ptr[i*packetSize+4];//6 bytes of byte count – provides information about number of bytes transmitted till last packet.
-        memcpy(&sort_buf_ptr[idx*payloadSize], &buf_ptr[i*packetSize+10], payloadSize);//1456 bytes of payload
+        idx = seqNum-firstPacketNum;
+        if(idx<1 || idx>packetNum-1) continue;//out of boundary
+        if(idx==packetNum-1){//last packet
+            memcpy(&sort_buf_ptr[(idx-1)*payloadSize+cpySize], &buf_ptr[i*packetSize+10], frameNum*bytesInFrame-idx*payloadSize+lastFrameRemainBytes);
+        }else{//middle packet
+            memcpy(&sort_buf_ptr[(idx-1)*payloadSize+cpySize], &buf_ptr[i*packetSize+10], payloadSize);//1456 bytes of payload
+        }
         receivedPacketNum++;
     }
 
-    lastPacketNum = seqNum;
+    lastPacketNum = *(uint32_t *)&buf_ptr[(packetNum-1)*packetSize];
     // printf("[fpga_udp]received packet num:%d,expected packet num:%d\n",receivedPacketNum,packetNum);
 
     return result;
 }
 
-py::array_t<uint8_t> read_data_udp(int sock_fd, uint32_t packetNum, int packetSize, int timeout_s, bool sort){
+py::array_t<uint8_t> read_data_udp(int sock_fd, uint32_t frameNum, int bytesInFrame, int packetSize, int timeout_s, bool sort){
+    uint32_t maxPacketNum = ((frameNum+1)*bytesInFrame)/(packetSize-10)+1;
     /* No pointer is passed, so NumPy will allocate the buffer */
-    auto result = py::array_t<uint8_t>(packetSize*packetNum);
-    py::buffer_info buf = result.request();
+    auto result = py::array_t<uint8_t>(maxPacketNum*packetSize);
+    int lastFrameRemainBytes=0;
 
-    _read_data_udp(sock_fd,packetNum,packetSize,timeout_s,buf);
+    _read_data_udp(sock_fd,frameNum,bytesInFrame,packetSize,lastFrameRemainBytes,timeout_s,result);
 
-    if(sort) return postProc_packet_sort(buf, packetNum, packetSize,receivedPacketNum_g,firstPacketNum_g,lastPacketNum_g);
+    if(sort) return postProc_packet_sort(result,frameNum,bytesInFrame,packetSize,lastFrameRemainBytes,receivedPacketNum_g,firstPacketNum_g,lastPacketNum_g);
 
     return result;
 }
 
-py::array_t<uint8_t> read_data_udp_block_thread(int sock_fd, uint32_t packetNum, int packetSize, int timeout_s, bool sort){
+py::array_t<uint8_t> read_data_udp_block_thread(int sock_fd, uint32_t frameNum, int bytesInFrame, int packetSize, int timeout_s, bool sort){
+    uint32_t maxPacketNum = ((frameNum+1)*bytesInFrame)/(packetSize-10)+1;
     /* No pointer is passed, so NumPy will allocate the buffer */
-    auto result = py::array_t<uint8_t>(packetSize*packetNum);
-    py::buffer_info buf = result.request();
+    auto result = py::array_t<uint8_t>(maxPacketNum*packetSize);
+    int lastFrameRemainBytes=0;
 
-    std::thread udp_thread(_read_data_udp,sock_fd,packetNum,packetSize,timeout_s,std::ref(buf));
+    std::thread udp_thread(_read_data_udp,sock_fd,frameNum,bytesInFrame,packetSize,std::ref(lastFrameRemainBytes),timeout_s,result);
     udp_thread.join();
 
-    if(sort) return postProc_packet_sort(buf, packetNum, packetSize,receivedPacketNum_g,firstPacketNum_g,lastPacketNum_g);
+    if(sort) return postProc_packet_sort(result,frameNum,bytesInFrame,packetSize,lastFrameRemainBytes,receivedPacketNum_g,firstPacketNum_g,lastPacketNum_g);
 
     return result;
 }
 
-void read_data_udp_async_start(int sock_fd, uint32_t packetNum, int packetSize, int timeout_s, bool sort){
+void read_data_udp_async_start(int sock_fd, uint32_t frameNum, int bytesInFrame, int packetSize, int timeout_s, bool sort){
     udp_async_mutex.lock();
-    udp_val = std::async(std::launch::async, read_data_udp, sock_fd,packetNum,packetSize,timeout_s,sort);
+    udp_val = std::async(std::launch::async, read_data_udp, sock_fd,frameNum,bytesInFrame,packetSize,timeout_s,sort);
 }
 
 py::array_t<uint8_t> read_data_udp_async_wait(){
@@ -206,6 +245,10 @@ PYBIND11_MODULE(fpga_udp, m) {
            read_data_udp_block_thread
            read_data_udp_async_start
            read_data_udp_async_wait
+           get_receivedPacketNum
+           get_firstPacketNum
+           get_lastPacketNum
+           get_expectedPacketNum
 
            AWR2243_firmwareDownload
            AWR2243_init
@@ -236,7 +279,8 @@ PYBIND11_MODULE(fpga_udp, m) {
         read UDP packet from FPGA as fast as written in C.
 
         sockfd:\tan open file descriptor of a socket
-        packetNum:\tA total of packetNum packets will be read
+        frameNum:\tA total of frameNum frames will be read
+        bytesInFrame:\tbytes of one frame
         packetSize:\tand the size of each packet is packetSize
         timeout_s:\ttime out for udp in sec
     )pbdoc");
@@ -244,7 +288,8 @@ PYBIND11_MODULE(fpga_udp, m) {
         read UDP packet from FPGA using thread, block untill data transfer finished.
 
         sockfd:\tan open file descriptor of a socket
-        packetNum:\tA total of packetNum packets will be read
+        frameNum:\tA total of frameNum frames will be read
+        bytesInFrame:\tbytes of one frame
         packetSize:\tand the size of each packet is packetSize
         timeout_s:\ttime out for udp in sec
     )pbdoc");
@@ -252,7 +297,8 @@ PYBIND11_MODULE(fpga_udp, m) {
         read UDP packet from FPGA using async, return immediately.
 
         sockfd:\tan open file descriptor of a socket
-        packetNum:\tA total of packetNum packets will be read
+        frameNum:\tA total of frameNum frames will be read
+        bytesInFrame:\tbytes of one frame
         packetSize:\tand the size of each packet is packetSize
         timeout_s:\ttime out for udp in sec
     )pbdoc");
@@ -262,6 +308,7 @@ PYBIND11_MODULE(fpga_udp, m) {
     m.def("get_receivedPacketNum", []() {return receivedPacketNum_g;});
     m.def("get_firstPacketNum", []() {return firstPacketNum_g;});
     m.def("get_lastPacketNum", []() {return lastPacketNum_g;});
+    m.def("get_expectedPacketNum", []() {return expectedPacketNum_g;});
 
     m.def("AWR2243_firmwareDownload",[](){
         return MMWL_App_firmwareDownload(RL_DEVICE_MAP_CASCADED_1);
