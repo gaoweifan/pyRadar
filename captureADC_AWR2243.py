@@ -11,12 +11,14 @@ import datetime
 3. 通过网口udp发送配置fpga指令(config_fpga)
 4. 通过网口udp发送配置record数据包指令(config_record)
 5. 通过网口udp发送开始采集指令(stream_start)
-6. 通过SPI启动雷达(AWR2243_sensorStart)
-7. 实时处理数据流或离线采集保存(write_frames_to_file)
-8. (optional, 若numFrame==0则不能有)等待雷达采集结束(AWR2243_waitSensorStop)
+6. 启动UDP数据包接收线程(fastRead_in_Cpp_async_start)
+7. 通过SPI启动雷达(AWR2243_sensorStart)
+8.1. (optional, 若numFrame==0则必须有)通过SPI停止雷达(AWR2243_sensorStop)
+8.2. (optional, 若numFrame==0则不能有)等待雷达采集结束(AWR2243_waitSensorStop)
 9. (optional, 若numFrame==0则必须有)通过网口udp发送停止采集指令(stream_stop)
-10. (optional, 若numFrame==0则必须有)通过SPI停止雷达(AWR2243_sensorStop)
-11. 通过SPI关闭雷达电源与配置文件(AWR2243_poweroff)
+10. 等待UDP数据包接收线程结束+解析出原始数据(fastRead_in_Cpp_async_wait)
+11. 保存原始数据到文件离线处理(tofile)
+12. 通过SPI关闭雷达电源与配置文件(AWR2243_poweroff)
 
 # "mmwaveconfig.txt"毫米波雷达配置文件要求
 TBD
@@ -48,8 +50,8 @@ try:
     time.sleep(1)
     
     # 2. 通过SPI初始化雷达并配置相应参数
-    dca_config_file = "configFiles/cf.json"
-    radar_config_file = "configFiles/AWR2243_mmwaveconfig.txt"
+    radar_config_file = "configFiles/AWR2243_mmwaveconfig.txt"  # laneEn=15则LVDS为4 lane模式
+    dca_config_file = "configFiles/cf.json"  # 若LVDS设置为4 lane模式，记得将cf.json中的lvdsMode设为1
     radar.AWR2243_init(radar_config_file)
     numframes=10
     radar.AWR2243_setFrameCfg(numframes)  # radar设置frame个数后会自动停止，无需向fpga及radar发送停止命令
@@ -73,27 +75,35 @@ try:
 
     # 5. 通过网口udp发送开始采集指令
     dca.stream_start()
+    # 6. 启动UDP数据包接收线程
+    numframes_out,sortInC_out = dca.fastRead_in_Cpp_async_start(numframes,sortInC=True)
+
+    # 7. 通过SPI启动雷达
     startTime = datetime.datetime.now()
-    # 6. 通过SPI启动雷达
     start = time.time()
     radar.AWR2243_sensorStart()
 
-    # 7. 从网口接收ADC原始数据+处理数据+保存到文件
-    dca.write_frames_to_file(filename="raw_data_"+startTime.strftime('%Y-%m-%d-%H-%M-%S')+".bin",numframes=numframes)
-    
-    # 8. 等待雷达采集结束
+    # 8.1 通过SPI停止雷达
+    # radar.AWR2243_sensorStop()
+    # 8.2 等待雷达采集结束
     radar.AWR2243_waitSensorStop()
     end = time.time()
     print("time elapsed(s):",end-start)
+    
     # 9. 通过网口udp发送停止采集指令
     # dca.stream_stop()  # DCA停止采集，设置frame个数后会自动停止，无需向fpga发送停止命令
-    # 10. 通过SPI停止雷达
-    # radar.AWR2243_sensorStop()
+
+    # 10. 等待UDP数据包接收线程结束+解析出原始数据
+    data_buf = dca.fastRead_in_Cpp_async_wait(numframes=numframes_out,sortInC=sortInC_out)
+    # 11. 保存原始数据到文件
+    filename="raw_data_"+startTime.strftime('%Y-%m-%d-%H-%M-%S')+".bin"
+    data_buf.tofile(filename)
+    print("file saved to",filename)
 
 except Exception as e:
     traceback.print_exc()
 finally:
     if dca is not None:
         dca.close()
-    # 11. 通过SPI关闭雷达电源与配置文件
+    # 12. 通过SPI关闭雷达电源与配置文件
     radar.AWR2243_poweroff()

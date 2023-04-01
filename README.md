@@ -95,19 +95,21 @@
 ### ***captureAll.py***
 同时采集原始ADC采样的IQ数据及片内DSP预处理好的点云等串口数据的示例代码（仅xWR1843）。
 #### 1.采集原始数据的一般流程
- 1.  重置雷达与DCA1000(reset_radar、reset_fpga)
- 2.  通过UART初始化雷达并配置相应参数(TI、setFrameCfg)
- 3.  (optional)创建从串口接收片内DSP处理好的数据的进程(create_read_process)
- 4.  通过网口udp发送配置fpga指令(config_fpga)
- 5.  通过网口udp发送配置record数据包指令(config_record)
- 6.  (optional)启动串口接收进程（只进行缓存清零）(start_read_process)
- 7.  通过网口udp发送开始采集指令(stream_start)
- 8.  通过串口启动雷达（理论上通过FTDI(USB转SPI)也能控制，目前只在AWR2243上实现）(startSensor)
- 9.  实时处理数据流或离线采集保存(write_frames_to_file)
- 10.  (optional)通过网口udp发送停止采集指令(stream_stop)
- 11.  通过串口关闭雷达(stopSensor) 或 通过网口发送重置雷达命令(reset_radar)
- 12.  (optional)停止接收串口数据(stop_read_process)
- 13.  (optional)解析从串口接收的点云等片内DSP处理好的数据(post_process_data_buf)
+ 1. 重置雷达与DCA1000(reset_radar、reset_fpga)
+ 2. 通过UART初始化雷达并配置相应参数(TI、setFrameCfg)
+ 3. (optional)创建从串口接收片内DSP处理好的数据的进程(create_read_process)
+ 4. 通过网口udp发送配置fpga指令(config_fpga)
+ 5. 通过网口udp发送配置record数据包指令(config_record)
+ 6. (optional)启动串口接收进程（只进行缓存清零）(start_read_process)
+ 7. 通过网口udp发送开始采集指令(stream_start)
+ 8. 启动UDP数据包接收线程(fastRead_in_Cpp_async_start)
+ 9. 通过串口启动雷达（理论上通过FTDI(USB转SPI)也能控制，目前只在AWR2243上实现）(startSensor)
+ 10. 等待UDP数据包接收线程结束+解析出原始数据(fastRead_in_Cpp_async_wait)
+ 11. 保存原始数据到文件离线处理(tofile)
+ 12. (optional)通过网口udp发送停止采集指令(stream_stop)
+ 13. 通过串口关闭雷达(stopSensor) 或 通过网口发送重置雷达命令(reset_radar)
+ 14. (optional)停止接收串口数据(stop_read_process)
+ 15. (optional)解析从串口接收的点云等片内DSP处理好的数据(post_process_data_buf)
 #### 2."*.cfg"毫米波雷达配置文件要求
  - Default profile in Visualizer disables the LVDS streaming.
  - To enable it, please export the chosen profile and set the appropriate enable bits.
@@ -137,12 +139,14 @@
  3. 通过网口udp发送配置fpga指令(config_fpga)
  4. 通过网口udp发送配置record数据包指令(config_record)
  5. 通过网口udp发送开始采集指令(stream_start)
- 6. 通过SPI启动雷达(AWR2243_sensorStart)
- 7. 实时处理数据流或离线采集保存(write_frames_to_file)
- 8. (optional, 若numFrame==0则不能有)等待雷达采集结束(AWR2243_waitSensorStop)
+ 6. 启动UDP数据包接收线程(fastRead_in_Cpp_async_start)
+ 7. 通过SPI启动雷达(AWR2243_sensorStart)
+ 8. 1. (optional, 若numFrame==0则必须有)通过SPI停止雷达(AWR2243_sensorStop)
+    2. (optional, 若numFrame==0则不能有)等待雷达采集结束(AWR2243_waitSensorStop)
  9. (optional, 若numFrame==0则必须有)通过网口udp发送停止采集指令(stream_stop)
- 10. (optional, 若numFrame==0则必须有)通过SPI停止雷达(AWR2243_sensorStop)
- 11. 通过SPI关闭雷达电源与配置文件(AWR2243_poweroff)
+ 10. 等待UDP数据包接收线程结束+解析出原始数据(fastRead_in_Cpp_async_wait)
+ 11. 保存原始数据到文件离线处理(tofile)
+ 12. 通过SPI关闭雷达电源与配置文件(AWR2243_poweroff)
 #### 2."mmwaveconfig.txt"毫米波雷达配置文件要求
  - TBD
 #### 3."cf.json"数据采集卡配置文件要求

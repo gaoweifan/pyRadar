@@ -13,12 +13,14 @@ import datetime
 5. 通过网口udp发送配置record数据包指令(config_record)
 6. (optional)启动串口接收进程（只进行缓存清零）(start_read_process)
 7. 通过网口udp发送开始采集指令(stream_start)
-8. 通过串口启动雷达（理论上通过FTDI(USB转SPI)也能控制，目前只在AWR2243上实现）(startSensor)
-9. 实时处理数据流或离线采集保存(write_frames_to_file)
-10. (optional)通过网口udp发送停止采集指令(stream_stop)
-11. 通过串口关闭雷达(stopSensor) 或 通过网口发送重置雷达命令(reset_radar)
-12. (optional)停止接收串口数据(stop_read_process)
-13. (optional)解析从串口接收的点云等片内DSP处理好的数据(post_process_data_buf)
+8. 启动UDP数据包接收线程(fastRead_in_Cpp_async_start)
+9. 通过串口启动雷达（理论上通过FTDI(USB转SPI)也能控制，目前只在AWR2243上实现）(startSensor)
+10. 等待UDP数据包接收线程结束+解析出原始数据(fastRead_in_Cpp_async_wait)
+11. 保存原始数据到文件离线处理(tofile)
+12. (optional)通过网口udp发送停止采集指令(stream_stop)
+13. 通过串口关闭雷达(stopSensor) 或 通过网口发送重置雷达命令(reset_radar)
+14. (optional)停止接收串口数据(stop_read_process)
+15. (optional)解析从串口接收的点云等片内DSP处理好的数据(post_process_data_buf)
 
 # "*.cfg"毫米波雷达配置文件要求
 Default profile in Visualizer disables the LVDS streaming.
@@ -56,8 +58,8 @@ try:
     time.sleep(1)
 
     # 2. 通过UART初始化雷达并配置相应参数
-    dca_config_file = "configFiles/cf.json"
-    radar_config_file = "configFiles/xWR1843_profile_3D.cfg"
+    dca_config_file = "configFiles/cf.json" # 记得将cf.json中的lvdsMode设为2，xWR1843只支持2路LVDS lanes
+    radar_config_file = "configFiles/xWR1843_profile_3D.cfg" # 记得将lvdsStreamCfg的第三个参数设置为1开启LVDS数据传输
     numframes=1400
     # 记得改端口号,verbose=True会显示向毫米波雷达板子发送的所有串口指令及响应
     radar = TI(cli_loc='COM4', data_loc='COM5',data_baud=921600,config_file=radar_config_file,verbose=True)
@@ -83,21 +85,31 @@ try:
     # radar.start_read_process()
     # 7. 通过网口udp发送开始采集指令
     dca.stream_start()
+    # 8. 启动UDP数据包接收线程
+    numframes_out,sortInC_out = dca.fastRead_in_Cpp_async_start(numframes,sortInC=True)
+
+    # 9. 通过串口启动雷达
     startTime = datetime.datetime.now()
-    # 8. 通过串口启动雷达
+    start = time.time()
     radar.startSensor()
 
-    # 9. 从网口接收ADC原始数据+处理数据+保存到文件
-    dca.write_frames_to_file(filename="raw_data_"+startTime.strftime('%Y-%m-%d-%H-%M-%S')+".bin",numframes=numframes)
+    # 10. 等待UDP数据包接收线程结束+解析出原始数据
+    data_buf = dca.fastRead_in_Cpp_async_wait(numframes=numframes_out,sortInC=sortInC_out)
+    end = time.time()
+    print("time elapsed(s):",end-start)
+    # 11. 保存原始数据到文件
+    filename="raw_data_"+startTime.strftime('%Y-%m-%d-%H-%M-%S')+".bin"
+    data_buf.tofile(filename)
+    print("file saved to",filename)
     
-    # 10. DCA停止采集，设置frame个数后会自动停止，无需向fpga发送停止命令
+    # 12. DCA停止采集，设置frame个数后会自动停止，无需向fpga发送停止命令
     # dca.stream_stop()
-    # 11. 通过串口关闭雷达
+    # 13. 通过串口关闭雷达
     radar.stopSensor()
-    # 12. 停止接收串口数据
+    # 14. 停止接收串口数据
     # radar.stop_read_process()
 
-    # 13. 解析从串口接收的点云等片内DSP处理好的数据,verbose=True会在处理过程中显示每一帧的详细信息
+    # 15. 解析从串口接收的点云等片内DSP处理好的数据,verbose=True会在处理过程中显示每一帧的详细信息
     # DSP_Processed_data=radar.post_process_data_buf(verbose=False)
     # 解析好的点云等数据在DSP_Processed_data这个变量内
     # 未解析的串口原始数据在radar.byteBuffer这个变量内
