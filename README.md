@@ -86,7 +86,7 @@
   - for Linux: `sudo python3 -c "import fpga_udp;fpga_udp.AWR2243_firmwareDownload()"`
   - 看见"MSS Patch version [ 2. 2. 2. 0]"则烧录成功
 2.  打开[captureADC_AWR2243.py](#captureadc_awr2243py)按需求修改并填入txt配置文件地址并开始采集数据
-3.  打开[testDecode.ipynb](#testdecodeipynb)或[testDecodeADCdata.mlx](#testdecodeadcdatamlx)解析刚才采集的数据
+3.  打开[testDecode_AWR2243.ipynb](#testdecode_awr2243ipynb)解析刚才采集的数据
 4.  对参数不满意可以用[testParam_AWR2243.ipynb](#testparam_awr2243ipynb)修改并检验参数的合理性
 
 
