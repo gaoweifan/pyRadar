@@ -16,35 +16,49 @@ class EKF:
 
     """
 
-    def __init__(self):
+    def __init__(self,deltaT=.05,
+                 maxNumPoints=250,
+                 maxNumTracks=20,
+                 stateVectorType=ekf_utils.gtrack_STATE_VECTOR_TYPE().gtrack_STATE_VECTORS_2DA,
+                 initialRadialVelocity=0,
+                 maxRadialVelocity=20,
+                 radialVelocityResolution=0,
+                 maxAcceleration=2,
+                 verbose=ekf_utils.gtrack_VERBOSE_TYPE().gtrack_VERBOSE_NONE,
+                 app_scenery_params=ekf_utils.gtrack_sceneryParams(numBoundaryBoxes=0, numStaticBoxes=0,
+                                                                   bound_box=[(0., 0., 0., 0.), (0., 0., 0., 0.)],
+                                                                   static_box=[(0., 0., 0., 0.), (0., 0., 0., 0.)]),
+                 app_gating_params = ekf_utils.gtrack_gatingParams(volume=4., params=[(3., 2., 0.)]),
+                 app_allocation_params = ekf_utils.gtrack_allocationParams(snrThre=50., velocityThre=.01, pointsThre=20,
+                                                                  maxDistanceThre=.75, maxVelThre=2),
+                 app_std_sigma = ekf_utils.gtrack_varParams(lengthStd=.289, widthStd=.289, dopplerStd=1.)
+                ):
         self.point_cloud = np.array(
             [ekf_utils.gtrack_measurementPoint() for _ in range(ekf_utils.MAXNUMBERMEASUREMENTS)])
 
         self.target_desc = np.array([ekf_utils.gtrack_targetDesc() for _ in range(ekf_utils.MAXNUMBERTRACKERS)])
 
         # customized configuration params
-        app_scenery_params = ekf_utils.gtrack_sceneryParams(numBoundaryBoxes=0, numStaticBoxes=0,
-                                                            bound_box=[(0., 0., 0., 0.), (0., 0., 0., 0.)],
-                                                            static_box=[(0., 0., 0., 0.), (0., 0., 0., 0.)])
-        app_gating_params = ekf_utils.gtrack_gatingParams(volume=4., params=[(3., 2., 0.)])
-        app_allocation_params = ekf_utils.gtrack_allocationParams(snrThre=50., velocityThre=.01, pointsThre=20,
-                                                                  maxDistanceThre=.75, maxVelThre=2)
-        app_std_sigma = ekf_utils.gtrack_varParams(lengthStd=.289, widthStd=.289, dopplerStd=1.)
+        app_scenery_params = app_scenery_params
+        app_gating_params = app_gating_params
+        app_allocation_params = app_allocation_params
+        app_std_sigma = app_std_sigma
 
         self.t_num = np.zeros(1)
 
         config = ekf_utils.gtrack_moduleConfig()
         adv_params = ekf_utils.gtrack_advancedParameters()
 
-        config.stateVectorType = ekf_utils.gtrack_STATE_VECTOR_TYPE().gtrack_STATE_VECTORS_2DA
-        config.verbose = ekf_utils.gtrack_VERBOSE_TYPE().gtrack_VERBOSE_NONE
+        config.stateVectorType = stateVectorType
+        config.verbose = verbose
 
-        config.deltaT = .05
-        config.maxRadialVelocity = 20
-        config.maxAcceleration = 2
-        config.maxNumPoints = 250
-        config.maxNumTracks = 20
-        config.initialRadialVelocity = 0
+        config.deltaT = deltaT
+        config.maxRadialVelocity = maxRadialVelocity
+        config.radialVelocityResolution = radialVelocityResolution
+        config.maxAcceleration = maxAcceleration
+        config.maxNumPoints = maxNumPoints
+        config.maxNumTracks = maxNumTracks
+        config.initialRadialVelocity = initialRadialVelocity
 
         adv_params.gatingParams = app_gating_params
         adv_params.sceneryParams = app_scenery_params
