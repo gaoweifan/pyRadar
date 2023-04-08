@@ -298,7 +298,7 @@ class DCA1000:
         ADC_PARAMS['tx'] = len(txEnable_buf)
         
         if ADC_PARAMS['tx'] > CFG_PARAMS['numTxChan']:
-            raise ValueError("exceed max tx num, check channelTx and chirp cfg")
+            raise ValueError("exceed max tx num, check channelTx(%d) and chirp cfg(%d)."%(CFG_PARAMS['numTxChan'],ADC_PARAMS['tx']))
         tmp_chirpNum = chirpEndIdx_buf[0]-chirpStartIdx_buf[0]+1
         all_chirpNum = tmp_chirpNum
         for i in range(ADC_PARAMS['tx']-1):

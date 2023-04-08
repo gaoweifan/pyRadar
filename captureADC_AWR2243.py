@@ -53,7 +53,7 @@ try:
     radar_config_file = "configFiles/AWR2243_mmwaveconfig.txt"  # laneEn=15则LVDS为4 lane模式
     dca_config_file = "configFiles/cf.json"  # 若LVDS设置为4 lane模式，记得将cf.json中的lvdsMode设为1
     radar.AWR2243_init(radar_config_file)
-    numframes=10
+    numframes=50
     radar.AWR2243_setFrameCfg(numframes)  # radar设置frame个数后会自动停止，无需向fpga及radar发送停止命令
     
     # 检查LVDS参数
