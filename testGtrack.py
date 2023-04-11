@@ -16,6 +16,8 @@ def gtrack_cppyy_init(gtrackRootPath="gtrack",use3D=True):
     else:
         cppyy.cppdef("#define GTRACK_2D")
         print("GTRACK_2D")
+    # set debug log macro
+    cppyy.cppdef("#define GTRACK_LOG_ENABLED")
 
     print("loading C files")
     # load header file
@@ -127,49 +129,49 @@ def gtrack_cppyy_step(hTrackModule,use3D=True):
         dim=4
     else:
         dim=3
-    pointCloud[0].array=np.array(	[3.83,-0.12,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[0].SNR=15.32
-    pointCloud[1].array=np.array(	[3.83,-0.10,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[1].SNR=15.92
-    pointCloud[2].array=np.array(	[3.78,-0.09,0.23,-0.99],dtype=np.float32)[:dim];    pointCloud[2].SNR=15.21
-    pointCloud[3].array=np.array(	[3.83,-0.09,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[3].SNR=16.55
-    pointCloud[4].array=np.array(	[3.78,-0.07,0.23,-0.99],dtype=np.float32)[:dim];    pointCloud[4].SNR=15.85
-    pointCloud[5].array=np.array(	[3.83,-0.07,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[5].SNR=17.10
-    pointCloud[6].array=np.array(	[3.78,-0.05,0.23,-0.99],dtype=np.float32)[:dim];    pointCloud[6].SNR=16.49
-    pointCloud[7].array=np.array(	[3.83,-0.05,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[7].SNR=17.44
-    pointCloud[8].array=np.array(	[3.88,-0.05,0.33,-0.55],dtype=np.float32)[:dim];    pointCloud[8].SNR=15.57
-    pointCloud[9].array=np.array(	[3.93,-0.05,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[9].SNR=15.31
-    pointCloud[10].array=np.array(	[3.98,-0.05,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[10].SNR=15.91
-    pointCloud[11].array=np.array(	[4.03,-0.05,0.19,-0.66],dtype=np.float32)[:dim];    pointCloud[11].SNR=15.36
-    pointCloud[12].array=np.array(	[3.78,-0.03,0.23,-0.99],dtype=np.float32)[:dim];    pointCloud[12].SNR=16.87
-    pointCloud[13].array=np.array(	[3.83,-0.03,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[13].SNR=17.45
-    pointCloud[14].array=np.array(	[3.88,-0.03,0.33,-0.55],dtype=np.float32)[:dim];    pointCloud[14].SNR=15.94
-    pointCloud[15].array=np.array(	[3.93,-0.03,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[15].SNR=16.52
-    pointCloud[16].array=np.array(	[3.98,-0.03,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[16].SNR=17.33
-    pointCloud[17].array=np.array(	[4.08,-0.03,0.19,-0.66],dtype=np.float32)[:dim];    pointCloud[17].SNR=15.57
-    pointCloud[18].array=np.array(	[4.13,-0.03,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[18].SNR=16.51
-    pointCloud[19].array=np.array(	[3.78,-0.02,0.23,-0.99],dtype=np.float32)[:dim];    pointCloud[19].SNR=16.70
-    pointCloud[20].array=np.array(	[3.83,-0.02,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[20].SNR=17.20
-    pointCloud[21].array=np.array(	[3.88,-0.02,0.33,-0.55],dtype=np.float32)[:dim];    pointCloud[21].SNR=16.00
-    pointCloud[22].array=np.array(	[3.93,-0.02,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[22].SNR=18.22
-    pointCloud[23].array=np.array(	[3.98,-0.02,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[23].SNR=18.78
-    pointCloud[24].array=np.array(	[4.08,-0.02,0.19,-0.66],dtype=np.float32)[:dim];    pointCloud[24].SNR=15.83
-    pointCloud[25].array=np.array(	[4.13,-0.02,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[25].SNR=17.79
-    pointCloud[26].array=np.array(	[3.78,0.00,0.23,-0.99 ],dtype=np.float32)[:dim];    pointCloud[26].SNR=16.12
-    pointCloud[27].array=np.array(	[3.83,0.00,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[27].SNR=16.83
-    pointCloud[28].array=np.array(	[3.88,0.00,0.33,-0.55 ],dtype=np.float32)[:dim];    pointCloud[28].SNR=15.70
-    pointCloud[29].array=np.array(	[3.93,0.00,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[29].SNR=18.46
-    pointCloud[30].array=np.array(	[3.98,0.00,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[30].SNR=17.56
-    pointCloud[31].array=np.array(	[4.13,0.00,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[31].SNR=16.73
-    pointCloud[32].array=np.array(	[4.28,0.00,0.10,-6.51 ],dtype=np.float32)[:dim];    pointCloud[32].SNR=15.39
-    pointCloud[33].array=np.array(	[3.78,0.02,0.23,-0.99 ],dtype=np.float32)[:dim];    pointCloud[33].SNR=15.46
-    pointCloud[34].array=np.array(	[3.83,0.02,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[34].SNR=16.42
-    pointCloud[35].array=np.array(	[3.88,0.02,0.33,-0.55 ],dtype=np.float32)[:dim];    pointCloud[35].SNR=15.21
-    pointCloud[36].array=np.array(	[3.93,0.02,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[36].SNR=16.76
-    pointCloud[37].array=np.array(	[3.98,0.02,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[37].SNR=16.03
-    pointCloud[38].array=np.array(	[4.13,0.02,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[38].SNR=15.29
-    pointCloud[39].array=np.array(	[3.83,0.03,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[39].SNR=15.98
-    pointCloud[40].array=np.array(	[3.93,0.03,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[40].SNR=15.51
-    pointCloud[41].array=np.array(	[3.83,0.05,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[41].SNR=15.53
-    pointCloud[42].array=np.array(	[3.83,0.07,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[42].SNR=15.08
+    pointCloud[0].array=np.array(	[3.83,-0.12,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[0].snr=15.32
+    pointCloud[1].array=np.array(	[3.83,-0.10,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[1].snr=15.92
+    pointCloud[2].array=np.array(	[3.78,-0.09,0.23,-0.99],dtype=np.float32)[:dim];    pointCloud[2].snr=15.21
+    pointCloud[3].array=np.array(	[3.83,-0.09,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[3].snr=16.55
+    pointCloud[4].array=np.array(	[3.78,-0.07,0.23,-0.99],dtype=np.float32)[:dim];    pointCloud[4].snr=15.85
+    pointCloud[5].array=np.array(	[3.83,-0.07,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[5].snr=17.10
+    pointCloud[6].array=np.array(	[3.78,-0.05,0.23,-0.99],dtype=np.float32)[:dim];    pointCloud[6].snr=16.49
+    pointCloud[7].array=np.array(	[3.83,-0.05,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[7].snr=17.44
+    pointCloud[8].array=np.array(	[3.88,-0.05,0.33,-0.55],dtype=np.float32)[:dim];    pointCloud[8].snr=15.57
+    pointCloud[9].array=np.array(	[3.93,-0.05,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[9].snr=15.31
+    pointCloud[10].array=np.array(	[3.98,-0.05,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[10].snr=15.91
+    pointCloud[11].array=np.array(	[4.03,-0.05,0.19,-0.66],dtype=np.float32)[:dim];    pointCloud[11].snr=15.36
+    pointCloud[12].array=np.array(	[3.78,-0.03,0.23,-0.99],dtype=np.float32)[:dim];    pointCloud[12].snr=16.87
+    pointCloud[13].array=np.array(	[3.83,-0.03,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[13].snr=17.45
+    pointCloud[14].array=np.array(	[3.88,-0.03,0.33,-0.55],dtype=np.float32)[:dim];    pointCloud[14].snr=15.94
+    pointCloud[15].array=np.array(	[3.93,-0.03,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[15].snr=16.52
+    pointCloud[16].array=np.array(	[3.98,-0.03,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[16].snr=17.33
+    pointCloud[17].array=np.array(	[4.08,-0.03,0.19,-0.66],dtype=np.float32)[:dim];    pointCloud[17].snr=15.57
+    pointCloud[18].array=np.array(	[4.13,-0.03,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[18].snr=16.51
+    pointCloud[19].array=np.array(	[3.78,-0.02,0.23,-0.99],dtype=np.float32)[:dim];    pointCloud[19].snr=16.70
+    pointCloud[20].array=np.array(	[3.83,-0.02,0.28,-0.55],dtype=np.float32)[:dim];    pointCloud[20].snr=17.20
+    pointCloud[21].array=np.array(	[3.88,-0.02,0.33,-0.55],dtype=np.float32)[:dim];    pointCloud[21].snr=16.00
+    pointCloud[22].array=np.array(	[3.93,-0.02,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[22].snr=18.22
+    pointCloud[23].array=np.array(	[3.98,-0.02,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[23].snr=18.78
+    pointCloud[24].array=np.array(	[4.08,-0.02,0.19,-0.66],dtype=np.float32)[:dim];    pointCloud[24].snr=15.83
+    pointCloud[25].array=np.array(	[4.13,-0.02,0.21,-0.66],dtype=np.float32)[:dim];    pointCloud[25].snr=17.79
+    pointCloud[26].array=np.array(	[3.78,0.00,0.23,-0.99 ],dtype=np.float32)[:dim];    pointCloud[26].snr=16.12
+    pointCloud[27].array=np.array(	[3.83,0.00,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[27].snr=16.83
+    pointCloud[28].array=np.array(	[3.88,0.00,0.33,-0.55 ],dtype=np.float32)[:dim];    pointCloud[28].snr=15.70
+    pointCloud[29].array=np.array(	[3.93,0.00,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[29].snr=18.46
+    pointCloud[30].array=np.array(	[3.98,0.00,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[30].snr=17.56
+    pointCloud[31].array=np.array(	[4.13,0.00,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[31].snr=16.73
+    pointCloud[32].array=np.array(	[4.28,0.00,0.10,-6.51 ],dtype=np.float32)[:dim];    pointCloud[32].snr=15.39
+    pointCloud[33].array=np.array(	[3.78,0.02,0.23,-0.99 ],dtype=np.float32)[:dim];    pointCloud[33].snr=15.46
+    pointCloud[34].array=np.array(	[3.83,0.02,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[34].snr=16.42
+    pointCloud[35].array=np.array(	[3.88,0.02,0.33,-0.55 ],dtype=np.float32)[:dim];    pointCloud[35].snr=15.21
+    pointCloud[36].array=np.array(	[3.93,0.02,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[36].snr=16.76
+    pointCloud[37].array=np.array(	[3.98,0.02,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[37].snr=16.03
+    pointCloud[38].array=np.array(	[4.13,0.02,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[38].snr=15.29
+    pointCloud[39].array=np.array(	[3.83,0.03,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[39].snr=15.98
+    pointCloud[40].array=np.array(	[3.93,0.03,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[40].snr=15.51
+    pointCloud[41].array=np.array(	[3.83,0.05,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[41].snr=15.53
+    pointCloud[42].array=np.array(	[3.83,0.07,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[42].snr=15.08
     mNum=43 # Number of input measurements
     targetDescr=gbl.targetDescr# Pointer to an array of GTRACK_targetDesc. This function populates the descritions for each of the tracked target 
     tNum=np.zeros(1,dtype=np.uint16)# Function returns a number of populated target descriptos 
@@ -183,12 +185,15 @@ def gtrack_cppyy_delete(hTrackModule):
     gbl.gtrack_delete(hTrackModule)
 
 
-use3D=False
+use3D=True
 gtrack_cppyy_init(gtrackRootPath="gtrack",use3D=use3D)
 hTrackModule=gtrack_cppyy_create(use3D)
 if hTrackModule is not cppyy.nullptr:
     targetDescr,tNum,mIndex,uIndex,presence=gtrack_cppyy_step(hTrackModule,use3D)
     print(tNum)
     for i in range(tNum):
-        print(targetDescr[i])
+        S=np.frombuffer(targetDescr[i].S, dtype=np.float32).reshape((-1,3))
+        uCenter=np.frombuffer(targetDescr[i].uCenter, dtype=np.float32)
+        print(S) # pos(X,Y,Z),vel(X,Y,Z),acc(X,Y,Z)
+        print(uCenter) # Range(m),Azimuth(rad),Elevation(rad),Radial velocity(m/s)
     gtrack_cppyy_delete(hTrackModule)
