@@ -1,0 +1,1783 @@
+******************************************************************************
+               TMS320C6x Linker Unix v8.3.12                   
+******************************************************************************
+>> Linked Thu Mar 30 13:17:37 2023
+
+OUTPUT FILE NAME:   <test/usecases/dss/awr2943_gtrack3D_usecase_dss.xe66>
+ENTRY POINT SYMBOL: "_c_int00"  address: 00837200
+
+
+MEMORY CONFIGURATION
+
+         name            origin    length      used     unused   attr    fill
+----------------------  --------  ---------  --------  --------  ----  --------
+  DSS_L2                00800000   00060000  00047f45  000180bb  RWIX
+  HWA_RAM               82000000   00020000  00000000  00020000  RWIX
+  DSS_L3                88000000   00200000  00002400  001fdc00  RWIX
+  RTOS_NORTOS_IPC_SHM_M c5000200   00001d40  00000000  00001d40  RWIX
+
+
+SEGMENT ALLOCATION MAP
+
+run origin  load origin   length   init length attrs members
+----------  ----------- ---------- ----------- ----- -------
+00800000    00800000    00000200   00000200    r-x
+  00800000    00800000    00000200   00000200    r-x .text:vectors
+00800200    00800200    00026450   00000000    rw-
+  00800200    00800200    00026450   00000000    rw- .far
+00826660    00826660    0001efc5   0001efc5    r-x
+  00826660    00826660    00013220   00013220    r-x .text
+  00839880    00839880    000095a0   000095a0    r-x .gtrackLibSection
+  00842e20    00842e20    00002805   00002805    r-- .const
+00845628    00845628    00002000   00000000    rw-
+  00845628    00845628    00001000   00000000    rw- .stack
+  00846628    00846628    00001000   00000000    rw- .sysmem
+00847628    00847628    000005c4   000005c4    rw-
+  00847628    00847628    000005c4   000005c4    rw- .fardata
+00847bec    00847bec    000001a8   000001a8    r--
+  00847bec    00847bec    000001a8   000001a8    r-- .switch
+00847d98    00847d98    00000120   00000000    rw-
+  00847d98    00847d98    00000120   00000000    rw- .cio
+00847eb8    00847eb8    00000004   00000004    r--
+  00847eb8    00847eb8    00000004   00000004    r-- .rodata
+00847ebc    00847ebc    00000014   00000000    rw-
+  00847ebc    00847ebc    00000014   00000000    rw- .bss
+00847ed0    00847ed0    0000008c   0000008c    rw-
+  00847ed0    00847ed0    0000008c   0000008c    rw- .neardata
+88000000    88000000    00002400   00000000    rw-
+  88000000    88000000    00002400   00000000    rw- .MCPILogBuffer
+
+
+SECTION ALLOCATION MAP
+
+ output                                  attributes/
+section   page    origin      length       input sections
+--------  ----  ----------  ----------   ----------------
+.text:vectors 
+*          0    00800000    00000200     
+                  00800000    00000200     freertos.awr294x.c66.ti-c6000.release.lib : port_hwi_vectors_freertos_asm.obj (.text:vectors)
+
+.text      0    00826660    00013220     
+                  00826660    00002000     rts6600_elf.lib : _printfi.c.obj (.text:__TI_printfi)
+                  00828660    00000ea0     gtrackApp.oe66 (.text:Test_initTask)
+                  00829500    00000a60     freertos.awr294x.c66.ti-c6000.release.lib : printf.obj (.text:_vsnprintf$0)
+                  00829f60    00000660     rts6600_elf.lib : powf.c.obj (.text:powf)
+                  0082a5c0    00000640                     : _printfi.c.obj (.text:_pconv_a)
+                  0082ac00    00000600                     : divd.c.obj (.text:__c6xabi_divd)
+                  0082b200    000004c0     freertos.awr294x.c66.ti-c6000.release.lib : printf.obj (.text:_ftoa$0)
+                  0082b6c0    000004a0                                               : printf.obj (.text:_etoa$0)
+                  0082bb60    00000440     rts6600_elf.lib : _printfi.c.obj (.text:_pconv_g)
+                  0082bfa0    000003c0                     : memory.c.obj (.text:free)
+                  0082c360    000002e0                     : fputs.c.obj (.text:fputs)
+                  0082c640    000002e0     freertos.awr294x.c66.ti-c6000.release.lib : timers.obj (.text:prvProcessReceivedCommands$0)
+                  0082c920    000002c0     rts6600_elf.lib : _printfi.c.obj (.text:_pconv_e)
+                  0082cbe0    000002c0                     : _printfi.c.obj (.text:fcvt)
+                  0082cea0    000002a0                     : divf.c.obj (.text:__c6xabi_divf)
+                  0082d140    00000280     freertos.awr294x.c66.ti-c6000.release.lib : printf.obj (.text:_ntoa_format$0)
+                  0082d3c0    00000280                                               : queue.obj (.text:xQueueSemaphoreTake)
+                  0082d640    00000260     libtestlogger_awr2943.ae66 : logger.oe66 (.text:MCPI_setFeatureTestResult)
+                  0082d8a0    00000260     rts6600_elf.lib : tanf.c.obj (.text:tanf)
+                  0082db00    00000260     freertos.awr294x.c66.ti-c6000.release.lib : queue.obj (.text:xQueueGenericSend)
+                  0082dd60    00000240     rts6600_elf.lib : imath64.c.obj (.text:__c6xabi_divull)
+                  0082dfa0    00000240                     : fread.c.obj (.text:fread)
+                  0082e1e0    00000220     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.text:SOC_rcmGetClkSrcAndDivReg$0)
+                  0082e400    00000220     rts6600_elf.lib : open.c.obj (.text:open)
+                  0082e620    00000200     freertos.awr294x.c66.ti-c6000.release.lib : ClockP_freertos_c66.obj (.text:ClockP_init)
+                  0082e820    00000200                                               : port_hwi_disp_always.obj (.text:_Hwi_dispatchAlways)
+                  0082ea20    00000200                                               : HeapP_internal.obj (.text:pvHeapMalloc)
+                  0082ec20    00000200                                               : queue.obj (.text:xQueueReceive)
+                  0082ee20    000001e0                                               : HwiP_c66.obj (.text:HwiP_init)
+                  0082f000    000001e0                                               : TimerP_rti.obj (.text:TimerP_setup)
+                  0082f1e0    000001e0                                               : tasks.obj (.text:prvInitialiseNewTask$0)
+                  0082f3c0    000001c0     rts6600_elf.lib : imath40.c.obj (.text:__c6xabi_divul)
+                  0082f580    000001c0                     : _printfi.c.obj (.text:_ltostr)
+                  0082f740    000001c0                     : fopen.c.obj (.text:_openfile)
+                  0082f900    000001c0                     : fputc.c.obj (.text:fputc)
+                  0082fac0    000001c0                     : ldexp.c.obj (.text:ldexp)
+                  0082fc80    000001c0                     : ldexpf.c.obj (.text:ldexpf)
+                  0082fe40    000001c0                     : memory.c.obj (.text:malloc)
+                  00830000    000001c0                     : setvbuf.c.obj (.text:setvbuf)
+                  008301c0    000001c0     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.text:xTaskIncrementTick)
+                  00830380    000001a0     rts6600_elf.lib : hostrename.c.obj (.text:HOSTrename)
+                  00830520    000001a0                     : frexp.c.obj (.text:frexp)
+                  008306c0    000001a0                     : frexpf.c.obj (.text:frexpf)
+                  00830860    000001a0     freertos.awr294x.c66.ti-c6000.release.lib : queue.obj (.text:xQueueGenericSendFromISR)
+                  00830a00    00000180     drivers.awr294x.c66.ti-c6000.release.lib : soc.obj (.text:SOC_controlModuleUnlockMMR)
+                  00830b80    00000180     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.text:vTaskPriorityDisinheritAfterTimeout)
+                  00830d00    00000180                                               : tasks.obj (.text:xTaskResumeAll)
+                  00830e80    00000160     drivers.awr294x.c66.ti-c6000.release.lib : soc.obj (.text:SOC_controlModuleLockMMR)
+                  00830fe0    00000160     rts6600_elf.lib : _bufread.c.obj (.text:__TI_buff_read)
+                  00831140    00000160     freertos.awr294x.c66.ti-c6000.release.lib : printf.obj (.text:_out_rev$0)
+                  008312a0    00000160                                               : HwiP_c66_asm.obj (.text)
+                  00831400    00000160     rts6600_elf.lib : logf.c.obj (.text:logf)
+                  00831560    00000160                     : sqrt.c.obj (.text:sqrt)
+                  008316c0    00000160     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.text:vTaskSwitchContext)
+                  00831820    00000160                                               : queue.obj (.text:xQueueGiveFromISR)
+                  00831980    00000160                                               : queue.obj (.text:xQueueReceiveFromISR)
+                  00831ae0    00000140                                               : HwiP_c66_handlers_freertos.obj (.text:HwiP_intcNmiDispatcher)
+                  00831c20    00000140                                               : TaskP_freertos.obj (.text:TaskP_loadUpdateAll)
+                  00831d60    00000140                                               : printf.obj (.text:_ntoa_long_long$0)
+                  00831ea0    00000140     rts6600_elf.lib : atanf.c.obj (.text:atanf)
+                  00831fe0    00000140     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.text:eTaskGetState)
+                  00832120    00000140     rts6600_elf.lib : fopen.c.obj (.text:fopen)
+                  00832260    00000140     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.text:vTaskDelete)
+                  008323a0    00000140                                               : queue.obj (.text:xQueueGenericCreateStatic)
+                  008324e0    00000140                                               : tasks.obj (.text:xTaskPriorityDisinherit)
+                  00832620    00000140                                               : tasks.obj (.text:xTaskPriorityInherit)
+                  00832760    00000120                                               : HwiP_c66.obj (.text:HwiP_intcEcmDispatcher)
+                  00832880    00000120     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.text:SOC_rcmGetHSDIVClkOutMuxClkSrc$0)
+                  008329a0    00000120     rts6600_elf.lib : _printfi.c.obj (.text:_pconv_f)
+                  00832ac0    00000120                     : getdevice.c.obj (.text:getdevice)
+                  00832be0    00000120     freertos.awr294x.c66.ti-c6000.release.lib : timers.obj (.text:prvSwitchTimerLists$0)
+                  00832d00    00000120                                               : queue.obj (.text:prvUnlockQueue$0)
+                  00832e20    00000120     rts6600_elf.lib : sqrtf.c.obj (.text:sqrtf)
+                  00832f40    00000120     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.text:xTaskCreateStatic)
+                  00833060    00000100     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.text:SOC_rcmSetPeripheralClock)
+                  00833160    00000100     rts6600_elf.lib : fclose.c.obj (.text:__TI_closefile)
+                  00833260    00000100                     : _printfi.c.obj (.text:_mcpy)
+                  00833360    00000100     freertos.awr294x.c66.ti-c6000.release.lib : printf.obj (.text:_ntoa_long$0)
+                  00833460    00000100     rts6600_elf.lib : atoi.c.obj (.text:atoi)
+                  00833560    00000100                     : fseek.c.obj (.text:fseek)
+                  00833660    00000100     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.text:prvAddCurrentTaskToDelayedList$0)
+                  00833760    00000100                                               : queue.obj (.text:prvCopyDataToQueue$0)
+                  00833860    000000e0     rts6600_elf.lib : hostlseek.c.obj (.text:HOSTlseek)
+                  00833940    000000e0                     : hostopen.c.obj (.text:HOSTopen)
+                  00833a20    000000e0                     : hostwrite.c.obj (.text:HOSTwrite)
+                  00833b00    000000e0     freertos.awr294x.c66.ti-c6000.release.lib : HwiP_c66.obj (.text:HwiP_construct)
+                  00833be0    000000e0     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.text:SOC_rcmADPLLJGetFOut$0)
+                  00833cc0    000000e0                                              : soc_rcm.obj (.text:SOC_rcmGetApllHSDivOutFreq$0)
+                  00833da0    000000e0                                              : soc_rcm.obj (.text:SOC_rcmGetCoreFout$0)
+                  00833e80    000000e0                                              : soc_rcm.obj (.text:SOC_rcmGetDSSFout$0)
+                  00833f60    000000e0                                              : soc_rcm.obj (.text:SOC_rcmGetDpllHSDivOutFreq$0)
+                  00834040    000000e0                                              : soc_rcm.obj (.text:SOC_rcmGetPerFout$0)
+                  00834120    000000e0     freertos.awr294x.c66.ti-c6000.release.lib : SemaphoreP_freertos.obj (.text:SemaphoreP_post)
+                  00834200    000000e0                                               : DebugP_log.obj (.text:_DebugP_assert)
+                  008342e0    000000e0     rts6600_elf.lib : _ltoa.c.obj (.text:__TI_ltoa)
+                  008343c0    000000e0                     : _io_perm.c.obj (.text:__TI_wrt_ok)
+                  008344a0    000000e0                     : divi.asm.obj (.text:__divi)
+                  00834580    000000e0                     : close.c.obj (.text:close)
+                  00834660    000000e0                     : exit.c.obj (.text:exit)
+                  00834740    000000e0                     : memset.c.obj (.text:memset)
+                  00834820    000000e0                     : printf.c.obj (.text:printf)
+                  00834900    000000e0     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.text:prvAddNewTaskToReadyList$0)
+                  008349e0    000000e0                                               : timers.obj (.text:prvProcessExpiredTimer$0)
+                  00834ac0    000000e0                                               : HeapP_internal.obj (.text:vHeapFree)
+                  00834ba0    000000e0                                               : tasks.obj (.text:vTaskGetInfo)
+                  00834c80    000000e0                                               : tasks.obj (.text:vTaskStartScheduler)
+                  00834d60    000000e0                                               : queue.obj (.text:xQueueGenericReset)
+                  00834e40    000000e0                                               : tasks.obj (.text:xTaskCheckForTimeOut)
+                  00834f20    000000e0                                               : tasks.obj (.text:xTaskRemoveFromEventList)
+                  00835000    000000e0                                               : timers.obj (.text:xTimerGenericCommand)
+                  008350e0    000000c0                                               : ClockP_freertos.obj (.text:ClockP_getTimeUsec)
+                  008351a0    000000c0     rts6600_elf.lib : hostread.c.obj (.text:HOSTread)
+                  00835260    000000c0                     : hostunlink.c.obj (.text:HOSTunlink)
+                  00835320    000000c0     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.text:SOC_rcmGetFreqLeafNode$0)
+                  008353e0    000000c0                                              : soc_rcm.obj (.text:SOC_rcmGetXTALFrequency$0)
+                  008354a0    000000c0     rts6600_elf.lib : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit:__TI_auto_init_nobinit_nopinit)
+                  00835560    000000c0                     : divu.asm.obj (.text:__divu)
+                  00835620    000000c0                     : remi.asm.obj (.text:__remi)
+                  008356e0    000000c0                     : memory.c.obj (.text:minsert)
+                  008357a0    000000c0                     : memory.c.obj (.text:mremove)
+                  00835860    000000c0     freertos.awr294x.c66.ti-c6000.release.lib : HeapP_internal.obj (.text:prvInsertBlockIntoFreeList$0)
+                  00835920    000000c0                                               : timers.obj (.text:prvProcessTimerOrBlockTask$0)
+                  008359e0    000000c0     rts6600_elf.lib : tls.c.obj (.text:tls:init:__TI_tls_init)
+                  00835aa0    000000c0                     : vprintf.c.obj (.text:vprintf)
+                  00835b60    000000c0     freertos.awr294x.c66.ti-c6000.release.lib : timers.obj (.text:xTimerCreateTimerTask)
+                  00835c20    000000a0                                               : ClockP_freertos.obj (.text:ClockP_usleep)
+                  00835cc0    000000a0     rts6600_elf.lib : hostclose.c.obj (.text:HOSTclose)
+                  00835d60    000000a0     freertos.awr294x.c66.ti-c6000.release.lib : HwiP_c66_handlers_freertos.obj (.text:HwiP_assignIntrHandlers)
+                  00835e00    000000a0     drivers.awr294x.c66.ti-c6000.release.lib : pinmux.obj (.text:Pinmux_config)
+                  00835ea0    000000a0                                              : soc_rcm.obj (.text:SOC_rcmGetCoreHSDivOut$0)
+                  00835f40    000000a0                                              : soc_rcm.obj (.text:SOC_rcmGetDSSHSDivOut$0)
+                  00835fe0    000000a0                                              : soc_rcm.obj (.text:SOC_rcmGetFreq$0)
+                  00836080    000000a0                                              : soc_rcm.obj (.text:SOC_rcmGetPerHSDivOut$0)
+                  00836120    000000a0     freertos.awr294x.c66.ti-c6000.release.lib : SemaphoreP_freertos.obj (.text:SemaphoreP_pend)
+                  008361c0    000000a0                                               : DebugP_freertos.obj (.text:_DebugP_logZone)
+                  00836260    000000a0     rts6600_elf.lib : fopen.c.obj (.text:__TI_cleanup)
+                  00836300    000000a0                     : fflush.c.obj (.text:__TI_doflush)
+                  008363a0    000000a0                     : _io_perm.c.obj (.text:__TI_rd_ok)
+                  00836440    000000a0                     : fixfu.c.obj (.text:__c6xabi_fixfu)
+                  008364e0    000000a0                     : fltullf.c.obj (.text:__c6xabi_fltullf)
+                  00836580    000000a0                     : remu.asm.obj (.text:__remu)
+                  00836620    000000a0     freertos.awr294x.c66.ti-c6000.release.lib : printf.obj (.text:_atoi$0)
+                  008366c0    000000a0     rts6600_elf.lib : _printfi.c.obj (.text:_ecpy)
+                  00836760    000000a0                     : getdevice.c.obj (.text:finddevice)
+                  00836800    000000a0     main_dss.oe66 (.text:main)
+                  008368a0    000000a0     rts6600_elf.lib : memcpy64.asm.obj (.text:memcpy)
+                  00836940    000000a0     freertos.awr294x.c66.ti-c6000.release.lib : timers.obj (.text:prvCheckForValidListAndQueue$0)
+                  008369e0    000000a0                                               : HeapP_internal.obj (.text:prvHeapInit$0)
+                  00836a80    000000a0                                               : tasks.obj (.text:prvInitialiseTaskLists$0)
+                  00836b20    000000a0                                               : list.obj (.text:vListInsert)
+                  00836bc0    000000a0                                               : queue.obj (.text:xQueueGiveMutexRecursive)
+                  00836c60    000000a0                                               : queue.obj (.text:xQueueTakeMutexRecursive)
+                  00836d00    00000080                                               : CacheP_c66.obj (.text:CacheP_all$0)
+                  00836d80    00000080                                               : CacheP_c66.obj (.text:CacheP_init)
+                  00836e00    00000080                                               : CacheP_c66.obj (.text:CacheP_setMar)
+                  00836e80    00000080     ti_power_clock_config.oe66 (.text:Module_clockSetFrequency)
+                  00836f00    00000080     freertos.awr294x.c66.ti-c6000.release.lib : SemaphoreP_freertos.obj (.text:SemaphoreP_constructMutex)
+                  00836f80    00000080                                               : port_tasksupport.obj (.text:_TaskSupport_swap__E)
+                  00837000    00000080     rts6600_elf.lib : trgmsg.c.obj (.text:__TI_readmsg)
+                  00837080    00000080                     : fixdu.c.obj (.text:__c6xabi_fixdu)
+                  00837100    00000080                     : llshift.c.obj (.text:__c6xabi_llshl)
+                  00837180    00000080                     : roundf.c.obj (.text:__c6xabi_roundf)
+                  00837200    00000080                     : boot.c.obj (.text:_c_int00)
+                  00837280    00000080                     : snprintf.c.obj (.text:_outs)
+                  00837300    00000080                     : fclose.c.obj (.text:fclose)
+                  00837380    00000080                     : modff.c.obj (.text:modff)
+                  00837400    00000080     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.text:prvCheckTasksWaitingTermination$0)
+                  00837480    00000080                                               : tasks.obj (.text:prvDeleteTCB$0)
+                  00837500    00000080                                               : timers.obj (.text:prvInsertTimerInActiveList$0)
+                  00837580    00000080     rts6600_elf.lib : snprintf.c.obj (.text:snprintf)
+                  00837600    00000080                     : unlink.c.obj (.text:unlink)
+                  00837680    00000080     freertos.awr294x.c66.ti-c6000.release.lib : TaskP_freertos.obj (.text:vApplicationLoadHook)
+                  00837700    00000080                                               : port.obj (.text:vPortAssertIfInISR)
+                  00837780    00000080                                               : port.obj (.text:vPortYield)
+                  00837800    00000080                                               : queue.obj (.text:vQueueWaitForMessageRestricted)
+                  00837880    00000080                                               : tasks.obj (.text:vTaskDelay)
+                  00837900    00000080                                               : tasks.obj (.text:vTaskPlaceOnEventListRestricted)
+                  00837980    00000060                                               : CacheP_c66.obj (.text:CacheP_setSize)
+                  008379e0    00000060                                               : CacheP_c66.obj (.text:CacheP_wbInvAll)
+                  00837a40    00000060     ti_dpl_config.oe66 (.text:Dpl_init)
+                  00837aa0    00000060     freertos.awr294x.c66.ti-c6000.release.lib : HeapP_freertos.obj (.text:HeapP_construct)
+                  00837b00    00000060                                               : port_hwi.obj (.text:Hwi_dispatchC__I)
+                  00837b60    00000060     ti_power_clock_config.oe66 (.text:Module_clockEnable)
+                  00837bc0    00000060     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.text:SOC_rcmGetClkSrcFromClkSelVal$0)
+                  00837c20    00000060                                              : soc_rcm.obj (.text:SOC_rcmGetModuleClkDivVal$0)
+                  00837c80    00000060     freertos.awr294x.c66.ti-c6000.release.lib : port_hwi_switch.obj (.text:_Hwi_switchAndDispatch__I)
+                  00837ce0    00000060     rts6600_elf.lib : frcmpyd_div.c.obj (.text:__TI_frcmpyd_div)
+                  00837d40    00000060                     : trgmsg.c.obj (.text:__TI_writemsg)
+                  00837da0    00000060                     : llshift.c.obj (.text:__c6xabi_llshru)
+                  00837e00    00000060                     : imath64.c.obj (.text:__c6xabi_remull)
+                  00837e60    00000060                     : imath64.c.obj (.text:_subcull)
+                  00837ec0    00000060                     : lseek.c.obj (.text:lseek)
+                  00837f20    00000060                     : memccpy.c.obj (.text:memccpy)
+                  00837f80    00000060     freertos.awr294x.c66.ti-c6000.release.lib : queue.obj (.text:prvCopyDataFromQueue$0)
+                  00837fe0    00000060                                               : queue.obj (.text:prvInitialiseNewQueue$0)
+                  00838040    00000060                                               : timers.obj (.text:prvSampleTimeNow$0)
+                  008380a0    00000060                                               : tasks.obj (.text:prvTaskCheckFreeStackSpace$0)
+                  00838100    00000060     rts6600_elf.lib : read.c.obj (.text:read)
+                  00838160    00000060                     : sprintf.c.obj (.text:sprintf)
+                  008381c0    00000060     freertos.awr294x.c66.ti-c6000.release.lib : queue.obj (.text:vQueueAddToRegistry)
+                  00838220    00000060                                               : tasks.obj (.text:vTaskEnterCritical)
+                  00838280    00000060                                               : tasks.obj (.text:vTaskExitCritical)
+                  008382e0    00000060                                               : tasks.obj (.text:vTaskPlaceOnEventList)
+                  00838340    00000060     rts6600_elf.lib : write.c.obj (.text:write)
+                  008383a0    00000040     freertos.awr294x.c66.ti-c6000.release.lib : ClockP_freertos.obj (.text:ClockP_timerTickIsr)
+                  008383e0    00000040                                               : DebugP_log.obj (.text:DebugP_logZoneEnable)
+                  00838420    00000040                                               : HeapP_freertos.obj (.text:HeapP_alloc)
+                  00838460    00000040                                               : HeapP_freertos.obj (.text:HeapP_free)
+                  008384a0    00000040                                               : port_hwi.obj (.text:HwiP_inISR)
+                  008384e0    00000040                                               : port_hwi.obj (.text:Hwi_Module_startup)
+                  00838520    00000040     libtestlogger_awr2943.ae66 : logger.oe66 (.text:MCPI_Initialize)
+                  00838560    00000040     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.text:SOC_rcmExtract32$0)
+                  008385a0    00000040                                              : soc_rcm.obj (.text:SOC_rcmExtract8$0)
+                  008385e0    00000040                                              : soc_rcm.obj (.text:SOC_rcmGetHSDivClkSrc$0)
+                  00838620    00000040                                              : soc_rcm.obj (.text:SOC_rcmInsert16$0)
+                  00838660    00000040     freertos.awr294x.c66.ti-c6000.release.lib : TimerP_rti.obj (.text:TimerP_Params_init)
+                  008386a0    00000040                                               : TimerP_rti.obj (.text:TimerP_getCount)
+                  008386e0    00000040                                               : DebugP_log.obj (.text:_DebugP_assertNoLog)
+                  00838720    00000040                                               : port_tasksupport.obj (.text:_TaskSupport_buildTaskStack)
+                  00838760    00000040     rts6600_elf.lib : isinf.c.obj (.text:__c6xabi_isinf)
+                  008387a0    00000040                     : _printfi.c.obj (.text:__c6xabi_isnan)
+                  008387e0    00000040                     : strasg.asm.obj (.text:__strasgi_64plus)
+                  00838820    00000040                     : args_main.c.obj (.text:_args_main)
+                  00838860    00000040                     : snprintf.c.obj (.text:_outc)
+                  008388a0    00000040                     : sprintf.c.obj (.text:_outs)
+                  008388e0    00000040     gtrackAlloc.oe66 (.text:gtrack_alloc)
+                  00838920    00000040     gtrackAlloc.oe66 (.text:gtrack_free)
+                  00838960    00000040     gtrackLog.oe66 (.text:gtrack_log)
+                  008389a0    00000040     freertos.awr294x.c66.ti-c6000.release.lib : queue.obj (.text:prvGetDisinheritPriorityAfterTimeout$0)
+                  008389e0    00000040                                               : timers.obj (.text:prvGetNextExpireTime$0)
+                  00838a20    00000040                                               : tasks.obj (.text:prvIdleTask$0)
+                  00838a60    00000040                                               : queue.obj (.text:prvInitialiseMutex$0)
+                  00838aa0    00000040                                               : queue.obj (.text:prvIsQueueEmpty$0)
+                  00838ae0    00000040                                               : queue.obj (.text:prvIsQueueFull$0)
+                  00838b20    00000040                                               : tasks.obj (.text:prvResetNextTaskUnblockTime$0)
+                  00838b60    00000040                                               : tasks.obj (.text:pvTaskIncrementMutexHeldCount)
+                  00838ba0    00000040                                               : port.obj (.text:pxPortInitialiseStack)
+                  00838be0    00000040                                               : list.obj (.text:uxListRemove)
+                  00838c20    00000040                                               : port.obj (.text:vApplicationGetIdleTaskMemory)
+                  00838c60    00000040                                               : port.obj (.text:vApplicationGetTimerTaskMemory)
+                  00838ca0    00000040                                               : port.obj (.text:vApplicationStackOverflowHook)
+                  00838ce0    00000040                                               : list.obj (.text:vListInsertEnd)
+                  00838d20    00000040                                               : heap_3.obj (.text:vPortFree)
+                  00838d60    00000040                                               : port.obj (.text:vPortTimerTickHandler)
+                  00838da0    00000040                                               : port.obj (.text:vPortYieldAsyncFromISR)
+                  00838de0    00000040                                               : printf.obj (.text:vprintf_)
+                  00838e20    00000040     rts6600_elf.lib : wcslen.c.obj (.text:wcslen)
+                  00838e60    00000040     freertos.awr294x.c66.ti-c6000.release.lib : port.obj (.text:xPortStartScheduler)
+                  00838ea0    00000040                                               : queue.obj (.text:xQueueCreateMutexStatic)
+                  00838ee0    00000040                                               : tasks.obj (.text:xTaskGetIdleTaskHandle)
+                  00838f20    00000040                                               : tasks.obj (.text:xTaskGetSchedulerState)
+                  00838f60    00000040                                               : tasks.obj (.text:xTaskGetTickCount)
+                  00838fa0    00000020     ti_board_open_close.oe66 (.text:Board_driversClose)
+                  00838fc0    00000020     ti_board_open_close.oe66 (.text:Board_driversOpen)
+                  00838fe0    00000020     ti_board_config.oe66 (.text:Board_init)
+                  00839000    00000020     freertos.awr294x.c66.ti-c6000.release.lib : ClockP_freertos.obj (.text:ClockP_sleepTicks$0)
+                  00839020    00000020                                               : ClockP_freertos.obj (.text:ClockP_usecToTicks)
+                  00839040    00000020                                               : CycleCounterP_c66.obj (.text:CycleCounterP_reset)
+                  00839060    00000020     ti_drivers_open_close.oe66 (.text:Drivers_open)
+                  00839080    00000020     freertos.awr294x.c66.ti-c6000.release.lib : HwiP_c66.obj (.text:HwiP_Params_init)
+                  008390a0    00000020                                               : HwiP_c66.obj (.text:HwiP_disable)
+                  008390c0    00000020                                               : HwiP_c66.obj (.text:HwiP_enable)
+                  008390e0    00000020                                               : HwiP_c66_handlers_freertos.obj (.text:HwiP_intcDispatcher$0)
+                  00839100    00000020                                               : HwiP_c66_handlers_freertos.obj (.text:HwiP_intcEcm0Dispatcher$0)
+                  00839120    00000020                                               : HwiP_c66_handlers_freertos.obj (.text:HwiP_intcEcm1Dispatcher$0)
+                  00839140    00000020                                               : HwiP_c66_handlers_freertos.obj (.text:HwiP_intcEcm2Dispatcher$0)
+                  00839160    00000020                                               : HwiP_c66_handlers_freertos.obj (.text:HwiP_intcEcm3Dispatcher$0)
+                  00839180    00000020                                               : HwiP_c66_handlers_freertos.obj (.text:HwiP_intcReservedDispatcher$0)
+                  008391a0    00000020                                               : HwiP_c66.obj (.text:HwiP_restore)
+                  008391c0    00000020                                               : port_hwi.obj (.text:Hwi_dispatchCore__I)
+                  008391e0    00000020                                               : port_hwi.obj (.text:Hwi_getIsrStackAddress)
+                  00839200    00000020                                               : port_hwi.obj (.text:Hwi_switchFromBootStack)
+                  00839220    00000020     libtestlogger_awr2943.ae66 : logger.oe66 (.text:MCPI_setTestResult)
+                  00839240    00000020     ti_pinmux_config.oe66 (.text:Pinmux_init)
+                  00839260    00000020     ti_power_clock_config.oe66 (.text:PowerClock_init)
+                  00839280    00000020     drivers.awr294x.c66.ti-c6000.release.lib : soc.obj (.text:SOC_moduleClockEnable)
+                  008392a0    00000020                                              : soc.obj (.text:SOC_moduleSetClockFrequency)
+                  008392c0    00000020                                              : soc_rcm.obj (.text:SOC_rcmGetFixedRootClkFout$0)
+                  008392e0    00000020                                              : soc_rcm.obj (.text:SOC_rcmGetPeripheralClockFrequency$0)
+                  00839300    00000020     ti_drivers_config.oe66 (.text:System_init)
+                  00839320    00000020     freertos.awr294x.c66.ti-c6000.release.lib : TaskP_freertos.obj (.text:TaskP_calcCounterDiff$0)
+                  00839340    00000020                                               : port.obj (.text:Task_Func)
+                  00839360    00000020                                               : port.obj (.text:Task_enter)
+                  00839380    00000020                                               : TimerP_rti.obj (.text:TimerP_clearOverflowInt)
+                  008393a0    00000020                                               : TimerP_rti.obj (.text:TimerP_getReloadCount)
+                  008393c0    00000020                                               : TimerP_rti.obj (.text:TimerP_start)
+                  008393e0    00000020                                               : TimerP_rti.obj (.text:TimerP_stop)
+                  00839400    00000020                                               : port_tasksupport.obj (.text:_TaskSupport_glue)
+                  00839420    00000020     rts6600_elf.lib : errno.c.obj (.text:__c6xabi_errno_addr)
+                  00839440    00000020                     : truncf.c.obj (.text:__c6xabi_truncf)
+                  00839460    00000020                     : push.asm.obj (.text:__pop_rts)
+                  00839480    00000020                     : push.asm.obj (.text:__push_rts)
+                  008394a0    00000020                     : _lock.c.obj (.text:_nop)
+                  008394c0    00000020     freertos.awr294x.c66.ti-c6000.release.lib : printf.obj (.text:_out_char$0)
+                  008394e0    00000020                                               : printf.obj (.text:_out_null$0)
+                  00839500    00000020     rts6600_elf.lib : printf.c.obj (.text:_outc)
+                  00839520    00000020                     : sprintf.c.obj (.text:_outc)
+                  00839540    00000020                     : vprintf.c.obj (.text:_outc)
+                  00839560    00000020                     : printf.c.obj (.text:_outs)
+                  00839580    00000020                     : vprintf.c.obj (.text:_outs)
+                  008395a0    00000020                     : signbit.c.obj (.text:_signbit)
+                  008395c0    00000020                     : startup.c.obj (.text:_system_post_cinit)
+                  008395e0    00000020                     : pre_init.c.obj (.text:_system_pre_init)
+                  00839600    00000020                     : exit.c.obj (.text:abort)
+                  00839620    00000020     freertos.awr294x.c66.ti-c6000.release.lib : port_hwi_vectors_freertos_asm.obj (.text)
+                  00839640    00000020     rts6600_elf.lib : llabs.c.obj (.text:llabs)
+                  00839660    00000020     freertos.awr294x.c66.ti-c6000.release.lib : port.obj (.text:prvTaskExitError$0)
+                  00839680    00000020                                               : timers.obj (.text:prvTimerTask$0)
+                  008396a0    00000020     ti_dpl_config.oe66 (.text:putchar_)
+                  008396c0    00000020     freertos.awr294x.c66.ti-c6000.release.lib : port.obj (.text:uiPortGetRunTimeCounterValue)
+                  008396e0    00000020                                               : port.obj (.text:vApplicationIdleHook)
+                  00839700    00000020                                               : HeapP_internal.obj (.text:vHeapCreateStatic)
+                  00839720    00000020                                               : list.obj (.text:vListInitialise)
+                  00839740    00000020                                               : list.obj (.text:vListInitialiseItem)
+                  00839760    00000020                                               : port.obj (.text:vPortConfigTimerForRunTimeStats)
+                  00839780    00000020                                               : port.obj (.text:vPortRestoreTaskContext)
+                  008397a0    00000020                                               : port.obj (.text:vPortValidateInterruptPriority)
+                  008397c0    00000020                                               : port.obj (.text:vPortYeildFromISR)
+                  008397e0    00000020                                               : tasks.obj (.text:vTaskInternalSetTimeOutState)
+                  00839800    00000020                                               : tasks.obj (.text:vTaskMissedYield)
+                  00839820    00000020                                               : tasks.obj (.text:vTaskSuspendAll)
+                  00839840    00000020                                               : port.obj (.text:xPortInIsrContext)
+                  00839860    00000020                                               : tasks.obj (.text:xTaskGetCurrentTaskHandle)
+
+.const     0    00842e20    00002805     
+                  00842e20    00000660     gtrackApp.oe66 (.const:.string)
+                  00843480    0000053c     freertos.awr294x.c66.ti-c6000.release.lib : queue.obj (.const:.string)
+                  008439bc    000004f8                                               : tasks.obj (.const:.string)
+                  00843eb4    00000304     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:.string)
+                  008441b8    000002d8                                              : soc_rcm.obj (.const:gSocRcmADPLLJConfigTbl$0)
+                  00844490    000001a4                                              : soc_rcm.obj (.const:gSocRcmClkSrcInfoMap$0)
+                  00844634    00000150     freertos.awr294x.c66.ti-c6000.release.lib : timers.obj (.const:.string)
+                  00844784    00000138                                               : HeapP_internal.obj (.const:.string)
+                  008448bc    00000104                                               : ClockP_freertos_c66.obj (.const:.string)
+                  008449c0    00000101     rts6600_elf.lib : ctype.c.obj (.const:.string:_ctypes_)
+                  00844ac1    00000003     --HOLE-- [fill = 0]
+                  00844ac4    000000c0     freertos.awr294x.c66.ti-c6000.release.lib : TimerP_rti.obj (.const:.string)
+                  00844b84    000000a8                                               : port.obj (.const:.string)
+                  00844c2c    00000094     libtestlogger_awr2943.ae66 : logger.oe66 (.const:.string)
+                  00844cc0    00000088     freertos.awr294x.c66.ti-c6000.release.lib : SemaphoreP_freertos.obj (.const:.string)
+                  00844d48    00000050                                               : printf.obj (.const:pow10$1$0)
+                  00844d98    00000048                                               : HeapP_freertos.obj (.const:.string)
+                  00844de0    00000048     main_dss.oe66 (.const:.string)
+                  00844e28    00000040     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:gSocRcmXTALInfo$0)
+                  00844e68    00000034                                              : soc_rcm.obj (.const:gSocRcmPeripheralClkSrcInfoMap$0)
+                  00844e9c    00000030     freertos.awr294x.c66.ti-c6000.release.lib : DebugP_log.obj (.const:.string)
+                  00844ecc    00000004     --HOLE-- [fill = 0]
+                  00844ed0    0000002c     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:gSocRcmHsDivMuxClkSrcInfoMap$0)
+                  00844efc    00000004     --HOLE-- [fill = 0]
+                  00844f00    00000028                                              : soc_rcm.obj (.const:gSocRcmFixedClocksTbl$0)
+                  00844f28    00000024     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.const:.string:$P$T26$27$0)
+                  00844f4c    00000024     rts6600_elf.lib : _printfi.c.obj (.const:.string)
+                  00844f70    00000020     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.const:.string:$P$T18$19$0)
+                  00844f90    00000020     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:gSocRcmXTALFreqTbl$0)
+                  00844fb0    0000001f                                              : soc_rcm.obj (.const:.string:$P$T1$2$0)
+                  00844fcf    00000001     --HOLE-- [fill = 0]
+                  00844fd0    0000001e     freertos.awr294x.c66.ti-c6000.release.lib : port.obj (.const:.string:$P$T0$1$0)
+                  00844fee    00000002     --HOLE-- [fill = 0]
+                  00844ff0    0000001b                                               : timers.obj (.const:.string:$P$T11$13$0)
+                  0084500b    00000005     --HOLE-- [fill = 0]
+                  00845010    0000001b     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:.string:$P$T20$21$0)
+                  0084502b    00000005     --HOLE-- [fill = 0]
+                  00845030    0000001a     freertos.awr294x.c66.ti-c6000.release.lib : queue.obj (.const:.string:$P$T1$2$0)
+                  0084504a    00000006     --HOLE-- [fill = 0]
+                  00845050    0000001a     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:.string:$P$T11$12$0)
+                  0084506a    00000006     --HOLE-- [fill = 0]
+                  00845070    0000001a     freertos.awr294x.c66.ti-c6000.release.lib : SemaphoreP_freertos.obj (.const:.string:$P$T2$3$0)
+                  0084508a    00000006     --HOLE-- [fill = 0]
+                  00845090    0000001a     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:gSocRcmCpswClkSrcValMap$0)
+                  008450aa    00000006     --HOLE-- [fill = 0]
+                  008450b0    0000001a                                              : soc_rcm.obj (.const:gSocRcmCptsClkSrcValMap$0)
+                  008450ca    00000006     --HOLE-- [fill = 0]
+                  008450d0    0000001a                                              : soc_rcm.obj (.const:gSocRcmCsiRxClkSrcValMap$0)
+                  008450ea    00000006     --HOLE-- [fill = 0]
+                  008450f0    0000001a                                              : soc_rcm.obj (.const:gSocRcmDssHwaClkSrcValMap$0)
+                  0084510a    00000006     --HOLE-- [fill = 0]
+                  00845110    0000001a                                              : soc_rcm.obj (.const:gSocRcmDssRtiClkSrcValMap$0)
+                  0084512a    00000006     --HOLE-- [fill = 0]
+                  00845130    0000001a                                              : soc_rcm.obj (.const:gSocRcmDssSciClkSrcValMap$0)
+                  0084514a    00000006     --HOLE-- [fill = 0]
+                  00845150    0000001a                                              : soc_rcm.obj (.const:gSocRcmI2CClkSrcValMap$0)
+                  0084516a    00000006     --HOLE-- [fill = 0]
+                  00845170    0000001a                                              : soc_rcm.obj (.const:gSocRcmMcanClkSrcValMap$0)
+                  0084518a    00000006     --HOLE-- [fill = 0]
+                  00845190    0000001a                                              : soc_rcm.obj (.const:gSocRcmQspiClkSrcValMap$0)
+                  008451aa    00000006     --HOLE-- [fill = 0]
+                  008451b0    0000001a                                              : soc_rcm.obj (.const:gSocRcmRtiClkSrcValMap$0)
+                  008451ca    00000006     --HOLE-- [fill = 0]
+                  008451d0    0000001a                                              : soc_rcm.obj (.const:gSocRcmSciClkSrcValMap$0)
+                  008451ea    00000006     --HOLE-- [fill = 0]
+                  008451f0    0000001a                                              : soc_rcm.obj (.const:gSocRcmSpiClkSrcValMap$0)
+                  0084520a    00000006     --HOLE-- [fill = 0]
+                  00845210    00000019     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.const:.string:$P$T19$20$0)
+                  00845229    00000007     --HOLE-- [fill = 0]
+                  00845230    00000019                                               : queue.obj (.const:.string:$P$T3$4$0)
+                  00845249    00000007     --HOLE-- [fill = 0]
+                  00845250    00000019                                               : queue.obj (.const:.string:$P$T4$5$0)
+                  00845269    00000007     --HOLE-- [fill = 0]
+                  00845270    00000019                                               : queue.obj (.const:.string:$P$T8$9$0)
+                  00845289    00000007     --HOLE-- [fill = 0]
+                  00845290    00000018                                               : tasks.obj (.const:.string:$P$T25$26$0)
+                  008452a8    00000017                                               : timers.obj (.const:.string:$P$T10$11$0)
+                  008452bf    00000001     --HOLE-- [fill = 0]
+                  008452c0    00000017                                               : tasks.obj (.const:.string:$P$T12$13$0)
+                  008452d7    00000001     --HOLE-- [fill = 0]
+                  008452d8    00000017     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:.string:$P$T17$18$0)
+                  008452ef    00000001     --HOLE-- [fill = 0]
+                  008452f0    00000017                                              : soc_rcm.obj (.const:.string:$P$T5$6$0)
+                  00845307    00000001     --HOLE-- [fill = 0]
+                  00845308    00000016     freertos.awr294x.c66.ti-c6000.release.lib : timers.obj (.const:.string:$P$T0$1$0)
+                  0084531e    00000002     --HOLE-- [fill = 0]
+                  00845320    00000016     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:.string:$P$T15$16$0)
+                  00845336    00000002     --HOLE-- [fill = 0]
+                  00845338    00000016     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.const:.string:$P$T16$17$0)
+                  0084534e    00000002     --HOLE-- [fill = 0]
+                  00845350    00000016     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:.string:$P$T19$20$0)
+                  00845366    00000002     --HOLE-- [fill = 0]
+                  00845368    00000016                                              : soc_rcm.obj (.const:gSocRcmPllCoreOut2HSDivClkSrcValMap$0)
+                  0084537e    00000002     --HOLE-- [fill = 0]
+                  00845380    00000016                                              : soc_rcm.obj (.const:gSocRcmPllDspOut1HSDivClkSrcValMap$0)
+                  00845396    00000002     --HOLE-- [fill = 0]
+                  00845398    00000016                                              : soc_rcm.obj (.const:gSocRcmPllDspOut2HSDivClkSrcValMap$0)
+                  008453ae    00000002     --HOLE-- [fill = 0]
+                  008453b0    00000016                                              : soc_rcm.obj (.const:gSocRcmPllPerOut1HSDivClkSrcValMap$0)
+                  008453c6    00000002     --HOLE-- [fill = 0]
+                  008453c8    00000015     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.const:.string:$P$T1$2$0)
+                  008453dd    00000003     --HOLE-- [fill = 0]
+                  008453e0    00000015                                               : queue.obj (.const:.string:$P$T13$14$0)
+                  008453f5    00000003     --HOLE-- [fill = 0]
+                  008453f8    00000015                                               : tasks.obj (.const:.string:$P$T22$23$0)
+                  0084540d    00000003     --HOLE-- [fill = 0]
+                  00845410    00000015                                               : timers.obj (.const:.string:$P$T3$4$0)
+                  00845425    00000003     --HOLE-- [fill = 0]
+                  00845428    00000014                                               : queue.obj (.const:.string:$P$T11$12$0)
+                  0084543c    00000004     --HOLE-- [fill = 0]
+                  00845440    00000014                                               : timers.obj (.const:.string:$P$T12$14$0)
+                  00845454    00000004     --HOLE-- [fill = 0]
+                  00845458    00000014                                               : tasks.obj (.const:.string:$P$T9$10$0)
+                  0084546c    00000014                                               : printf.obj (.const:.string)
+                  00845480    00000013                                               : queue.obj (.const:.string:$P$T0$1$0)
+                  00845493    00000005     --HOLE-- [fill = 0]
+                  00845498    00000013                                               : port.obj (.const:.string:$P$T1$2$0)
+                  008454ab    00000005     --HOLE-- [fill = 0]
+                  008454b0    00000013                                               : tasks.obj (.const:.string:$P$T14$15$0)
+                  008454c3    00000005     --HOLE-- [fill = 0]
+                  008454c8    00000013                                               : tasks.obj (.const:.string:$P$T15$16$0)
+                  008454db    00000005     --HOLE-- [fill = 0]
+                  008454e0    00000013     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:.string:$P$T16$17$0)
+                  008454f3    00000005     --HOLE-- [fill = 0]
+                  008454f8    00000012     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.const:.string:$P$T0$1$0)
+                  0084550a    00000006     --HOLE-- [fill = 0]
+                  00845510    00000012     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.const:.string:$P$T14$15$0)
+                  00845522    00000006     --HOLE-- [fill = 0]
+                  00845528    00000012                                              : soc_rcm.obj (.const:.string:$P$T18$19$0)
+                  0084553a    00000006     --HOLE-- [fill = 0]
+                  00845540    00000012     freertos.awr294x.c66.ti-c6000.release.lib : queue.obj (.const:.string:$P$T7$8$0)
+                  00845552    00000006     --HOLE-- [fill = 0]
+                  00845558    00000012                                               : queue.obj (.const:.string:$P$T9$10$0)
+                  0084556a    00000006     --HOLE-- [fill = 0]
+                  00845570    00000010                                               : HeapP_freertos.obj (.const:.string:$P$T0$1$0)
+                  00845580    0000000f                                               : tasks.obj (.const:.string:$P$T10$11$0)
+                  0084558f    00000001     --HOLE-- [fill = 0]
+                  00845590    0000000e                                               : queue.obj (.const:.string:$P$T10$11$0)
+                  0084559e    00000002     --HOLE-- [fill = 0]
+                  008455a0    0000000e                                               : tasks.obj (.const:.string:$P$T4$5$0)
+                  008455ae    00000002     --HOLE-- [fill = 0]
+                  008455b0    0000000d                                               : HeapP_internal.obj (.const:.string:$P$T0$1$0)
+                  008455bd    00000003     --HOLE-- [fill = 0]
+                  008455c0    0000000d                                               : TimerP_rti.obj (.const:.string:$P$T0$1$0)
+                  008455cd    00000003     --HOLE-- [fill = 0]
+                  008455d0    0000000d                                               : tasks.obj (.const:.string:$P$T24$25$0)
+                  008455dd    00000003     --HOLE-- [fill = 0]
+                  008455e0    0000000c                                               : ClockP_freertos_c66.obj (.const:.string:$P$T0$1$0)
+                  008455ec    00000004     --HOLE-- [fill = 0]
+                  008455f0    0000000c                                               : tasks.obj (.const:.string:$P$T2$3$0)
+                  008455fc    00000004     --HOLE-- [fill = 0]
+                  00845600    0000000b                                               : tasks.obj (.const:.string:$P$T3$4$0)
+                  0084560b    00000005     --HOLE-- [fill = 0]
+                  00845610    0000000a                                               : HeapP_internal.obj (.const:.string:$P$T1$2$0)
+                  0084561a    00000006     --HOLE-- [fill = 0]
+                  00845620    00000005     main_dss.oe66 (.const:.string:$P$T0$1)
+
+.cinit     0    00800000    00000000     UNINITIALIZED
+
+.far       0    00800200    00026450     UNINITIALIZED
+                  00800200    0000c000     (.common:gAppTskStackMain)
+                  0080c200    00008000     (.common:gHeapMem)
+                  00814200    000073a0     (.common:targetDescr)
+                  0081b5a0    00004e20     (.common:pointCloud)
+                  008203c0    00004000     (.common:uxHwiStack)
+                  008243c0    00001000     freertos.awr294x.c66.ti-c6000.release.lib : port.obj (.far:uxIdleTaskStack$0)
+                  008253c0    0000040c     (.common:gHwiCtrl)
+                  008257cc    00000004     --HOLE--
+                  008257d0    00000400                                               : port.obj (.far:uxTimerTaskStack$0)
+                  00825bd0    00000280                                               : tasks.obj (.far:pxReadyTasksLists$0)
+                  00825e50    00000140     (.common:__TI_tmpnams)
+                  00825f90    00000100     (.common:xQueueRegistry)
+                  00826090    00000100                                               : timers.obj (.far:ucStaticTimerQueueStorage$16$0)
+                  00826190    000000a0     (.common:gTaskP_ctrl)
+                  00826230    00000098                                               : DebugP_freertos.obj (.far:gDebugLogLockObj$0)
+                  008262c8    0000008c     (.common:gAppTaskObj)
+                  00826354    0000008c                                               : port.obj (.far:xIdleTaskTCB$0)
+                  008263e0    0000008c                                               : port.obj (.far:xTimerTaskTCB$0)
+                  0082646c    00000080     (.common:gHeapObj)
+                  008264ec    00000050                                               : timers.obj (.far:xStaticTimerQueue$15$0)
+                  0082653c    00000044     (.common:gHwiIntcIntrTable)
+                  00826580    00000038     (.common:gClockCtrl)
+                  008265b8    00000014                                               : timers.obj (.far:xActiveTimerList1$0)
+                  008265cc    00000014                                               : timers.obj (.far:xActiveTimerList2$0)
+                  008265e0    00000014                                               : tasks.obj (.far:xDelayedTaskList1$0)
+                  008265f4    00000014                                               : tasks.obj (.far:xDelayedTaskList2$0)
+                  00826608    00000014                                               : tasks.obj (.far:xPendingReadyList$0)
+                  0082661c    00000014                                               : tasks.obj (.far:xSuspendedTaskList$0)
+                  00826630    00000014                                               : tasks.obj (.far:xTasksWaitingTermination$0)
+                  00826644    00000004     --HOLE--
+                  00826648    00000008     (.common:parmbuf)
+
+.stack     0    00845628    00001000     UNINITIALIZED
+                  00845628    00000008     rts6600_elf.lib : boot.c.obj (.stack)
+                  00845630    00000ff8     --HOLE--
+
+.sysmem    0    00846628    00001000     UNINITIALIZED
+                  00846628    00000008     rts6600_elf.lib : memory.c.obj (.sysmem)
+                  00846630    00000ff8     --HOLE--
+
+.fardata   0    00847628    000005c4     
+                  00847628    000001e0     rts6600_elf.lib : defs.c.obj (.fardata:_ftable)
+                  00847808    000000a0                     : write.c.obj (.fardata:_stream)
+                  008478a8    00000080     ti_pinmux_config.oe66 (.fardata:gPinMuxMainDomainCfg)
+                  00847928    0000007c     gtrackApp.oe66 (.fardata:appSceneryParams)
+                  008479a4    00000004     rts6600_elf.lib : _lock.c.obj (.fardata:_lock)
+                  008479a8    00000078                     : write.c.obj (.fardata:_device)
+                  00847a20    00000044                     : powf.c.obj (.fardata:A1$1)
+                  00847a64    0000003c     gtrackApp.oe66 (.fardata:appPresenceDetectionParams)
+                  00847aa0    00000024     ti_dpl_config.oe66 (.fardata:gCacheMarRegion)
+                  00847ac4    00000004     rts6600_elf.lib : _lock.c.obj (.fardata:_unlock)
+                  00847ac8    00000020                     : powf.c.obj (.fardata:A2$2)
+                  00847ae8    00000020                     : atanf.c.obj (.fardata:arctan_consts$1)
+                  00847b08    00000020                     : logf.c.obj (.fardata:log_consts$1)
+                  00847b28    0000001c     freertos.awr294x.c66.ti-c6000.release.lib : port_hwi.obj (.fardata:Hwi_Module__state__V)
+                  00847b44    00000018     gtrackApp.oe66 (.fardata:appAllocationParams)
+                  00847b5c    00000014     gtrackApp.oe66 (.fardata:appGatingParams)
+                  00847b70    00000014     ti_dpl_config.oe66 (.fardata:gClockConfig)
+                  00847b84    00000004     rts6600_elf.lib : defs.c.obj (.fardata)
+                  00847b88    0000000c                     : powf.c.obj (.fardata:Q$4)
+                  00847b94    0000000c     gtrackApp.oe66 (.fardata:appStateParams)
+                  00847ba0    0000000c     ti_dpl_config.oe66 (.fardata:gCacheSize)
+                  00847bac    00000004     rts6600_elf.lib : errno.c.obj (.fardata)
+                  00847bb0    0000000c     ti_power_clock_config.oe66 (.fardata:gSocModulesClockFrequency)
+                  00847bbc    0000000c     rts6600_elf.lib : exit.c.obj (.fardata)
+                  00847bc8    00000008                     : tanf.c.obj (.fardata:Q$2)
+                  00847bd0    00000008                     : memory.c.obj (.fardata)
+                  00847bd8    00000004                     : tanf.c.obj (.fardata:P$1)
+                  00847bdc    00000004                     : fopen.c.obj (.fardata)
+                  00847be0    00000004                     : powf.c.obj (.fardata:P$3)
+                  00847be4    00000004                     : open.c.obj (.fardata)
+                  00847be8    00000004     ti_power_clock_config.oe66 (.fardata:gSocModules)
+
+.switch    0    00847bec    000001a8     
+                  00847bec    00000084     freertos.awr294x.c66.ti-c6000.release.lib : printf.obj (.switch:_vsnprintf$0)
+                  00847c70    00000050     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.switch:SOC_rcmGetClkSrcAndDivReg$0)
+                  00847cc0    00000038     rts6600_elf.lib : _printfi.c.obj (.switch:__TI_printfi)
+                  00847cf8    00000018     libgtrack3D_awr2943.ae66 : gtrack_create.oe66 (.switch:gtrack_create)
+                  00847d10    00000014     drivers.awr294x.c66.ti-c6000.release.lib : soc_rcm.obj (.switch:SOC_rcmGetApllHSDivOutFreq$0)
+                  00847d24    00000014                                              : soc_rcm.obj (.switch:SOC_rcmGetCoreHSDivOut$0)
+                  00847d38    00000014                                              : soc_rcm.obj (.switch:SOC_rcmGetDSSHSDivOut$0)
+                  00847d4c    00000014                                              : soc_rcm.obj (.switch:SOC_rcmGetFreqLeafNode$0)
+                  00847d60    00000014                                              : soc_rcm.obj (.switch:SOC_rcmGetPerHSDivOut$0)
+                  00847d74    00000010                                              : soc_rcm.obj (.switch:SOC_rcmGetHSDIVClkOutMuxClkSrc$0)
+                  00847d84    00000010     libgtrack3D_awr2943.ae66 : gtrack_unit_update.oe66 (.switch:gtrack_velocityStateHandling)
+
+.cio       0    00847d98    00000120     UNINITIALIZED
+                  00847d98    00000120     rts6600_elf.lib : trgmsg.c.obj (.cio)
+
+.rodata    0    00847eb8    00000004     
+                  00847eb8    00000004     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.rodata)
+
+.bss       0    00847ebc    00000014     UNINITIALIZED
+                  00847ebc    00000008     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.bss)
+                  00847ec4    00000008                                               : timers.obj (.bss)
+                  00847ecc    00000004     (.common:gAppTask)
+
+.neardata 
+*          0    00847ed0    0000008c     
+                  00847ed0    00000040     freertos.awr294x.c66.ti-c6000.release.lib : tasks.obj (.neardata)
+                  00847f10    00000018                                               : port.obj (.neardata)
+                  00847f28    0000000c                                               : timers.obj (.neardata)
+                  00847f34    0000000c     libtestlogger_awr2943.ae66 : logger.oe66 (.neardata)
+                  00847f40    00000008     freertos.awr294x.c66.ti-c6000.release.lib : TaskP_freertos.obj (.neardata)
+                  00847f48    00000004                                               : DebugP_freertos.obj (.neardata)
+                  00847f4c    00000004                                               : DebugP_log.obj (.neardata)
+                  00847f50    00000004     gtrackAlloc.oe66 (.neardata)
+                  00847f54    00000004     main_dss.oe66 (.neardata)
+                  00847f58    00000004     ti_dpl_config.oe66 (.neardata)
+
+.gtrackLibSection 
+*          0    00839880    000095a0     
+                  00839880    000017e0     libgtrack3D_awr2943.ae66 : gtrack_unit_update.oe66 (.text:gtrack_unitUpdate)
+                  0083b060    00000ba0                              : gtrack_create.oe66 (.text:gtrack_create)
+                  0083bc00    000009e0                              : gtrack_module.oe66 (.text:gtrack_moduleAllocate)
+                  0083c5e0    00000900                              : gtrack_utilities_3d.oe66 (.text:gtrack_matrixInv)
+                  0083cee0    00000700                              : gtrack_unit_score.oe66 (.text:gtrack_unitScore)
+                  0083d5e0    00000540                              : gtrack_step.oe66 (.text:gtrack_step)
+                  0083db20    00000500                              : gtrack_unit_event.oe66 (.text:gtrack_unitEvent)
+                  0083e020    00000460                              : gtrack_unit_update.oe66 (.text:gtrack_velocityStateHandling)
+                  0083e480    000003c0                              : gtrack_unit_create.oe66 (.text:gtrack_unitCreate)
+                  0083e840    000003a0                              : gtrack_utilities.oe66 (.text:gtrack_computeJacobian)
+                  0083ebe0    00000300                              : gtrack_module.oe66 (.text:gtrack_modulePresence)
+                  0083eee0    000002c0                              : gtrack_unit_predict.oe66 (.text:gtrack_unitPredict)
+                  0083f1a0    00000240                              : gtrack_unit_start.oe66 (.text:gtrack_unitStart)
+                  0083f3e0    00000200                              : gtrack_math.oe66 (.text:gtrack_matrixPrint2)
+                  0083f5e0    000001e0                              : gtrack_utilities.oe66 (.text:gtrack_cartesian2spherical)
+                  0083f7c0    000001c0                              : gtrack_delete.oe66 (.text:gtrack_delete)
+                  0083f980    000001c0                              : gtrack_utilities_3d.oe66 (.text:gtrack_matrixComputePJT)
+                  0083fb40    00000140                              : gtrack_math.oe66 (.text:gtrack_matrixPrint)
+                  0083fc80    00000120                              : gtrack_listlib.oe66 (.text:gtrack_listRemoveElement)
+                  0083fda0    00000120                              : gtrack_utilities.oe66 (.text:gtrack_spherical2cartesian)
+                  0083fec0    00000100                              : gtrack_utilities_3d.oe66 (.text:gtrack_computeMahalanobis)
+                  0083ffc0    00000100                              : gtrack_math.oe66 (.text:gtrack_matrixCovNormalize)
+                  008400c0    00000100                              : gtrack_math.oe66 (.text:gtrack_matrixMakeSymmetrical)
+                  008401c0    00000100                              : gtrack_module.oe66 (.text:gtrack_moduleUpdate)
+                  008402c0    000000e0                              : gtrack_utilities_3d.oe66 (.text:gtrack_calcDistance)
+                  008403a0    000000e0                              : gtrack_utilities_3d.oe66 (.text:gtrack_calcMeasurementLimits)
+                  00840480    000000e0                              : gtrack_utilities_3d.oe66 (.text:gtrack_calcMeasurementSpread)
+                  00840560    000000e0                              : gtrack_math.oe66 (.text:gtrack_matrixCovAcc)
+                  00840640    000000e0                              : gtrack_math.oe66 (.text:gtrack_matrixCovFilter)
+                  00840720    000000e0                              : gtrack_math.oe66 (.text:gtrack_matrixTransposeMultiply)
+                  00840800    000000c0                              : gtrack_utilities_3d.oe66 (.text:gtrack_cart2sph)
+                  008408c0    000000c0                              : gtrack_math.oe66 (.text:gtrack_matrixMultiply)
+                  00840980    000000c0                              : gtrack_module.oe66 (.text:gtrack_modulePredict)
+                  00840a40    000000c0                              : gtrack_unit_stop.oe66 (.text:gtrack_unitStop)
+                  00840b00    000000c0                              : gtrack_utilities.oe66 (.text:gtrack_unrollRadialVelocity)
+                  00840bc0    000000a0                              : gtrack_utilities_3d.oe66 (.text:gtrack_computeMahalanobisPartial)
+                  00840c60    000000a0                              : gtrack_utilities_3d.oe66 (.text:gtrack_isPointBehindTarget)
+                  00840d00    000000a0                              : gtrack_math.oe66 (.text:gtrack_matrixSetDiag)
+                  00840da0    000000a0                              : gtrack_module.oe66 (.text:gtrack_moduleAssociate)
+                  00840e40    000000a0                              : gtrack_module.oe66 (.text:gtrack_moduleReport)
+                  00840ee0    000000a0                              : gtrack_math.oe66 (.text:gtrack_sincosd)
+                  00840f80    000000a0                              : gtrack_utilities_3d.oe66 (.text:gtrack_sph2cart)
+                  00841020    000000a0                              : gtrack_unit_report.oe66 (.text:gtrack_unitReport)
+                  008410c0    00000080                              : gtrack_utilities_3d.oe66 (.text:gtrack_calcDim)
+                  00841140    00000080                              : gtrack_utilities_3d.oe66 (.text:gtrack_censor2world)
+                  008411c0    00000080                              : gtrack_utilities_3d.oe66 (.text:gtrack_isInsideSolidAngle)
+                  00841240    00000060                              : gtrack_utilities_3d.oe66 (.text:gtrack_isInsideBoresightStaticZone)
+                  008412a0    00000060                              : gtrack_utilities_3d.oe66 (.text:gtrack_isPointInsideBox)
+                  00841300    00000060                              : gtrack_math.oe66 (.text:gtrack_matrixAdd)
+                  00841360    00000060                              : gtrack_math.oe66 (.text:gtrack_matrixGetDiag)
+                  008413c0    00000060                              : gtrack_math.oe66 (.text:gtrack_matrixSub)
+                  00841420    00000060                              : gtrack_math.oe66 (.text:gtrack_vectorScalarMulAcc)
+                  00841480    00000040                              : gtrack_listlib.oe66 (.text:gtrack_listDequeue)
+                  008414c0    00000040                              : gtrack_listlib.oe66 (.text:gtrack_listEnqueue)
+                  00841500    00000040                              : gtrack_math.oe66 (.text:gtrack_matrixInit)
+                  00841540    00000040                              : gtrack_math.oe66 (.text:gtrack_vectorAdd)
+                  00841580    00000040                              : gtrack_math.oe66 (.text:gtrack_vectorScalarMul)
+                  008415c0    00000040                              : gtrack_math.oe66 (.text:gtrack_vectorSub)
+                  00841600    00000020                              : gtrack_listlib.oe66 (.text:gtrack_listGetFirst)
+                  00841620    00000020                              : gtrack_listlib.oe66 (.text:gtrack_listGetNext)
+                  00841640    00000020                              : gtrack_listlib.oe66 (.text:gtrack_listInit)
+                  00841660    00000020                              : gtrack_unit_delete.oe66 (.text:gtrack_unitDelete)
+                  00841680    00000020                              : gtrack_unit_get.oe66 (.text:gtrack_unitGetC)
+                  008416a0    00000020                              : gtrack_unit_get.oe66 (.text:gtrack_unitGetMCenter)
+                  008416c0    00000020                              : gtrack_unit_get.oe66 (.text:gtrack_unitGetSpread)
+                  008416e0    00000020                              : gtrack_math.oe66 (.text:gtrack_vectorInit)
+                  00841700    000005a0                              : gtrack_math.oe66 (.const:cosTable)
+                  00841ca0    000005a0                              : gtrack_math.oe66 (.const:sinTable)
+                  00842240    000003b8                              : gtrack_unit_update.oe66 (.const:.string)
+                  008425f8    00000144                              : gtrack_create.oe66 (.const:$P$T3$3)
+                  0084273c    00000004     --HOLE-- [fill = 0]
+                  00842740    00000144                              : gtrack_create.oe66 (.const:$P$T4$4)
+                  00842884    00000118                              : gtrack_module.oe66 (.const:.string)
+                  0084299c    000000b8                              : gtrack_unit_event.oe66 (.const:.string)
+                  00842a54    00000004     --HOLE-- [fill = 0]
+                  00842a58    00000090                              : gtrack_create.oe66 (.const:$P$T1$1)
+                  00842ae8    00000090                              : gtrack_create.oe66 (.const:$P$T2$2)
+                  00842b78    0000007c                              : gtrack_unit_predict.oe66 (.const:.string)
+                  00842bf4    0000007c                              : gtrack_create.oe66 (.const:defaultSceneryParams)
+                  00842c70    00000054                              : gtrack_unit_start.oe66 (.const:.string)
+                  00842cc4    0000003c                              : gtrack_create.oe66 (.const:defaultPresenceParams)
+                  00842d00    00000038                              : gtrack_unit_stop.oe66 (.const:.string)
+                  00842d38    00000028                              : gtrack_math.oe66 (.const:.string)
+                  00842d60    00000024                              : gtrack_unit_score.oe66 (.const:.string)
+                  00842d84    00000004     --HOLE-- [fill = 0]
+                  00842d88    00000024                              : gtrack_utilities_3d.oe66 (.const:pInit)
+                  00842dac    00000018                              : gtrack_create.oe66 (.const:defaultAllocationParams)
+                  00842dc4    00000004     --HOLE-- [fill = 0]
+                  00842dc8    00000015                              : gtrack_module.oe66 (.const:.string:$P$T2$1)
+                  00842ddd    00000003     --HOLE-- [fill = 0]
+                  00842de0    00000014                              : gtrack_create.oe66 (.const:defaultGatingParams)
+                  00842df4    00000004     --HOLE-- [fill = 0]
+                  00842df8    00000010                              : gtrack_utilities_3d.oe66 (.const:spreadMin)
+                  00842e08    0000000c                              : gtrack_create.oe66 (.const:defaultStateParams)
+                  00842e14    0000000c     --HOLE-- [fill = 00000000]
+
+.MCPILogBuffer 
+*          0    88000000    00002400     UNINITIALIZED
+                  88000000    00002400     main_dss.oe66 (.MCPILogBuffer)
+
+MODULE SUMMARY
+
+       Module                              code     ro data   rw data
+       ------                              ----     -------   -------
+    obj_awr29433D/
+       gtrackApp.oe66                      3744     1632      82736  
+       main_dss.oe66                       160      77        58516  
+       gtrackAlloc.oe66                    128      0         4      
+       gtrackLog.oe66                      64       0         0      
+    +--+-----------------------------------+--------+---------+---------+
+       Total:                              4096     1709      141256 
+                                                                     
+    obj_awr29433D/dssgenerated/
+       ti_power_clock_config.oe66          256      0         16     
+       ti_dpl_config.oe66                  128      0         72     
+       ti_pinmux_config.oe66               32       0         128    
+       ti_board_open_close.oe66            64       0         0      
+       ti_board_config.oe66                32       0         0      
+       ti_drivers_config.oe66              32       0         0      
+       ti_drivers_open_close.oe66          32       0         0      
+    +--+-----------------------------------+--------+---------+---------+
+       Total:                              576      0         216    
+                                                                     
+    /home/gtbldadm/nightlybuilds/mmwave_app_sdk/scripts/jenkins/../../ti/utils/testlogger/lib/libtestlogger_awr2943.ae66
+       logger.oe66                         704      148       12     
+    +--+-----------------------------------+--------+---------+---------+
+       Total:                              704      148       12     
+                                                                     
+    /opt/ti/ccs1220/ccs/tools/compiler/ti-cgt-c6000_8.3.12/lib/rts6600_elf.lib
+       _printfi.c.obj                      13504    92        0      
+       memory.c.obj                        1792     0         8      
+       powf.c.obj                          1632     0         116    
+       divd.c.obj                          1536     0         0      
+       fopen.c.obj                         928      0         4      
+       defs.c.obj                          0        0         804    
+       imath64.c.obj                       768      0         0      
+       fputs.c.obj                         736      0         0      
+       divf.c.obj                          672      0         0      
+       tanf.c.obj                          608      0         12     
+       fread.c.obj                         576      0         0      
+       open.c.obj                          544      0         4      
+       trgmsg.c.obj                        224      0         288    
+       fputc.c.obj                         448      0         0      
+       getdevice.c.obj                     448      0         0      
+       imath40.c.obj                       448      0         0      
+       ldexp.c.obj                         448      0         0      
+       ldexpf.c.obj                        448      0         0      
+       setvbuf.c.obj                       448      0         0      
+       frexp.c.obj                         416      0         0      
+       frexpf.c.obj                        416      0         0      
+       hostrename.c.obj                    416      0         0      
+       _io_perm.c.obj                      384      0         0      
+       fclose.c.obj                        384      0         0      
+       logf.c.obj                          352      0         32     
+       write.c.obj                         96       0         280    
+       _bufread.c.obj                      352      0         0      
+       atanf.c.obj                         320      0         32     
+       sqrt.c.obj                          352      0         0      
+       snprintf.c.obj                      320      0         0      
+       printf.c.obj                        288      0         0      
+       sqrtf.c.obj                         288      0         0      
+       exit.c.obj                          256      0         12     
+       ctype.c.obj                         0        257       0      
+       atoi.c.obj                          256      0         0      
+       fseek.c.obj                         256      0         0      
+       vprintf.c.obj                       256      0         0      
+       hostopen.c.obj                      224      0         8      
+       _ltoa.c.obj                         224      0         0      
+       close.c.obj                         224      0         0      
+       divi.asm.obj                        224      0         0      
+       hostlseek.c.obj                     224      0         0      
+       hostwrite.c.obj                     224      0         0      
+       llshift.c.obj                       224      0         0      
+       memset.c.obj                        224      0         0      
+       autoinit.c.obj                      192      0         0      
+       divu.asm.obj                        192      0         0      
+       hostread.c.obj                      192      0         0      
+       hostunlink.c.obj                    192      0         0      
+       remi.asm.obj                        192      0         0      
+       sprintf.c.obj                       192      0         0      
+       tls.c.obj                           192      0         0      
+       fflush.c.obj                        160      0         0      
+       fixfu.c.obj                         160      0         0      
+       fltullf.c.obj                       160      0         0      
+       hostclose.c.obj                     160      0         0      
+       memcpy64.asm.obj                    160      0         0      
+       remu.asm.obj                        160      0         0      
+       boot.c.obj                          128      0         0      
+       fixdu.c.obj                         128      0         0      
+       modff.c.obj                         128      0         0      
+       roundf.c.obj                        128      0         0      
+       unlink.c.obj                        128      0         0      
+       frcmpyd_div.c.obj                   96       0         0      
+       lseek.c.obj                         96       0         0      
+       memccpy.c.obj                       96       0         0      
+       read.c.obj                          96       0         0      
+       args_main.c.obj                     64       0         0      
+       isinf.c.obj                         64       0         0      
+       push.asm.obj                        64       0         0      
+       strasg.asm.obj                      64       0         0      
+       wcslen.c.obj                        64       0         0      
+       _lock.c.obj                         32       0         8      
+       errno.c.obj                         32       0         4      
+       llabs.c.obj                         32       0         0      
+       pre_init.c.obj                      32       0         0      
+       signbit.c.obj                       32       0         0      
+       startup.c.obj                       32       0         0      
+       truncf.c.obj                        32       0         0      
+    +--+-----------------------------------+--------+---------+---------+
+       Total:                              37280    349       1612   
+                                                                     
+    /opt/ti/mcu_plus_sdk_awr294x_08_06_00_28/source/drivers/lib/drivers.awr294x.c66.ti-c6000.release.lib
+       soc_rcm.obj                         3968     2977      0      
+       soc.obj                             800      0         0      
+       pinmux.obj                          160      0         0      
+    +--+-----------------------------------+--------+---------+---------+
+       Total:                              4928     2977      0      
+                                                                     
+    /opt/ti/mcu_plus_sdk_awr294x_08_06_00_28/source/kernel/freertos/lib/freertos.awr294x.c66.ti-c6000.release.lib
+       port_hwi.obj                        320      0         16412  
+       tasks.obj                           6560     1621      812    
+       printf.obj                          6912     232       0      
+       queue.obj                           5024     1551      256    
+       port.obj                            1024     217       5424   
+       timers.obj                          2336     449       396    
+       HwiP_c66.obj                        1120     0         1104   
+       HeapP_internal.obj                  1120     335       0      
+       TimerP_rti.obj                      736      205       0      
+       ClockP_freertos_c66.obj             512      272       0      
+       SemaphoreP_freertos.obj             512      162       0      
+       HwiP_c66_handlers_freertos.obj      672      0         0      
+       TaskP_freertos.obj                  480      0         168    
+       CacheP_c66.obj                      576      0         0      
+       port_hwi_vectors_freertos_asm.obj   544      0         0      
+       ClockP_freertos.obj                 480      0         56     
+       port_hwi_disp_always.obj            512      0         0      
+       DebugP_log.obj                      352      48        4      
+       HwiP_c66_asm.obj                    352      0         0      
+       list.obj                            352      0         0      
+       DebugP_freertos.obj                 160      0         156    
+       HeapP_freertos.obj                  224      88        0      
+       port_tasksupport.obj                224      0         0      
+       port_hwi_switch.obj                 96       0         0      
+       heap_3.obj                          64       0         0      
+       CycleCounterP_c66.obj               32       0         0      
+    +--+-----------------------------------+--------+---------+---------+
+       Total:                              31296    5180      24788  
+                                                                     
+    lib/libgtrack3D_awr2943.ae66
+       gtrack_unit_update.oe66             7232     968       0      
+       gtrack_math.oe66                    3200     2920      0      
+       gtrack_utilities_3d.oe66            4928     52        0      
+       gtrack_module.oe66                  4064     301       0      
+       gtrack_create.oe66                  2976     1200      0      
+       gtrack_utilities.oe66               1888     0         0      
+       gtrack_unit_score.oe66              1792     36        0      
+       gtrack_unit_event.oe66              1280     184       0      
+       gtrack_step.oe66                    1344     0         0      
+       gtrack_unit_create.oe66             960      0         0      
+       gtrack_unit_predict.oe66            704      124       0      
+       gtrack_unit_start.oe66              576      84        0      
+       gtrack_listlib.oe66                 512      0         0      
+       gtrack_delete.oe66                  448      0         0      
+       gtrack_unit_stop.oe66               192      56        0      
+       gtrack_unit_report.oe66             160      0         0      
+       gtrack_unit_get.oe66                96       0         0      
+       gtrack_unit_delete.oe66             32       0         0      
+    +--+-----------------------------------+--------+---------+---------+
+       Total:                              32384    5925      0      
+                                                                     
+       Heap:                               0        0         4096   
+       Stack:                              0        0         4096   
+    +--+-----------------------------------+--------+---------+---------+
+       Grand Total:                        111264   16288     176076 
+
+
+GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
+
+address   name                               
+-------   ----                               
+00838fa0  Board_driversClose                 
+00838fc0  Board_driversOpen                  
+00838fe0  Board_init                         
+00839600  C$$EXIT                            
+00837d98  C$$IO$$                            
+00836d80  CacheP_init                        
+00836e00  CacheP_setMar                      
+00837980  CacheP_setSize                     
+008379e0  CacheP_wbInvAll                    
+00838f60  ClockP_getTicks                    
+008350e0  ClockP_getTimeUsec                 
+008386a0  ClockP_getTimerCount               
+0082e620  ClockP_init                        
+00839380  ClockP_timerClearOverflowInt       
+008383a0  ClockP_timerTickIsr                
+00839020  ClockP_usecToTicks                 
+00835c20  ClockP_usleep                      
+00839040  CycleCounterP_reset                
+008383e0  DebugP_logZoneEnable               
+00837a40  Dpl_init                           
+00839060  Drivers_open                       
+00847ed8  FreeRTOS_errno                     
+00835cc0  HOSTclose                          
+00833860  HOSTlseek                          
+00833940  HOSTopen                           
+008351a0  HOSTread                           
+00830380  HOSTrename                         
+00835260  HOSTunlink                         
+00833a20  HOSTwrite                          
+00838420  HeapP_alloc                        
+00837aa0  HeapP_construct                    
+00838460  HeapP_free                         
+008312a0  HwiP_Entry                         
+00839080  HwiP_Params_init                   
+00835d60  HwiP_assignIntrHandlers            
+00833b00  HwiP_construct                     
+008390a0  HwiP_disable                       
+008390c0  HwiP_enable                        
+008384a0  HwiP_inISR                         
+0082ee20  HwiP_init                          
+00832760  HwiP_intcEcmDispatcher             
+00831360  HwiP_intcGlobalDisable             
+00831340  HwiP_intcGlobalEnable              
+008313d4  HwiP_intcGlobalExcepClear          
+008313ac  HwiP_intcGlobalExcepEnable         
+008313c0  HwiP_intcGlobalExtExcepEnable      
+00831398  HwiP_intcGlobalNmiEnable           
+00831380  HwiP_intcGlobalRestore             
+008312f4  HwiP_intcInterruptClear            
+008312d4  HwiP_intcInterruptDisable          
+008312b4  HwiP_intcInterruptEnable           
+00831310  HwiP_intcInterruptRestore          
+00831304  HwiP_intcInterruptSet              
+00839620  HwiP_intcIvpSet                    
+00831ae0  HwiP_intcNmiDispatcher             
+00831328  HwiP_intcQueryInterruptStatus      
+008391a0  HwiP_restore                       
+00847b28  Hwi_Module__state__V               
+008384e0  Hwi_Module_startup                 
+0082e820  Hwi_dispatchAlways                 
+00837b00  Hwi_dispatchC__I                   
+008391c0  Hwi_dispatchCore__I                
+008391e0  Hwi_getIsrStackAddress             
+00837c80  Hwi_switchAndDispatch__I           
+00839200  Hwi_switchFromBootStack            
+00847f38  MCPI_FailSignature                 
+00838520  MCPI_Initialize                    
+00847f34  MCPI_Result                        
+88000000  MCPI_logMessage                    
+0082d640  MCPI_setFeatureTestResult          
+00839220  MCPI_setTestResult                 
+00837b60  Module_clockEnable                 
+00836e80  Module_clockSetFrequency           
+00835e00  Pinmux_config                      
+00839240  Pinmux_init                        
+00839260  PowerClock_init                    
+00830e80  SOC_controlModuleLockMMR           
+00830a00  SOC_controlModuleUnlockMMR         
+00839280  SOC_moduleClockEnable              
+008392a0  SOC_moduleSetClockFrequency        
+00833060  SOC_rcmSetPeripheralClock          
+00836f00  SemaphoreP_constructMutex          
+00836120  SemaphoreP_pend                    
+00834120  SemaphoreP_post                    
+00839300  System_init                        
+00831c20  TaskP_loadUpdateAll                
+00837780  TaskP_yield                        
+00838720  TaskSupport_buildTaskStack         
+00839400  TaskSupport_glue                   
+00836f80  TaskSupport_swap__E                
+00839340  Task_Func                          
+00839360  Task_enter                         
+00839660  Task_exit                          
+00828660  Test_initTask                      
+00838660  TimerP_Params_init                 
+00839380  TimerP_clearOverflowInt            
+008386a0  TimerP_getCount                    
+008393a0  TimerP_getReloadCount              
+0082f000  TimerP_setup                       
+008393c0  TimerP_start                       
+008393e0  TimerP_stop                        
+00834200  _DebugP_assert                     
+008386e0  _DebugP_assertNoLog                
+008361c0  _DebugP_logZone                    
+00847d98  __CIOBUF_                          
+UNDEFED   __TI_CINIT_Base                    
+UNDEFED   __TI_CINIT_Limit                   
+UNDEFED   __TI_Handler_Table_Base            
+UNDEFED   __TI_Handler_Table_Limit           
+00846628  __TI_STACK_END                     
+00001000  __TI_STACK_SIZE                    
+00847eb8  __TI_STATIC_BASE                   
+00001000  __TI_SYSMEM_SIZE                   
+UNDEFED   __TI_TLS_INIT_Base                 
+UNDEFED   __TI_TLS_INIT_Limit                
+008354a0  __TI_auto_init_nobinit_nopinit     
+00830fe0  __TI_buff_read                     
+00836260  __TI_cleanup                       
+00847bbc  __TI_cleanup_ptr                   
+00833160  __TI_closefile                     
+00836300  __TI_doflush                       
+00847bc0  __TI_dtors_ptr                     
+00847bc4  __TI_enable_exit_profile_output    
+00837ce0  __TI_frcmpyd_div                   
+00847b84  __TI_ft_end                        
+008342e0  __TI_ltoa                          
+ffffffff  __TI_pprof_out_hndl                
+00826660  __TI_printfi                       
+ffffffff  __TI_prof_data_size                
+ffffffff  __TI_prof_data_start               
+008363a0  __TI_rd_ok                         
+00837000  __TI_readmsg                       
+008359e0  __TI_tls_init                      
+00825e50  __TI_tmpnams                       
+00837d40  __TI_writemsg                      
+008343c0  __TI_wrt_ok                        
+ffffffff  __binit__                          
+0082ac00  __c6xabi_divd                      
+0082cea0  __c6xabi_divf                      
+008344a0  __c6xabi_divi                      
+00835560  __c6xabi_divu                      
+0082f3c0  __c6xabi_divul                     
+0082dd60  __c6xabi_divull                    
+00839420  __c6xabi_errno_addr                
+00837080  __c6xabi_fixdu                     
+00836440  __c6xabi_fixfu                     
+008364e0  __c6xabi_fltullf                   
+00838760  __c6xabi_isinf                     
+00837100  __c6xabi_llshl                     
+00837da0  __c6xabi_llshru                    
+00839460  __c6xabi_pop_rts                   
+00839480  __c6xabi_push_rts                  
+00835620  __c6xabi_remi                      
+00836580  __c6xabi_remu                      
+00837e00  __c6xabi_remull                    
+00837180  __c6xabi_roundf                    
+008387e0  __c6xabi_strasgi_64plus            
+00839440  __c6xabi_truncf                    
+ffffffff  __c_args__                         
+008344a0  __divi                             
+00835560  __divu                             
+00847bac  __errno                            
+00839460  __pop_rts                          
+00839480  __push_rts                         
+00835620  __remi                             
+00836580  __remu                             
+008387e0  __strasgi_64plus                   
+00838820  _args_main                         
+00837200  _c_int00                           
+008449c0  _ctypes_                           
+008479a8  _device                            
+00847628  _ftable                            
+00842e14  _gtrackLibEnd                      
+00839880  _gtrackLibStart                    
+008479a4  _lock                              
+008394a0  _nop                               
+008395a0  _signbit                           
+00845628  _stack                             
+00847808  _stream                            
+00837e60  _subcull                           
+00846628  _sys_memory                        
+008395c0  _system_post_cinit                 
+008395e0  _system_pre_init                   
+00847ac4  _unlock                            
+00800000  _vectors                           
+00839600  abort                              
+00847b44  appAllocationParams                
+00847b5c  appGatingParams                    
+00847a64  appPresenceDetectionParams         
+00847928  appSceneryParams                   
+00847b94  appStateParams                     
+00831ea0  atanf                              
+00833460  atoi                               
+ffffffff  binit                              
+00834580  close                              
+00842dac  defaultAllocationParams            
+00842de0  defaultGatingParams                
+00842cc4  defaultPresenceParams              
+00842bf4  defaultSceneryParams               
+00842e08  defaultStateParams                 
+00831fe0  eTaskGetState                      
+00847bac  errno                              
+00834660  exit                               
+00837300  fclose                             
+00836760  finddevice                         
+00832120  fopen                              
+0082f900  fputc                              
+0082c360  fputs                              
+0082dfa0  fread                              
+0082bfa0  free                               
+00830520  frexp                              
+008306c0  frexpf                             
+00830520  frexpl                             
+00833560  fseek                              
+00847ecc  gAppTask                           
+008262c8  gAppTaskObj                        
+00800200  gAppTskStackMain                   
+00847aa0  gCacheMarRegion                    
+00847f58  gCacheMarRegionNum                 
+00847ba0  gCacheSize                         
+00847b70  gClockConfig                       
+00826580  gClockCtrl                         
+00847f4c  gDebugLogZone                      
+0080c200  gHeapMem                           
+0082646c  gHeapObj                           
+008253c0  gHwiCtrl                           
+0082653c  gHwiIntcIntrTable                  
+00847f54  gMCPILogMessageSize                
+00847be8  gSocModules                        
+00847bb0  gSocModulesClockFrequency          
+00826190  gTaskP_ctrl                        
+00832ac0  getdevice                          
+008388e0  gtrack_alloc                       
+008410c0  gtrack_calcDim                     
+008402c0  gtrack_calcDistance                
+008403a0  gtrack_calcMeasurementLimits       
+00840480  gtrack_calcMeasurementSpread       
+00840800  gtrack_cart2sph                    
+0083f5e0  gtrack_cartesian2spherical         
+00841140  gtrack_censor2world                
+0083e840  gtrack_computeJacobian             
+0083fec0  gtrack_computeMahalanobis          
+00840bc0  gtrack_computeMahalanobisPartial   
+0083b060  gtrack_create                      
+0083f7c0  gtrack_delete                      
+00838920  gtrack_free                        
+00841240  gtrack_isInsideBoresightStaticZone 
+008411c0  gtrack_isInsideSolidAngle          
+00840c60  gtrack_isPointBehindTarget         
+008412a0  gtrack_isPointInsideBox            
+00841480  gtrack_listDequeue                 
+008414c0  gtrack_listEnqueue                 
+00841600  gtrack_listGetFirst                
+00841620  gtrack_listGetNext                 
+00841640  gtrack_listInit                    
+0083fc80  gtrack_listRemoveElement           
+00838960  gtrack_log                         
+00841300  gtrack_matrixAdd                   
+0083f980  gtrack_matrixComputePJT            
+00840560  gtrack_matrixCovAcc                
+00840640  gtrack_matrixCovFilter             
+0083ffc0  gtrack_matrixCovNormalize          
+00841360  gtrack_matrixGetDiag               
+00841500  gtrack_matrixInit                  
+0083c5e0  gtrack_matrixInv                   
+008400c0  gtrack_matrixMakeSymmetrical       
+008408c0  gtrack_matrixMultiply              
+0083fb40  gtrack_matrixPrint                 
+0083f3e0  gtrack_matrixPrint2                
+00840d00  gtrack_matrixSetDiag               
+008413c0  gtrack_matrixSub                   
+00840720  gtrack_matrixTransposeMultiply     
+0083bc00  gtrack_moduleAllocate              
+00840da0  gtrack_moduleAssociate             
+00840980  gtrack_modulePredict               
+0083ebe0  gtrack_modulePresence              
+00840e40  gtrack_moduleReport                
+008401c0  gtrack_moduleUpdate                
+00840ee0  gtrack_sincosd                     
+00840f80  gtrack_sph2cart                    
+0083fda0  gtrack_spherical2cartesian         
+0083d5e0  gtrack_step                        
+0083e480  gtrack_unitCreate                  
+00841660  gtrack_unitDelete                  
+0083db20  gtrack_unitEvent                   
+00841680  gtrack_unitGetC                    
+008416a0  gtrack_unitGetMCenter              
+008416c0  gtrack_unitGetSpread               
+0083eee0  gtrack_unitPredict                 
+00841020  gtrack_unitReport                  
+0083cee0  gtrack_unitScore                   
+0083f1a0  gtrack_unitStart                   
+00840a40  gtrack_unitStop                    
+00839880  gtrack_unitUpdate                  
+00840b00  gtrack_unrollRadialVelocity        
+00841540  gtrack_vectorAdd                   
+008416e0  gtrack_vectorInit                  
+00841580  gtrack_vectorScalarMul             
+00841420  gtrack_vectorScalarMulAcc          
+008415c0  gtrack_vectorSub                   
+0083e020  gtrack_velocityStateHandling       
+0082fac0  ldexp                              
+0082fc80  ldexpf                             
+0082fac0  ldexpl                             
+00839640  llabs                              
+00831400  logf                               
+00837ec0  lseek                              
+00836800  main                               
+0082fe40  malloc                             
+00837f20  memccpy                            
+008368a0  memcpy                             
+00847f50  memoryBytesUsed                    
+00834740  memset                             
+00837380  modff                              
+0082e400  open                               
+00842d88  pInit                              
+00826648  parmbuf                            
+0081b5a0  pointCloud                         
+00829f60  powf                               
+00834820  printf                             
+0082f900  putc                               
+008396a0  putchar_                           
+0082ea20  pvHeapMalloc                       
+00838b60  pvTaskIncrementMutexHeldCount      
+00847ed0  pxCurrentTCB                       
+00838ba0  pxPortInitialiseStack              
+00838100  read                               
+00837600  remove                             
+0082fac0  scalbn                             
+0082fc80  scalbnf                            
+0082fac0  scalbnl                            
+00830000  setvbuf                            
+00837580  snprintf                           
+00842df8  spreadMin                          
+00838160  sprintf                            
+00831560  sqrt                               
+00832e20  sqrtf                              
+00831560  sqrtl                              
+0082d8a0  tanf                               
+00814200  targetDescr                        
+008396c0  uiPortGetRunTimeCounterValue       
+00847f10  ulCriticalNesting                  
+00847f1c  ulPortInterruptNesting             
+00847f20  ulPortSchedularRunning             
+00847f14  ulPortTaskHasFPUContext            
+00847f18  ulPortYieldRequired                
+00837600  unlink                             
+008203c0  uxHwiStack                         
+00838be0  uxListRemove                       
+00847f24  uxPortIncorrectYieldCount          
+00847eb8  uxTopUsedPriority                  
+00838c20  vApplicationGetIdleTaskMemory      
+00838c60  vApplicationGetTimerTaskMemory     
+008396e0  vApplicationIdleHook               
+00837680  vApplicationLoadHook               
+00838ca0  vApplicationStackOverflowHook      
+00839700  vHeapCreateStatic                  
+00834ac0  vHeapFree                          
+00839720  vListInitialise                    
+00839740  vListInitialiseItem                
+00836b20  vListInsert                        
+00838ce0  vListInsertEnd                     
+00837700  vPortAssertIfInISR                 
+00839760  vPortConfigTimerForRunTimeStats    
+00838220  vPortEnterCritical                 
+00838280  vPortExitCritical                  
+00838d20  vPortFree                          
+00839780  vPortRestoreTaskContext            
+00838d60  vPortTimerTickHandler              
+008397a0  vPortValidateInterruptPriority     
+008397c0  vPortYeildFromISR                  
+00837780  vPortYield                         
+00838da0  vPortYieldAsyncFromISR             
+008381c0  vQueueAddToRegistry                
+00837800  vQueueWaitForMessageRestricted     
+00837880  vTaskDelay                         
+00832260  vTaskDelete                        
+00838220  vTaskEnterCritical                 
+00838280  vTaskExitCritical                  
+00834ba0  vTaskGetInfo                       
+008397e0  vTaskInternalSetTimeOutState       
+00839800  vTaskMissedYield                   
+008382e0  vTaskPlaceOnEventList              
+00837900  vTaskPlaceOnEventListRestricted    
+00830b80  vTaskPriorityDisinheritAfterTimeout
+00834c80  vTaskStartScheduler                
+00839820  vTaskSuspendAll                    
+008316c0  vTaskSwitchContext                 
+00835aa0  vprintf                            
+00838de0  vprintf_                           
+00838e20  wcslen                             
+00838340  write                              
+00839840  xPortInIsrContext                  
+00838e60  xPortStartScheduler                
+00838ea0  xQueueCreateMutexStatic            
+008323a0  xQueueGenericCreateStatic          
+00834d60  xQueueGenericReset                 
+0082db00  xQueueGenericSend                  
+00830860  xQueueGenericSendFromISR           
+00831820  xQueueGiveFromISR                  
+00836bc0  xQueueGiveMutexRecursive           
+0082ec20  xQueueReceive                      
+00831980  xQueueReceiveFromISR               
+00825f90  xQueueRegistry                     
+0082d3c0  xQueueSemaphoreTake                
+00836c60  xQueueTakeMutexRecursive           
+00834e40  xTaskCheckForTimeOut               
+00832f40  xTaskCreateStatic                  
+00839860  xTaskGetCurrentTaskHandle          
+00838ee0  xTaskGetIdleTaskHandle             
+00838f20  xTaskGetSchedulerState             
+00838f60  xTaskGetTickCount                  
+008301c0  xTaskIncrementTick                 
+008324e0  xTaskPriorityDisinherit            
+00832620  xTaskPriorityInherit               
+00834f20  xTaskRemoveFromEventList           
+00830d00  xTaskResumeAll                     
+00835b60  xTimerCreateTimerTask              
+00835000  xTimerGenericCommand               
+
+
+GLOBAL SYMBOLS: SORTED BY Symbol Address 
+
+address   name                               
+-------   ----                               
+00001000  __TI_STACK_SIZE                    
+00001000  __TI_SYSMEM_SIZE                   
+00800000  _vectors                           
+00800200  gAppTskStackMain                   
+0080c200  gHeapMem                           
+00814200  targetDescr                        
+0081b5a0  pointCloud                         
+008203c0  uxHwiStack                         
+008253c0  gHwiCtrl                           
+00825e50  __TI_tmpnams                       
+00825f90  xQueueRegistry                     
+00826190  gTaskP_ctrl                        
+008262c8  gAppTaskObj                        
+0082646c  gHeapObj                           
+0082653c  gHwiIntcIntrTable                  
+00826580  gClockCtrl                         
+00826648  parmbuf                            
+00826660  __TI_printfi                       
+00828660  Test_initTask                      
+00829f60  powf                               
+0082ac00  __c6xabi_divd                      
+0082bfa0  free                               
+0082c360  fputs                              
+0082cea0  __c6xabi_divf                      
+0082d3c0  xQueueSemaphoreTake                
+0082d640  MCPI_setFeatureTestResult          
+0082d8a0  tanf                               
+0082db00  xQueueGenericSend                  
+0082dd60  __c6xabi_divull                    
+0082dfa0  fread                              
+0082e400  open                               
+0082e620  ClockP_init                        
+0082e820  Hwi_dispatchAlways                 
+0082ea20  pvHeapMalloc                       
+0082ec20  xQueueReceive                      
+0082ee20  HwiP_init                          
+0082f000  TimerP_setup                       
+0082f3c0  __c6xabi_divul                     
+0082f900  fputc                              
+0082f900  putc                               
+0082fac0  ldexp                              
+0082fac0  ldexpl                             
+0082fac0  scalbn                             
+0082fac0  scalbnl                            
+0082fc80  ldexpf                             
+0082fc80  scalbnf                            
+0082fe40  malloc                             
+00830000  setvbuf                            
+008301c0  xTaskIncrementTick                 
+00830380  HOSTrename                         
+00830520  frexp                              
+00830520  frexpl                             
+008306c0  frexpf                             
+00830860  xQueueGenericSendFromISR           
+00830a00  SOC_controlModuleUnlockMMR         
+00830b80  vTaskPriorityDisinheritAfterTimeout
+00830d00  xTaskResumeAll                     
+00830e80  SOC_controlModuleLockMMR           
+00830fe0  __TI_buff_read                     
+008312a0  HwiP_Entry                         
+008312b4  HwiP_intcInterruptEnable           
+008312d4  HwiP_intcInterruptDisable          
+008312f4  HwiP_intcInterruptClear            
+00831304  HwiP_intcInterruptSet              
+00831310  HwiP_intcInterruptRestore          
+00831328  HwiP_intcQueryInterruptStatus      
+00831340  HwiP_intcGlobalEnable              
+00831360  HwiP_intcGlobalDisable             
+00831380  HwiP_intcGlobalRestore             
+00831398  HwiP_intcGlobalNmiEnable           
+008313ac  HwiP_intcGlobalExcepEnable         
+008313c0  HwiP_intcGlobalExtExcepEnable      
+008313d4  HwiP_intcGlobalExcepClear          
+00831400  logf                               
+00831560  sqrt                               
+00831560  sqrtl                              
+008316c0  vTaskSwitchContext                 
+00831820  xQueueGiveFromISR                  
+00831980  xQueueReceiveFromISR               
+00831ae0  HwiP_intcNmiDispatcher             
+00831c20  TaskP_loadUpdateAll                
+00831ea0  atanf                              
+00831fe0  eTaskGetState                      
+00832120  fopen                              
+00832260  vTaskDelete                        
+008323a0  xQueueGenericCreateStatic          
+008324e0  xTaskPriorityDisinherit            
+00832620  xTaskPriorityInherit               
+00832760  HwiP_intcEcmDispatcher             
+00832ac0  getdevice                          
+00832e20  sqrtf                              
+00832f40  xTaskCreateStatic                  
+00833060  SOC_rcmSetPeripheralClock          
+00833160  __TI_closefile                     
+00833460  atoi                               
+00833560  fseek                              
+00833860  HOSTlseek                          
+00833940  HOSTopen                           
+00833a20  HOSTwrite                          
+00833b00  HwiP_construct                     
+00834120  SemaphoreP_post                    
+00834200  _DebugP_assert                     
+008342e0  __TI_ltoa                          
+008343c0  __TI_wrt_ok                        
+008344a0  __c6xabi_divi                      
+008344a0  __divi                             
+00834580  close                              
+00834660  exit                               
+00834740  memset                             
+00834820  printf                             
+00834ac0  vHeapFree                          
+00834ba0  vTaskGetInfo                       
+00834c80  vTaskStartScheduler                
+00834d60  xQueueGenericReset                 
+00834e40  xTaskCheckForTimeOut               
+00834f20  xTaskRemoveFromEventList           
+00835000  xTimerGenericCommand               
+008350e0  ClockP_getTimeUsec                 
+008351a0  HOSTread                           
+00835260  HOSTunlink                         
+008354a0  __TI_auto_init_nobinit_nopinit     
+00835560  __c6xabi_divu                      
+00835560  __divu                             
+00835620  __c6xabi_remi                      
+00835620  __remi                             
+008359e0  __TI_tls_init                      
+00835aa0  vprintf                            
+00835b60  xTimerCreateTimerTask              
+00835c20  ClockP_usleep                      
+00835cc0  HOSTclose                          
+00835d60  HwiP_assignIntrHandlers            
+00835e00  Pinmux_config                      
+00836120  SemaphoreP_pend                    
+008361c0  _DebugP_logZone                    
+00836260  __TI_cleanup                       
+00836300  __TI_doflush                       
+008363a0  __TI_rd_ok                         
+00836440  __c6xabi_fixfu                     
+008364e0  __c6xabi_fltullf                   
+00836580  __c6xabi_remu                      
+00836580  __remu                             
+00836760  finddevice                         
+00836800  main                               
+008368a0  memcpy                             
+00836b20  vListInsert                        
+00836bc0  xQueueGiveMutexRecursive           
+00836c60  xQueueTakeMutexRecursive           
+00836d80  CacheP_init                        
+00836e00  CacheP_setMar                      
+00836e80  Module_clockSetFrequency           
+00836f00  SemaphoreP_constructMutex          
+00836f80  TaskSupport_swap__E                
+00837000  __TI_readmsg                       
+00837080  __c6xabi_fixdu                     
+00837100  __c6xabi_llshl                     
+00837180  __c6xabi_roundf                    
+00837200  _c_int00                           
+00837300  fclose                             
+00837380  modff                              
+00837580  snprintf                           
+00837600  remove                             
+00837600  unlink                             
+00837680  vApplicationLoadHook               
+00837700  vPortAssertIfInISR                 
+00837780  TaskP_yield                        
+00837780  vPortYield                         
+00837800  vQueueWaitForMessageRestricted     
+00837880  vTaskDelay                         
+00837900  vTaskPlaceOnEventListRestricted    
+00837980  CacheP_setSize                     
+008379e0  CacheP_wbInvAll                    
+00837a40  Dpl_init                           
+00837aa0  HeapP_construct                    
+00837b00  Hwi_dispatchC__I                   
+00837b60  Module_clockEnable                 
+00837c80  Hwi_switchAndDispatch__I           
+00837ce0  __TI_frcmpyd_div                   
+00837d40  __TI_writemsg                      
+00837d98  C$$IO$$                            
+00837da0  __c6xabi_llshru                    
+00837e00  __c6xabi_remull                    
+00837e60  _subcull                           
+00837ec0  lseek                              
+00837f20  memccpy                            
+00838100  read                               
+00838160  sprintf                            
+008381c0  vQueueAddToRegistry                
+00838220  vPortEnterCritical                 
+00838220  vTaskEnterCritical                 
+00838280  vPortExitCritical                  
+00838280  vTaskExitCritical                  
+008382e0  vTaskPlaceOnEventList              
+00838340  write                              
+008383a0  ClockP_timerTickIsr                
+008383e0  DebugP_logZoneEnable               
+00838420  HeapP_alloc                        
+00838460  HeapP_free                         
+008384a0  HwiP_inISR                         
+008384e0  Hwi_Module_startup                 
+00838520  MCPI_Initialize                    
+00838660  TimerP_Params_init                 
+008386a0  ClockP_getTimerCount               
+008386a0  TimerP_getCount                    
+008386e0  _DebugP_assertNoLog                
+00838720  TaskSupport_buildTaskStack         
+00838760  __c6xabi_isinf                     
+008387e0  __c6xabi_strasgi_64plus            
+008387e0  __strasgi_64plus                   
+00838820  _args_main                         
+008388e0  gtrack_alloc                       
+00838920  gtrack_free                        
+00838960  gtrack_log                         
+00838b60  pvTaskIncrementMutexHeldCount      
+00838ba0  pxPortInitialiseStack              
+00838be0  uxListRemove                       
+00838c20  vApplicationGetIdleTaskMemory      
+00838c60  vApplicationGetTimerTaskMemory     
+00838ca0  vApplicationStackOverflowHook      
+00838ce0  vListInsertEnd                     
+00838d20  vPortFree                          
+00838d60  vPortTimerTickHandler              
+00838da0  vPortYieldAsyncFromISR             
+00838de0  vprintf_                           
+00838e20  wcslen                             
+00838e60  xPortStartScheduler                
+00838ea0  xQueueCreateMutexStatic            
+00838ee0  xTaskGetIdleTaskHandle             
+00838f20  xTaskGetSchedulerState             
+00838f60  ClockP_getTicks                    
+00838f60  xTaskGetTickCount                  
+00838fa0  Board_driversClose                 
+00838fc0  Board_driversOpen                  
+00838fe0  Board_init                         
+00839020  ClockP_usecToTicks                 
+00839040  CycleCounterP_reset                
+00839060  Drivers_open                       
+00839080  HwiP_Params_init                   
+008390a0  HwiP_disable                       
+008390c0  HwiP_enable                        
+008391a0  HwiP_restore                       
+008391c0  Hwi_dispatchCore__I                
+008391e0  Hwi_getIsrStackAddress             
+00839200  Hwi_switchFromBootStack            
+00839220  MCPI_setTestResult                 
+00839240  Pinmux_init                        
+00839260  PowerClock_init                    
+00839280  SOC_moduleClockEnable              
+008392a0  SOC_moduleSetClockFrequency        
+00839300  System_init                        
+00839340  Task_Func                          
+00839360  Task_enter                         
+00839380  ClockP_timerClearOverflowInt       
+00839380  TimerP_clearOverflowInt            
+008393a0  TimerP_getReloadCount              
+008393c0  TimerP_start                       
+008393e0  TimerP_stop                        
+00839400  TaskSupport_glue                   
+00839420  __c6xabi_errno_addr                
+00839440  __c6xabi_truncf                    
+00839460  __c6xabi_pop_rts                   
+00839460  __pop_rts                          
+00839480  __c6xabi_push_rts                  
+00839480  __push_rts                         
+008394a0  _nop                               
+008395a0  _signbit                           
+008395c0  _system_post_cinit                 
+008395e0  _system_pre_init                   
+00839600  C$$EXIT                            
+00839600  abort                              
+00839620  HwiP_intcIvpSet                    
+00839640  llabs                              
+00839660  Task_exit                          
+008396a0  putchar_                           
+008396c0  uiPortGetRunTimeCounterValue       
+008396e0  vApplicationIdleHook               
+00839700  vHeapCreateStatic                  
+00839720  vListInitialise                    
+00839740  vListInitialiseItem                
+00839760  vPortConfigTimerForRunTimeStats    
+00839780  vPortRestoreTaskContext            
+008397a0  vPortValidateInterruptPriority     
+008397c0  vPortYeildFromISR                  
+008397e0  vTaskInternalSetTimeOutState       
+00839800  vTaskMissedYield                   
+00839820  vTaskSuspendAll                    
+00839840  xPortInIsrContext                  
+00839860  xTaskGetCurrentTaskHandle          
+00839880  _gtrackLibStart                    
+00839880  gtrack_unitUpdate                  
+0083b060  gtrack_create                      
+0083bc00  gtrack_moduleAllocate              
+0083c5e0  gtrack_matrixInv                   
+0083cee0  gtrack_unitScore                   
+0083d5e0  gtrack_step                        
+0083db20  gtrack_unitEvent                   
+0083e020  gtrack_velocityStateHandling       
+0083e480  gtrack_unitCreate                  
+0083e840  gtrack_computeJacobian             
+0083ebe0  gtrack_modulePresence              
+0083eee0  gtrack_unitPredict                 
+0083f1a0  gtrack_unitStart                   
+0083f3e0  gtrack_matrixPrint2                
+0083f5e0  gtrack_cartesian2spherical         
+0083f7c0  gtrack_delete                      
+0083f980  gtrack_matrixComputePJT            
+0083fb40  gtrack_matrixPrint                 
+0083fc80  gtrack_listRemoveElement           
+0083fda0  gtrack_spherical2cartesian         
+0083fec0  gtrack_computeMahalanobis          
+0083ffc0  gtrack_matrixCovNormalize          
+008400c0  gtrack_matrixMakeSymmetrical       
+008401c0  gtrack_moduleUpdate                
+008402c0  gtrack_calcDistance                
+008403a0  gtrack_calcMeasurementLimits       
+00840480  gtrack_calcMeasurementSpread       
+00840560  gtrack_matrixCovAcc                
+00840640  gtrack_matrixCovFilter             
+00840720  gtrack_matrixTransposeMultiply     
+00840800  gtrack_cart2sph                    
+008408c0  gtrack_matrixMultiply              
+00840980  gtrack_modulePredict               
+00840a40  gtrack_unitStop                    
+00840b00  gtrack_unrollRadialVelocity        
+00840bc0  gtrack_computeMahalanobisPartial   
+00840c60  gtrack_isPointBehindTarget         
+00840d00  gtrack_matrixSetDiag               
+00840da0  gtrack_moduleAssociate             
+00840e40  gtrack_moduleReport                
+00840ee0  gtrack_sincosd                     
+00840f80  gtrack_sph2cart                    
+00841020  gtrack_unitReport                  
+008410c0  gtrack_calcDim                     
+00841140  gtrack_censor2world                
+008411c0  gtrack_isInsideSolidAngle          
+00841240  gtrack_isInsideBoresightStaticZone 
+008412a0  gtrack_isPointInsideBox            
+00841300  gtrack_matrixAdd                   
+00841360  gtrack_matrixGetDiag               
+008413c0  gtrack_matrixSub                   
+00841420  gtrack_vectorScalarMulAcc          
+00841480  gtrack_listDequeue                 
+008414c0  gtrack_listEnqueue                 
+00841500  gtrack_matrixInit                  
+00841540  gtrack_vectorAdd                   
+00841580  gtrack_vectorScalarMul             
+008415c0  gtrack_vectorSub                   
+00841600  gtrack_listGetFirst                
+00841620  gtrack_listGetNext                 
+00841640  gtrack_listInit                    
+00841660  gtrack_unitDelete                  
+00841680  gtrack_unitGetC                    
+008416a0  gtrack_unitGetMCenter              
+008416c0  gtrack_unitGetSpread               
+008416e0  gtrack_vectorInit                  
+00842bf4  defaultSceneryParams               
+00842cc4  defaultPresenceParams              
+00842d88  pInit                              
+00842dac  defaultAllocationParams            
+00842de0  defaultGatingParams                
+00842df8  spreadMin                          
+00842e08  defaultStateParams                 
+00842e14  _gtrackLibEnd                      
+008449c0  _ctypes_                           
+00845628  _stack                             
+00846628  __TI_STACK_END                     
+00846628  _sys_memory                        
+00847628  _ftable                            
+00847808  _stream                            
+00847928  appSceneryParams                   
+008479a4  _lock                              
+008479a8  _device                            
+00847a64  appPresenceDetectionParams         
+00847aa0  gCacheMarRegion                    
+00847ac4  _unlock                            
+00847b28  Hwi_Module__state__V               
+00847b44  appAllocationParams                
+00847b5c  appGatingParams                    
+00847b70  gClockConfig                       
+00847b84  __TI_ft_end                        
+00847b94  appStateParams                     
+00847ba0  gCacheSize                         
+00847bac  __errno                            
+00847bac  errno                              
+00847bb0  gSocModulesClockFrequency          
+00847bbc  __TI_cleanup_ptr                   
+00847bc0  __TI_dtors_ptr                     
+00847bc4  __TI_enable_exit_profile_output    
+00847be8  gSocModules                        
+00847d98  __CIOBUF_                          
+00847eb8  __TI_STATIC_BASE                   
+00847eb8  uxTopUsedPriority                  
+00847ecc  gAppTask                           
+00847ed0  pxCurrentTCB                       
+00847ed8  FreeRTOS_errno                     
+00847f10  ulCriticalNesting                  
+00847f14  ulPortTaskHasFPUContext            
+00847f18  ulPortYieldRequired                
+00847f1c  ulPortInterruptNesting             
+00847f20  ulPortSchedularRunning             
+00847f24  uxPortIncorrectYieldCount          
+00847f34  MCPI_Result                        
+00847f38  MCPI_FailSignature                 
+00847f4c  gDebugLogZone                      
+00847f50  memoryBytesUsed                    
+00847f54  gMCPILogMessageSize                
+00847f58  gCacheMarRegionNum                 
+88000000  MCPI_logMessage                    
+ffffffff  __TI_pprof_out_hndl                
+ffffffff  __TI_prof_data_size                
+ffffffff  __TI_prof_data_start               
+ffffffff  __binit__                          
+ffffffff  __c_args__                         
+ffffffff  binit                              
+UNDEFED   __TI_CINIT_Base                    
+UNDEFED   __TI_CINIT_Limit                   
+UNDEFED   __TI_Handler_Table_Base            
+UNDEFED   __TI_Handler_Table_Limit           
+UNDEFED   __TI_TLS_INIT_Base                 
+UNDEFED   __TI_TLS_INIT_Limit                
+
+[419 symbols]

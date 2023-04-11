@@ -1,0 +1,1760 @@
+******************************************************************************
+            TI ARM Clang Linker Unix v2.1.2                    
+******************************************************************************
+>> Linked Thu Mar 30 13:32:23 2023
+
+OUTPUT FILE NAME:   <test/usecases/mss/awr2944_gtrack2D_usecase_mss.xer5f>
+ENTRY POINT SYMBOL: "_vectors"  address: 00000000
+
+
+MEMORY CONFIGURATION
+
+         name            origin    length      used     unused   attr    fill
+----------------------  --------  ---------  --------  --------  ----  --------
+  RESET_VECTORS         00000000   00000100  00000040  000000c0     X
+  TCMA_RAM              00000100   0000ff00  00000000  0000ff00  R  X
+  TCMB_RAM              00080000   00010000  00000000  00010000  RW  
+  SBL_RESERVED_L2_RAM   10200000   00020000  00000000  00020000  RW  
+  MSS_L2                10220000   000c8000  00038e20  0008f1e0  RW  
+  HWA_RAM               82000000   00020000  00000000  00020000  RW  
+  DSS_L3                88000000   00280000  00002400  0027dc00  RW  
+  RTOS_NORTOS_IPC_SHM_M c5000200   00001d40  00000000  00001d40  RWIX
+
+
+SEGMENT ALLOCATION MAP
+
+run origin  load origin   length   init length attrs members
+----------  ----------- ---------- ----------- ----- -------
+00000000    00000000    00000040   00000040    r-x
+  00000000    00000000    00000040   00000040    r-x .vectors
+10220000    10220000    00022b40   00000000    rw-
+  10220000    10220000    0001fb40   00000000    rw- .bss
+  1023fb40    1023fb40    00001000   00000000    rw- .sysmem
+  10240b40    10240b40    00002000   00000000    rw- .stack
+10242b40    10242b40    00013b88   00013b88    r-x
+  10242b40    10242b40    0000a280   0000a280    r-x .text
+  1024cdc0    1024cdc0    00002c90   00002c90    r-- .rodata
+  1024fa50    1024fa50    00006c78   00006c78    r-x .gtrackLibSection
+102566d0    102566d0    00000d78   00000d78    r-x
+  102566d0    102566d0    00000740   00000740    r-x .text.hwi
+  10256e10    10256e10    00000430   00000430    r-x .text.cache
+  10257240    10257240    00000208   00000208    r-x .text.mpu
+10257450    10257450    00000138   00000138    r-x
+  10257450    10257450    00000130   00000130    r-x .text.boot
+  10257580    10257580    00000008   00000008    r-x .text:abort
+10257588    10257588    000004a0   000004a0    rw-
+  10257588    10257588    000004a0   000004a0    rw- .data
+10257a28    10257a28    00001400   00000000    r--
+  10257a28    10257a28    00000100   00000000    r-- .irqstack
+  10257b28    10257b28    00000100   00000000    r-- .fiqstack
+  10257c28    10257c28    00001000   00000000    r-- .svcstack
+  10258c28    10258c28    00000100   00000000    r-- .abortstack
+  10258d28    10258d28    00000100   00000000    r-- .undefinedstack
+88000000    88000000    00002400   00000000    rw-
+  88000000    88000000    00002400   00000000    rw- .MCPILogBuffer
+
+
+SECTION ALLOCATION MAP
+
+ output                                  attributes/
+section   page    origin      length       input sections
+--------  ----  ----------  ----------   ----------------
+.vectors   0    00000000    00000040     
+                  00000000    00000040     freertos.awr294x.r5f.ti-arm-clang.release.lib : HwiP_armv7r_vectors_freertos_asm.obj (.vectors)
+
+.bss       0    10220000    0001fb40     UNINITIALIZED
+                  10220000    0000c000     (.common:gAppTskStackMain)
+                  1022c000    00008000     (.common:gHeapMem)
+                  10234000    00004e20     (.common:targetDescr)
+                  10238e20    00003e80     (.common:pointCloud)
+                  1023cca0    00001008     (.common:gHwiCtrl)
+                  1023dca8    00001000     freertos.awr294x.r5f.ti-arm-clang.release.lib : port.obj (.bss.uxIdleTaskStack)
+                  1023eca8    00000400                                                   : port.obj (.bss.uxTimerTaskStack)
+                  1023f0a8    00000280                                                   : tasks.obj (.bss.pxReadyTasksLists)
+                  1023f328    00000120     libsysbm.a : trgmsg.c.obj (.bss:_CIOBUF_)
+                  1023f448    00000100     freertos.awr294x.r5f.ti-arm-clang.release.lib : timers.obj (.bss.prvCheckForValidListAndQueue.ucStaticTimerQueueStorage)
+                  1023f548    00000100     (.common:xQueueRegistry)
+                  1023f648    000000a0     (.common:__TI_tmpnams)
+                  1023f6e8    000000a0     (.common:gTaskP_ctrl)
+                  1023f788    00000098                                                   : DebugP_freertos.obj (.bss.gDebugLogLockObj)
+                  1023f820    0000008c                                                   : port.obj (.bss.xIdleTaskTCB)
+                  1023f8ac    0000008c                                                   : port.obj (.bss.xTimerTaskTCB)
+                  1023f938    0000008c     (.common:gAppTaskObj)
+                  1023f9c4    00000080     (.common:gHeapObj)
+                  1023fa44    00000050                                                   : timers.obj (.bss.prvCheckForValidListAndQueue.xStaticTimerQueue)
+                  1023fa94    00000050     (.common:gRovDummyQueue)
+                  1023fae4    00000004                                                   : HwiP_armv7r_handlers_freertos.obj (.bss.gdummy)
+                  1023fae8    00000038     (.common:gClockCtrl)
+                  1023fb20    00000008     (.common:parmbuf)
+                  1023fb28    00000004                                                   : HwiP_armv7r_vim.obj (.bss.gdummy)
+                  1023fb2c    00000004     libc.a : memory.c.obj (.bss.sys_free)
+                  1023fb30    00000004     (.common:gAppTask)
+                  1023fb34    0000000c     --HOLE--
+
+.sysmem    0    1023fb40    00001000     UNINITIALIZED
+                  1023fb40    00000010     libc.a : memory.c.obj (.sysmem)
+                  1023fb50    00000ff0     --HOLE--
+
+.stack     0    10240b40    00002000     UNINITIALIZED
+                  10240b40    00000004     freertos.awr294x.r5f.ti-arm-clang.release.lib : boot_armv7r_asm.obj (.stack)
+                  10240b44    00001ffc     --HOLE--
+
+.text      0    10242b40    0000a280     
+                  10242b40    00000fe8     libc.a : _printfi.c.obj (.text:__TI_printfi)
+                  10243b28    00000008     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc.obj (.text.SOC_moduleSetClockFrequency)
+                  10243b30    0000098c     gtrackApp.oer5f (.text.Test_initTask)
+                  102444bc    00000004     freertos.awr294x.r5f.ti-arm-clang.release.lib : ClockP_freertos_r5.obj (.text.ClockP_getTimerCount)
+                  102444c0    00000700     libc.a : k_rem_pio2.c.obj (.text.__kernel_rem_pio2)
+                  10244bc0    00000638            : e_powf.c.obj (.text.powf)
+                  102451f8    000005a8     freertos.awr294x.r5f.ti-arm-clang.release.lib : printf.obj (.text._vsnprintf)
+                  102457a0    000002d8                                                   : printf.obj (.text._etoa)
+                  10245a78    00000008                                                   : TimerP_rti.obj (.text.TimerP_clearOverflowInt)
+                  10245a80    000002d2     libtestlogger_awr2944.aer5f : logger.oer5f (.text.MCPI_setFeatureTestResult)
+                  10245d52    00000006     freertos.awr294x.r5f.ti-arm-clang.release.lib : port.obj (.text.prvTaskExitError)
+                  10245d58    000002bc                                                   : printf.obj (.text._ftoa)
+                  10246014    00000004                                                   : ClockP_freertos_r5.obj (.text.ClockP_timerClearOverflowInt)
+                  10246018    00000278     libc.a : _printfi.c.obj (.text._pconv_a)
+                  10246290    00000230            : _printfi.c.obj (.text._pconv_g)
+                  102464c0    00000230            : s_tanf.c.obj (.text.tanf)
+                  102466f0    00000214            : e_logf.c.obj (.text.logf)
+                  10246904    00000200     freertos.awr294x.r5f.ti-arm-clang.release.lib : timers.obj (.text.prvTimerTask)
+                  10246b04    00000004     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc.obj (.text.SOC_moduleClockEnable)
+                  10246b08    000001d8     libc.a : e_sqrt.c.obj (.text.sqrt)
+                  10246ce0    000001d0     libclang_rt.builtins.a : udivsi3.S.obj (.text)
+                  10246eb0    000001c0     libc.a : fopen.c.obj (.text._openfile)
+                  10247070    000001b8            : memory.c.obj (.text.aligned_alloc)
+                  10247228    000001b8            : memory.c.obj (.text.free)
+                  102473e0    000001ac            : s_atanf.c.obj (.text.atanf)
+                  1024758c    000001a4            : fputs.c.obj (.text.fputs)
+                  10247730    000001a4     freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.xQueueSemaphoreTake)
+                  102478d4    000001a0     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.text.SOC_rcmGetFreqLeafNode)
+                  10247a74    00000194                                                  : soc_rcm.obj (.text.SOC_rcmSetPeripheralClock)
+                  10247c08    0000018c     libc.a : fread.c.obj (.text.fread)
+                  10247d94    00000184     freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.xQueueGenericSend)
+                  10247f18    0000015c     libc.a : s_floor.c.obj (.text.floor)
+                  10248074    00000154     freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.xQueueReceive)
+                  102481c8    00000148     libc.a : _printfi.c.obj (.text.fcvt)
+                  10248310    00000144            : setvbuf.c.obj (.text.setvbuf)
+                  10248454    00000004            : _lock.c.obj (.text._nop)
+                  10248458    00000140            : s_scalbn.c.obj (.text.scalbn)
+                  10248598    00000138            : _printfi.c.obj (.text._pconv_e)
+                  102486d0    00000128     freertos.awr294x.r5f.ti-arm-clang.release.lib : ClockP_freertos_r5.obj (.text.ClockP_init)
+                  102487f8    00000120                                                   : TimerP_rti.obj (.text.TimerP_setup)
+                  10248918    00000120     libsysbm.a : open.c.obj (.text.open)
+                  10248a38    00000118     libclang_rt.builtins.a : udivmoddi4.S.obj (.text)
+                  10248b50    00000116     freertos.awr294x.r5f.ti-arm-clang.release.lib : printf.obj (.text._ntoa_format)
+                  10248c66    00000002                                                   : printf.obj (.text._out_null)
+                  10248c68    00000114     libc.a : s_scalbnf.c.obj (.text.scalbnf)
+                  10248d7c    00000108     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.text.SOC_rcmGetFreq)
+                  10248e84    000000f8     libc.a : fopen.c.obj (.text.fopen)
+                  10248f7c    000000f4     freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.xQueueGenericSendFromISR)
+                  10249070    000000f0                                                   : HeapP_internal.obj (.text.pvHeapMalloc)
+                  10249160    000000e8     libc.a : _bufread.c.obj (.text.__TI_buff_read)
+                  10249248    000000e8            : fputc.c.obj (.text.fputc)
+                  10249330    000000e8     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.text.vTaskSwitchContext)
+                  10249418    000000e0     libc.a : e_sqrtf.c.obj (.text.sqrtf)
+                  102494f8    000000e0     freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.xQueueGiveFromISR)
+                  102495d8    000000e0                                                   : tasks.obj (.text.xTaskIncrementTick)
+                  102496b8    000000d8                                                   : queue.obj (.text.xQueueGenericCreateStatic)
+                  10249790    000000c8     libc.a : getdevice.c.obj (.text.getdevice)
+                  10249858    000000c4     freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.xQueueReceiveFromISR)
+                  1024991c    000000c4                                                   : tasks.obj (.text.xTaskResumeAll)
+                  102499e0    000000c0     libc.a : _printfi.c.obj (.text._mcpy)
+                  10249aa0    000000c0     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.text.prvInitialiseNewTask)
+                  10249b60    000000c0                                                   : tasks.obj (.text.xTaskCreateStatic)
+                  10249c20    000000bc                                                   : tasks.obj (.text.prvAddNewTaskToReadyList)
+                  10249cdc    000000b8                                                   : timers.obj (.text.prvSampleTimeNow)
+                  10249d94    000000b4     libc.a : fclose.c.obj (.text.__TI_closefile)
+                  10249e48    000000b4            : fseek.c.obj (.text.fseeko)
+                  10249efc    000000b0     freertos.awr294x.r5f.ti-arm-clang.release.lib : TaskP_freertos.obj (.text.TaskP_loadUpdateAll)
+                  10249fac    000000ac                                                   : printf.obj (.text._ntoa_long_long)
+                  1024a058    000000a8                                                   : tasks.obj (.text.vTaskPriorityDisinheritAfterTimeout)
+                  1024a100    000000a4     libc.a : memory.c.obj (.text.split)
+                  1024a1a4    000000a4     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.text.xTaskPriorityDisinherit)
+                  1024a248    000000a0     libsysbm.a : hostrename.c.obj (.text.HOSTrename)
+                  1024a2e8    00000008     freertos.awr294x.r5f.ti-arm-clang.release.lib : printf.obj (.text._out_char)
+                  1024a2f0    0000009e     main_mss.oer5f (.text.main)
+                  1024a38e    00000002     freertos.awr294x.r5f.ti-arm-clang.release.lib : port.obj (.text.vPortConfigTimerForRunTimeStats)
+                  1024a390    0000009c     libc.a : _io_perm.c.obj (.text.__TI_wrt_ok)
+                  1024a42c    00000098     libsysbm.a : hostlseek.c.obj (.text.HOSTlseek)
+                  1024a4c4    00000098     libc.a : printf.c.obj (.text.printf)
+                  1024a55c    00000094     libsysbm.a : hostopen.c.obj (.text.HOSTopen)
+                  1024a5f0    00000094     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.text.eTaskGetState)
+                  1024a684    00000094                                                   : tasks.obj (.text.vTaskDelete)
+                  1024a718    00000090                                                   : tasks.obj (.text.vTaskStartScheduler)
+                  1024a7a8    0000008c                                                   : printf.obj (.text._ntoa_long)
+                  1024a834    0000008c     libsysbm.a : close.c.obj (.text.close)
+                  1024a8c0    0000008c     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.text.xTaskCheckForTimeOut)
+                  1024a94c    00000088     libc.a : fflush.c.obj (.text.__TI_doflush)
+                  1024a9d4    00000088            : _ltoa.c.obj (.text.__TI_ltoa)
+                  1024aa5c    00000004            : printf.c.obj (.text._outc)
+                  1024aa60    00000088            : s_tanf.c.obj (.text.__kernel_tandf)
+                  1024aae8    00000088            : _printfi.c.obj (.text._ecpy)
+                  1024ab70    00000088     freertos.awr294x.r5f.ti-arm-clang.release.lib : port.obj (.text.pxPortInitialiseStack)
+                  1024abf8    00000088                                                   : HeapP_internal.obj (.text.vHeapFree)
+                  1024ac80    00000084     libsysbm.a : hostread.c.obj (.text.HOSTread)
+                  1024ad04    00000084                : hostwrite.c.obj (.text.HOSTwrite)
+                  1024ad88    00000084     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc.obj (.text.SOC_controlModuleUnlockMMR)
+                  1024ae0c    00000084     libc.a : vprintf.c.obj (.text.vprintf)
+                  1024ae90    00000080     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.text.xTaskPriorityInherit)
+                  1024af10    0000007c     libc.a : _printfi.c.obj (.text._pconv_f)
+                  1024af8c    00000004            : vprintf.c.obj (.text._outc)
+                  1024af90    0000007c            : s_frexp.c.obj (.text.frexp)
+                  1024b00c    0000007c     freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.prvCopyDataToQueue)
+                  1024b088    0000007c                                                   : tasks.obj (.text.vTaskGetInfo)
+                  1024b104    0000007c                                                   : tasks.obj (.text.xTaskRemoveFromEventList)
+                  1024b180    00000078     libc.a : snprintf.c.obj (.text.snprintf)
+                  1024b1f8    00000076     freertos.awr294x.r5f.ti-arm-clang.release.lib : printf.obj (.text._out_rev)
+                  1024b26e    00000002                                                   : port.obj (.text.vPortValidateInterruptPriority)
+                  1024b270    00000074     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.text.SOC_rcmGetCoreFout)
+                  1024b2e4    00000074                                                  : soc_rcm.obj (.text.SOC_rcmGetDSSFout)
+                  1024b358    00000074                                                  : soc_rcm.obj (.text.SOC_rcmGetPerFout)
+                  1024b3cc    00000074     libc.a : _io_perm.c.obj (.text.__TI_rd_ok)
+                  1024b440    00000074     freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.xQueueGenericReset)
+                  1024b4b4    0000000c     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.text.SOC_rcmGetPeripheralClockFrequency)
+                  1024b4c0    00000070     ti_power_clock_config.oer5f (.text.PowerClock_init)
+                  1024b530    00000070     libc.a : atoi.c.obj (.text.atoi)
+                  1024b5a0    00000070     freertos.awr294x.r5f.ti-arm-clang.release.lib : timers.obj (.text.xTimerCreateTimerTask)
+                  1024b610    0000006c     libsysbm.a : hostunlink.c.obj (.text.HOSTunlink)
+                  1024b67c    0000006c     libc.a : getdevice.c.obj (.text.finddevice)
+                  1024b6e8    0000006c     freertos.awr294x.r5f.ti-arm-clang.release.lib : timers.obj (.text.xTimerGenericCommand)
+                  1024b754    00000068     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc.obj (.text.SOC_controlModuleLockMMR)
+                  1024b7bc    00000068     freertos.awr294x.r5f.ti-arm-clang.release.lib : DebugP_freertos.obj (.text._DebugP_logZone)
+                  1024b824    00000068                                                   : queue.obj (.text.prvUnlockQueue)
+                  1024b88c    00000060     libsysbm.a : hostclose.c.obj (.text.HOSTclose)
+                  1024b8ec    00000060     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.text.prvAddCurrentTaskToDelayedList)
+                  1024b94c    0000005c     libc.a : _printfi.c.obj (.text._fcpy)
+                  1024b9a8    0000005c     freertos.awr294x.r5f.ti-arm-clang.release.lib : PmuP_armv7r.obj (.text.pmu)
+                  1024ba04    0000005c                                                   : timers.obj (.text.prvCheckForValidListAndQueue)
+                  1024ba60    00000058                                                   : DebugP_log.obj (.text._DebugP_assert)
+                  1024bab8    00000058     libc.a : fopen.c.obj (.text.__TI_cleanup)
+                  1024bb10    00000058     libsysbm.a : trgmsg.c.obj (.text.__TI_readmsg)
+                  1024bb68    00000058                : trgmsg.c.obj (.text.__TI_writemsg)
+                  1024bbc0    00000058     libc.a : snprintf.c.obj (.text._outs)
+                  1024bc18    00000058            : sprintf.c.obj (.text.sprintf)
+                  1024bc70    00000054     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.text.SOC_rcmADPLLJGetFOut)
+                  1024bcc4    00000054                                                  : soc_rcm.obj (.text.SOC_rcmGetR5InFrequency)
+                  1024bd18    00000054     freertos.awr294x.r5f.ti-arm-clang.release.lib : SemaphoreP_freertos.obj (.text.SemaphoreP_pend)
+                  1024bd6c    00000054     libc.a : exit.c.obj (.text.exit)
+                  1024bdc0    00000054     libclang_rt.builtins.a : floatundisf.S.obj (.text)
+                  1024be14    00000050     libc.a : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit)
+                  1024be64    0000004c     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.text.SOC_rcmGetXTALFrequency)
+                  1024beb0    0000004c     libc.a : fclose.c.obj (.text.fclose)
+                  1024befc    0000004c     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.text.prvIdleTask)
+                  1024bf48    0000004c                                                   : tasks.obj (.text.vTaskDelay)
+                  1024bf94    0000004c                                                   : tasks.obj (.text.vTaskPlaceOnEventListRestricted)
+                  1024bfe0    0000004a                                                   : SemaphoreP_freertos.obj (.text.SemaphoreP_post)
+                  1024c02a    00000002     --HOLE-- [fill = 0]
+                  1024c02c    00000048     libc.a : memccpy.c.obj (.text.memccpy)
+                  1024c074    00000048     libsysbm.a : unlink.c.obj (.text.unlink)
+                  1024c0bc    00000048     freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.xQueueGiveMutexRecursive)
+                  1024c104    00000046                                                   : HeapP_internal.obj (.text.vHeapCreateStatic)
+                  1024c14a    00000046                                                   : queue.obj (.text.vQueueWaitForMessageRestricted)
+                  1024c190    00000044                                                   : SemaphoreP_freertos.obj (.text.SemaphoreP_constructMutex)
+                  1024c1d4    00000044                                                   : tasks.obj (.text.prvDeleteTCB)
+                  1024c218    00000044                                                   : queue.obj (.text.xQueueTakeMutexRecursive)
+                  1024c25c    00000040                                                   : ClockP_freertos.obj (.text.ClockP_getTimeUsec)
+                  1024c29c    00000040     libc.a : memory.c.obj (.text.free_list_insert)
+                  1024c2dc    00000040     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.text.vTaskPlaceOnEventList)
+                  1024c31c    0000003c                                                   : timers.obj (.text.prvInsertTimerInActiveList)
+                  1024c358    00000008                                                   : port.obj (.text.uiPortGetRunTimeCounterValue)
+                  1024c360    0000003a     ti_dpl_config.oer5f (.text.Dpl_init)
+                  1024c39a    0000003a     freertos.awr294x.r5f.ti-arm-clang.release.lib : HeapP_internal.obj (.text.prvInsertBlockIntoFreeList)
+                  1024c3d4    00000038                                                   : TaskP_freertos.obj (.text.vApplicationLoadHook)
+                  1024c40c    00000034                                                   : ClockP_freertos.obj (.text.ClockP_usleep)
+                  1024c440    00000034                                                   : HeapP_freertos.obj (.text.HeapP_construct)
+                  1024c474    00000034     libc.a : memory.c.obj (.text.free_list_remove)
+                  1024c4a8    00000034     libsysbm.a : lseek.c.obj (.text.lseek)
+                  1024c4dc    00000034     libc.a : fputs.c.obj (.text.puts)
+                  1024c510    00000034     libsysbm.a : read.c.obj (.text.read)
+                  1024c544    00000034                : write.c.obj (.text.write)
+                  1024c578    00000030     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.text.SOC_rcmGetModuleClkDivVal)
+                  1024c5a8    00000030     libc.a : snprintf.c.obj (.text._outc)
+                  1024c5d8    00000030     freertos.awr294x.r5f.ti-arm-clang.release.lib : PmuP_armv7r_asm.obj (.text.pmu)
+                  1024c608    00000030                                                   : tasks.obj (.text.xTaskGetIdleTaskHandle)
+                  1024c638    0000002e     drivers.awr294x.r5f.ti-arm-clang.release.lib : pinmux.obj (.text.Pinmux_config)
+                  1024c666    0000000a                                                  : soc.obj (.text.SOC_getSelfCpuClk)
+                  1024c670    0000002e     gtrackAlloc.oer5f (.text.gtrack_alloc)
+                  1024c69e    0000002e     freertos.awr294x.r5f.ti-arm-clang.release.lib : list.obj (.text.vListInsert)
+                  1024c6cc    0000002c                                                   : ClockP_freertos.obj (.text.ClockP_timerTickIsr)
+                  1024c6f8    0000002c     libc.a : sprintf.c.obj (.text._outs)
+                  1024c724    00000004            : printf.c.obj (.text._outs)
+                  1024c728    0000002c     libclang_rt.builtins.a : divsi3.S.obj (.text)
+                  1024c754    00000028     libc.a : _printfi.c.obj (.text.strchr)
+                  1024c77c    00000028     freertos.awr294x.r5f.ti-arm-clang.release.lib : port.obj (.text.vApplicationStackOverflowHook)
+                  1024c7a4    00000024                                                   : TimerP_rti.obj (.text.TimerP_Params_init)
+                  1024c7c8    00000024                                                   : printf.obj (.text._atoi)
+                  1024c7ec    00000004     libc.a : vprintf.c.obj (.text._outs)
+                  1024c7f0    00000024     gtrackLog.oer5f (.text.gtrack_log)
+                  1024c814    00000024     freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.prvCopyDataFromQueue)
+                  1024c838    00000024                                                   : tasks.obj (.text.prvResetNextTaskUnblockTime)
+                  1024c85c    00000024                                                   : list.obj (.text.uxListRemove)
+                  1024c880    00000024                                                   : port.obj (.text.vPortTimerTickHandler)
+                  1024c8a4    00000024                                                   : queue.obj (.text.vQueueAddToRegistry)
+                  1024c8c8    00000024                                                   : tasks.obj (.text.vTaskExitCritical)
+                  1024c8ec    00000024     libclang_rt.builtins.a : aeabi_uldivmod.S.obj (.text)
+                  1024c910    00000022     gtrackAlloc.oer5f (.text.gtrack_free)
+                  1024c932    00000002     --HOLE-- [fill = 0]
+                  1024c934    00000020     freertos.awr294x.r5f.ti-arm-clang.release.lib : DebugP_log.obj (.text.DebugP_logZoneEnable)
+                  1024c954    00000020                                                   : queue.obj (.text.prvInitialiseNewQueue)
+                  1024c974    00000020     libc.a : wcslen.c.obj (.text.wcslen)
+                  1024c994    0000001c     freertos.awr294x.r5f.ti-arm-clang.release.lib : HeapP_freertos.obj (.text.HeapP_alloc)
+                  1024c9b0    0000001c     libtestlogger_awr2944.aer5f : logger.oer5f (.text.MCPI_Initialize)
+                  1024c9cc    0000001c     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.text.SOC_rcmGetClkSrcFromClkSelVal)
+                  1024c9e8    0000001c                                                  : soc_rcm.obj (.text.SOC_rcmGetR5Clock)
+                  1024ca04    0000001c     freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.prvInitialiseMutex)
+                  1024ca20    0000001c     libc.a : _printfi.c.obj (.text.strlen)
+                  1024ca3c    0000001c     libsysbm.a : hostrename.c.obj (.text.strlen)
+                  1024ca58    0000001c     freertos.awr294x.r5f.ti-arm-clang.release.lib : port.obj (.text.vApplicationGetIdleTaskMemory)
+                  1024ca74    0000001c                                                   : port.obj (.text.vApplicationGetTimerTaskMemory)
+                  1024ca90    0000001c                                                   : printf.obj (.text.vprintf_)
+                  1024caac    0000001c                                                   : queue.obj (.text.xQueueCreateMutexStatic)
+                  1024cac8    0000001c                                                   : tasks.obj (.text.xTaskGetSchedulerState)
+                  1024cae4    0000001c     libsysbm.a : memcpy32.S.obj (.text:TI_memcpy_small)
+                  1024cb00    0000001c     libclang_rt.builtins.a : aeabi_memset.S.obj (.text)
+                  1024cb1c    0000001a     freertos.awr294x.r5f.ti-arm-clang.release.lib : HeapP_freertos.obj (.text.HeapP_free)
+                  1024cb36    0000000a                                                   : TimerP_rti.obj (.text.TimerP_getReloadCount)
+                  1024cb40    0000001a     ti_drivers_config.oer5f (.text.System_init)
+                  1024cb5a    0000001a     freertos.awr294x.r5f.ti-arm-clang.release.lib : list.obj (.text.vListInsertEnd)
+                  1024cb74    0000001a                                                   : heap_3.obj (.text.vPortFree)
+                  1024cb8e    00000018                                                   : TimerP_rti.obj (.text.TimerP_getCount)
+                  1024cba6    00000002     --HOLE-- [fill = 0]
+                  1024cba8    00000018                                                   : boot_armv7r.obj (.text._system_pre_init)
+                  1024cbc0    00000018                                                   : queue.obj (.text.prvIsQueueEmpty)
+                  1024cbd8    00000018                                                   : tasks.obj (.text.pvTaskIncrementMutexHeldCount)
+                  1024cbf0    00000018                                                   : tasks.obj (.text.vTaskEnterCritical)
+                  1024cc08    00000018                                                   : port.obj (.text.xPortStartScheduler)
+                  1024cc20    00000018                                                   : tasks.obj (.text.xTaskGetTickCount)
+                  1024cc38    00000018     libsysbm.a : memset32.S.obj (.text:TI_memset_small)
+                  1024cc50    00000016     freertos.awr294x.r5f.ti-arm-clang.release.lib : list.obj (.text.vListInitialise)
+                  1024cc66    00000002     --HOLE-- [fill = 0]
+                  1024cc68    00000014                                                   : ClockP_freertos.obj (.text.ClockP_usecToTicks)
+                  1024cc7c    00000004     libc.a : fseek.c.obj (.text.fseek)
+                  1024cc80    00000014     libtestlogger_awr2944.aer5f : logger.oer5f (.text.MCPI_setTestResult)
+                  1024cc94    00000014     libc.a : sprintf.c.obj (.text._outc)
+                  1024cca8    00000014     libsysbm.a : hostrename.c.obj (.text.strcpy)
+                  1024ccbc    00000010     freertos.awr294x.r5f.ti-arm-clang.release.lib : port.obj (.text.vPortYeildFromISR)
+                  1024cccc    00000010                                                   : tasks.obj (.text.vTaskInternalSetTimeOutState)
+                  1024ccdc    00000010                                                   : tasks.obj (.text.vTaskSuspendAll)
+                  1024ccec    00000004     libsysbm.a : remove.c.obj (.text.remove)
+                  1024ccf0    0000000e     ti_pinmux_config.oer5f (.text.Pinmux_init)
+                  1024ccfe    00000002     --HOLE-- [fill = 0]
+                  1024cd00    0000000c     libc.a : aeabi_portable.c.obj (.text.__aeabi_errno_addr)
+                  1024cd0c    0000000c            : memory.c.obj (.text.malloc)
+                  1024cd18    0000000c     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.text.vTaskMissedYield)
+                  1024cd24    0000000c                                                   : tasks.obj (.text.xTaskGetCurrentTaskHandle)
+                  1024cd30    0000000a                                                   : TimerP_rti.obj (.text.TimerP_start)
+                  1024cd3a    0000000a                                                   : port.obj (.text.vApplicationIdleHook)
+                  1024cd44    00000006                                                   : list.obj (.text.vListInitialiseItem)
+                  1024cd4a    00000002     --HOLE-- [fill = 0]
+                  1024cd4c    00000004     libclang_rt.builtins.a : aeabi_memcpy.S.obj (.text)
+                  1024cd50    00000004     ti_board_open_close.oer5f (.text.Board_driversOpen)
+                  1024cd54    00000008     libclang_rt.builtins.a : aeabi_memcpy.S.obj (.tramp.__aeabi_memcpy.1)
+                  1024cd5c    00000004     --HOLE-- [fill = 0]
+                  1024cd60    00000004                            : aeabi_div0.c.obj (.text.__aeabi_idiv0)
+                  1024cd64    00000008     freertos.awr294x.r5f.ti-arm-clang.release.lib : HwiP_armv7r_asm.obj (.tramp.HwiP_enable.1)
+                  1024cd6c    00000004     --HOLE-- [fill = 0]
+                  1024cd70    00000004     libclang_rt.builtins.a : aeabi_div0.c.obj (.text.__aeabi_ldiv0)
+                  1024cd74    00000008     freertos.awr294x.r5f.ti-arm-clang.release.lib : PmuP_armv7r_asm.obj (.tramp.PmuP_enableCounters.1)
+                  1024cd7c    00000004     --HOLE-- [fill = 0]
+                  1024cd80    00000002     ti_board_open_close.oer5f (.text.Board_driversClose)
+                  1024cd82    0000000e     --HOLE-- [fill = 0]
+                  1024cd90    00000002     ti_board_config.oer5f (.text.Board_init)
+                  1024cd92    0000000e     --HOLE-- [fill = 0]
+                  1024cda0    00000002     ti_drivers_open_close.oer5f (.text.Drivers_open)
+                  1024cda2    0000000e     --HOLE-- [fill = 0]
+                  1024cdb0    00000002     ti_dpl_config.oer5f (.text.putchar_)
+                  1024cdb2    0000000e     --HOLE-- [fill = 0]
+
+.rodata    0    1024cdc0    00002c90     
+                  1024cdc0    000007b7     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.rodata.str1.1)
+                  1024d577    00000756                                                   : queue.obj (.rodata.str1.1)
+                  1024dccd    0000064d     gtrackApp.oer5f (.rodata.str1.1)
+                  1024e31a    0000051f     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.rodata.str1.1)
+                  1024e839    00000002     libc.a : fputs.c.obj (.rodata.str1.1)
+                  1024e83b    00000001     --HOLE-- [fill = 0]
+                  1024e83c    000002d8     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.rodata.gSocRcmADPLLJConfigTbl)
+                  1024eb14    000002bc     freertos.awr294x.r5f.ti-arm-clang.release.lib : timers.obj (.rodata.str1.1)
+                  1024edd0    0000014c                                                   : HeapP_internal.obj (.rodata.str1.1)
+                  1024ef1c    0000010e                                                   : ClockP_freertos_r5.obj (.rodata.str1.1)
+                  1024f02a    00000002     --HOLE-- [fill = 0]
+                  1024f02c    00000108     libc.a : k_rem_pio2.c.obj (.rodata.ipio2)
+                  1024f134    0000000c     ti_dpl_config.oer5f (.rodata.gMpuConfig)
+                  1024f140    00000101     libc.a : aeabi_ctype.S.obj (.rodata)
+                  1024f241    000000da     freertos.awr294x.r5f.ti-arm-clang.release.lib : SemaphoreP_freertos.obj (.rodata.str1.1)
+                  1024f31b    000000cc                                                   : TimerP_rti.obj (.rodata.str1.1)
+                  1024f3e7    000000ac     main_mss.oer5f (.rodata.str1.1)
+                  1024f493    00000090     libtestlogger_awr2944.aer5f : logger.oer5f (.rodata.str1.1)
+                  1024f523    00000001     --HOLE-- [fill = 0]
+                  1024f524    00000070     ti_dpl_config.oer5f (.rodata.gMpuRegionConfig)
+                  1024f594    00000069     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.rodata.gSocRcmClkSrcInfoMap)
+                  1024f5fd    0000005d     freertos.awr294x.r5f.ti-arm-clang.release.lib : port.obj (.rodata.str1.1)
+                  1024f65a    00000058                                                   : HeapP_freertos.obj (.rodata.str1.1)
+                  1024f6b2    00000005     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.rodata.gSocRcmR5ClkSrcInfoMap)
+                  1024f6b7    00000001     --HOLE-- [fill = 0]
+                  1024f6b8    00000050     freertos.awr294x.r5f.ti-arm-clang.release.lib : printf.obj (.rodata._ftoa.pow10)
+                  1024f708    00000040     libc.a : k_rem_pio2.c.obj (.rodata.PIo2)
+                  1024f748    00000040     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.rodata.gSocRcmXTALInfo)
+                  1024f788    0000002d     freertos.awr294x.r5f.ti-arm-clang.release.lib : DebugP_log.obj (.rodata.str1.1)
+                  1024f7b5    00000003     --HOLE-- [fill = 0]
+                  1024f7b8    00000028     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.rodata.gSocRcmFixedClocksTbl)
+                  1024f7e0    00000022     libc.a : _printfi.c.obj (.rodata.str1.1)
+                  1024f802    00000002     --HOLE-- [fill = 0]
+                  1024f804    00000020            : s_atanf.c.obj (.rodata.cst16)
+                  1024f824    00000020     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.rodata.cst32)
+                  1024f844    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmCpswClkSrcValMap)
+                  1024f85e    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmCptsClkSrcValMap)
+                  1024f878    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmCsiRxClkSrcValMap)
+                  1024f892    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmDssHwaClkSrcValMap)
+                  1024f8ac    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmDssRtiClkSrcValMap)
+                  1024f8c6    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmDssSciClkSrcValMap)
+                  1024f8e0    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmI2CClkSrcValMap)
+                  1024f8fa    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmMcanClkSrcValMap)
+                  1024f914    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmQspiClkSrcValMap)
+                  1024f92e    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmRtiClkSrcValMap)
+                  1024f948    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmSciClkSrcValMap)
+                  1024f962    0000001a                                                  : soc_rcm.obj (.rodata.gSocRcmSpiClkSrcValMap)
+                  1024f97c    00000018     libc.a : e_powf.c.obj (.rodata.cst8)
+                  1024f994    00000016     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.rodata.gSocRcmPllCoreOut2HSDivClkSrcValMap)
+                  1024f9aa    00000016                                                  : soc_rcm.obj (.rodata.gSocRcmPllDspOut1HSDivClkSrcValMap)
+                  1024f9c0    00000016                                                  : soc_rcm.obj (.rodata.gSocRcmPllDspOut2HSDivClkSrcValMap)
+                  1024f9d6    00000016                                                  : soc_rcm.obj (.rodata.gSocRcmPllPerOut1HSDivClkSrcValMap)
+                  1024f9ec    00000012     freertos.awr294x.r5f.ti-arm-clang.release.lib : printf.obj (.rodata.str1.1)
+                  1024f9fe    00000002     --HOLE-- [fill = 0]
+                  1024fa00    00000010     libc.a : k_rem_pio2.c.obj (.rodata.cst16)
+                  1024fa10    0000000d     drivers.awr294x.r5f.ti-arm-clang.release.lib : soc_rcm.obj (.rodata.gSocRcmPeripheralClkSrcInfoMap)
+                  1024fa1d    0000000b                                                  : soc_rcm.obj (.rodata.gSocRcmHsDivMuxClkSrcInfoMap)
+                  1024fa28    0000000a                                                  : soc_rcm.obj (.rodata.gSocRcmR5ClkSrcValMap)
+                  1024fa32    00000002     --HOLE-- [fill = 0]
+                  1024fa34    00000008     ti_dpl_config.oer5f (.rodata.gCacheConfig)
+                  1024fa3c    00000004     freertos.awr294x.r5f.ti-arm-clang.release.lib : CacheP_armv7r.obj (.rodata.gCacheL1dCacheLineSize)
+                  1024fa40    00000004                                                   : CacheP_armv7r.obj (.rodata.gCacheL1pCacheLineSize)
+                  1024fa44    00000004                                                   : tasks.obj (.rodata.uxTopUsedPriority)
+                  1024fa48    00000008     --HOLE-- [fill = 0]
+
+.text.hwi 
+*          0    102566d0    00000740     
+                  102566d0    00000332     freertos.awr294x.r5f.ti-arm-clang.release.lib : HwiP_armv7r_vim.obj (.text.hwi)
+                  10256a02    00000002     --HOLE-- [fill = 0]
+                  10256a04    000001ec                                                   : portASM.obj (.text.hwi)
+                  10256bf0    000001a8                                                   : HwiP_armv7r_handlers_freertos.obj (.text.hwi)
+                  10256d98    00000070                                                   : HwiP_armv7r_asm.obj (.text.hwi)
+                  10256e08    00000008                                                   : HwiP_armv7r_asm.obj (.tramp.HwiP_enableFIQ.1)
+
+.text.cache 
+*          0    10256e10    00000430     
+                  10256e10    00000340     freertos.awr294x.r5f.ti-arm-clang.release.lib : CacheP_armv7r_asm.obj (.text.cache)
+                  10257150    000000d8                                                   : CacheP_armv7r.obj (.text.cache)
+                  10257228    00000008                                                   : CacheP_armv7r_asm.obj (.tramp.CacheP_invL1d.1)
+                  10257230    00000008                                                   : CacheP_armv7r_asm.obj (.tramp.CacheP_enableL1p.1)
+                  10257238    00000008                                                   : HwiP_armv7r_asm.obj (.tramp.HwiP_restore.1)
+
+.text.mpu 
+*          0    10257240    00000208     
+                  10257240    00000180     freertos.awr294x.r5f.ti-arm-clang.release.lib : MpuP_armv7r.obj (.text.mpu)
+                  102573c0    00000078                                                   : MpuP_armv7r_asm.obj (.text.mpu)
+                  10257438    00000008                                                   : HwiP_armv7r_asm.obj (.tramp.HwiP_restore.2)
+                  10257440    00000008                                                   : MpuP_armv7r_asm.obj (.tramp.MpuP_isEnableAsm.1)
+
+.text.boot 
+*          0    10257450    00000130     
+                  10257450    000000fc     freertos.awr294x.r5f.ti-arm-clang.release.lib : boot_armv7r_asm.obj (.text.boot)
+                  1025754c    0000001a                                                   : DebugP_log.obj (.text.boot)
+                  10257566    0000000a     --HOLE-- [fill = 0]
+                  10257570    0000000e     ti_dpl_config.oer5f (.text.boot)
+                  1025757e    00000002     --HOLE-- [fill = 0]
+
+.text:abort 
+*          0    10257580    00000008     
+                  10257580    00000008     libc.a : exit.c.obj (.text:abort)
+
+.data      0    10257588    000004a0     
+                  10257588    000000f0     libc.a : defs.c.obj (.data._ftable)
+                  10257678    00000080     ti_pinmux_config.oer5f (.data.gPinMuxMainDomainCfg)
+                  102576f8    0000007c     gtrackApp.oer5f (.data.appSceneryParams)
+                  10257774    00000078     libsysbm.a : host_device.c.obj (.data._device)
+                  102577ec    00000074     gtrackApp.oer5f (.data..L_MergedGlobals)
+                  10257860    0000006c     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.data..L_MergedGlobals.35)
+                  102578cc    00000050     libsysbm.a : host_device.c.obj (.data._stream)
+                  1025791c    00000040     freertos.awr294x.r5f.ti-arm-clang.release.lib : tasks.obj (.data..L_MergedGlobals)
+                  1025795c    00000030                                                   : timers.obj (.data..L_MergedGlobals.13)
+                  1025798c    00000014     ti_dpl_config.oer5f (.data.gClockConfig)
+                  102579a0    00000010     freertos.awr294x.r5f.ti-arm-clang.release.lib : port.obj (.data..L_MergedGlobals)
+                  102579b0    00000010     ti_power_clock_config.oer5f (.data..L_MergedGlobals)
+                  102579c0    0000000c     libtestlogger_awr2944.aer5f : logger.oer5f (.data..L_MergedGlobals)
+                  102579cc    00000008     freertos.awr294x.r5f.ti-arm-clang.release.lib : timers.obj (.data..L_MergedGlobals)
+                  102579d4    00000008     libc.a : exit.c.obj (.data..L_MergedGlobals)
+                  102579dc    00000004            : defs.c.obj (.data.__TI_ft_end)
+                  102579e0    00000008     freertos.awr294x.r5f.ti-arm-clang.release.lib : PmuP_armv7r.obj (.data.pmu)
+                  102579e8    00000008                                                   : TaskP_freertos.obj (.data.vApplicationLoadHook.lastUpdateTime)
+                  102579f0    00000004     libc.a : aeabi_portable.c.obj (.data.__aeabi_errno)
+                  102579f4    00000004            : _lock.c.obj (.data._lock)
+                  102579f8    00000004            : _lock.c.obj (.data._unlock)
+                  102579fc    00000004     freertos.awr294x.r5f.ti-arm-clang.release.lib : DebugP_log.obj (.data.gDebugLogZone)
+                  10257a00    00000004     ti_dpl_config.oer5f (.data.gHwiConfig)
+                  10257a04    00000004     main_mss.oer5f (.data.gMCPILogMessageSize)
+                  10257a08    00000004     gtrackAlloc.oer5f (.data.memoryBytesUsed)
+                  10257a0c    00000004     freertos.awr294x.r5f.ti-arm-clang.release.lib : timers.obj (.data.prvSampleTimeNow.xLastTime)
+                  10257a10    00000004                                                   : port.obj (.data.ulPortTaskHasFPUContext)
+                  10257a14    00000001     libc.a : fopen.c.obj (.data._search_fp.init)
+                  10257a15    00000003     --HOLE-- [fill = 0]
+                  10257a18    00000001     freertos.awr294x.r5f.ti-arm-clang.release.lib : DebugP_freertos.obj (.data.gDebugLogIsInitDone)
+                  10257a19    00000003     --HOLE-- [fill = 0]
+                  10257a1c    00000001     libc.a : memory.c.obj (.data.memory_is_initialized)
+                  10257a1d    00000003     --HOLE-- [fill = 0]
+                  10257a20    00000001     libsysbm.a : open.c.obj (.data.open.stream_init)
+                  10257a21    00000007     --HOLE-- [fill = 0]
+
+.irqstack 
+*          0    10257a28    00000100     UNINITIALIZED
+                  10257a28    00000100     --HOLE--
+
+.fiqstack 
+*          0    10257b28    00000100     UNINITIALIZED
+                  10257b28    00000100     --HOLE--
+
+.svcstack 
+*          0    10257c28    00001000     UNINITIALIZED
+                  10257c28    00001000     --HOLE--
+
+.abortstack 
+*          0    10258c28    00000100     UNINITIALIZED
+                  10258c28    00000100     --HOLE--
+
+.undefinedstack 
+*          0    10258d28    00000100     UNINITIALIZED
+                  10258d28    00000100     --HOLE--
+
+.gtrackLibSection 
+*          0    1024fa50    00006c78     
+                  1024fa50    0000149e     libgtrack2D_awr2944.aer5f : gtrack_unit_update.oer5f (.text.gtrack_unitUpdate)
+                  10250eee    00000002     --HOLE-- [fill = 0]
+                  10250ef0    0000075a                               : gtrack_create.oer5f (.text.gtrack_create)
+                  1025164a    00000006     --HOLE-- [fill = 0]
+                  10251650    0000069c                               : gtrack_module.oer5f (.text.gtrack_moduleAllocate)
+                  10251cec    00000004     --HOLE-- [fill = 0]
+                  10251cf0    000003fc                               : gtrack_unit_score.oer5f (.text.gtrack_unitScore)
+                  102520ec    00000004     --HOLE-- [fill = 0]
+                  102520f0    00000338                               : gtrack_step.oer5f (.text.gtrack_step)
+                  10252428    00000008     --HOLE-- [fill = 0]
+                  10252430    000002ba                               : gtrack_unit_event.oer5f (.text.gtrack_unitEvent)
+                  102526ea    00000006     --HOLE-- [fill = 0]
+                  102526f0    00000274                               : gtrack_math.oer5f (.text.gtrack_matrixMakeSymmetrical)
+                  10252964    0000000c     --HOLE-- [fill = 0]
+                  10252970    00000268                               : gtrack_math.oer5f (.text.gtrack_matrixMultiply)
+                  10252bd8    00000008     --HOLE-- [fill = 0]
+                  10252be0    00000268                               : gtrack_math.oer5f (.text.gtrack_matrixTransposeMultiply)
+                  10252e48    00000008     --HOLE-- [fill = 0]
+                  10252e50    00000266                               : gtrack_utilities.oer5f (.text.gtrack_computeJacobian)
+                  102530b6    0000000a     --HOLE-- [fill = 0]
+                  102530c0    00000236                               : gtrack_math.oer5f (.text.gtrack_matrixCovFilter)
+                  102532f6    0000000a     --HOLE-- [fill = 0]
+                  10253300    000001ec                               : gtrack_unit_create.oer5f (.text.gtrack_unitCreate)
+                  102534ec    00000004     --HOLE-- [fill = 0]
+                  102534f0    000001c6                               : gtrack_math.oer5f (.text.gtrack_matrixCovNormalize)
+                  102536b6    0000000a     --HOLE-- [fill = 0]
+                  102536c0    00000192                               : gtrack_utilities_2d.oer5f (.text.gtrack_matrixInv)
+                  10253852    0000000e     --HOLE-- [fill = 0]
+                  10253860    0000017e                               : gtrack_module.oer5f (.text.gtrack_modulePresence)
+                  102539de    00000002     --HOLE-- [fill = 0]
+                  102539e0    00000178                               : gtrack_utilities.oer5f (.text.gtrack_cartesian2spherical)
+                  10253b58    00000008     --HOLE-- [fill = 0]
+                  10253b60    00000170                               : gtrack_unit_predict.oer5f (.text.gtrack_unitPredict)
+                  10253cd0    00000148                               : gtrack_unit_start.oer5f (.text.gtrack_unitStart)
+                  10253e18    00000008     --HOLE-- [fill = 0]
+                  10253e20    00000144                               : gtrack_utilities_2d.oer5f (.text.gtrack_matrixComputePJT)
+                  10253f64    0000000c     --HOLE-- [fill = 0]
+                  10253f70    0000013a                               : gtrack_math.oer5f (.text.gtrack_matrixPrint2)
+                  102540aa    00000006     --HOLE-- [fill = 0]
+                  102540b0    00000100                               : gtrack_math.oer5f (.text.gtrack_matrixSetDiag)
+                  102541b0    000000fe                               : gtrack_math.oer5f (.text.gtrack_vectorScalarMulAcc)
+                  102542ae    00000002     --HOLE-- [fill = 0]
+                  102542b0    000000ec                               : gtrack_utilities.oer5f (.text.gtrack_spherical2cartesian)
+                  1025439c    00000004     --HOLE-- [fill = 0]
+                  102543a0    000000e4                               : gtrack_delete.oer5f (.text.gtrack_delete)
+                  10254484    0000000c     --HOLE-- [fill = 0]
+                  10254490    000000e0                               : gtrack_math.oer5f (.text.gtrack_matrixGetDiag)
+                  10254570    000000e0                               : gtrack_math.oer5f (.text.gtrack_vectorAdd)
+                  10254650    000000e0                               : gtrack_math.oer5f (.text.gtrack_vectorSub)
+                  10254730    000000cc                               : gtrack_math.oer5f (.text.gtrack_vectorScalarMul)
+                  102547fc    00000004     --HOLE-- [fill = 0]
+                  10254800    000000c4                               : gtrack_math.oer5f (.text.gtrack_matrixCovAcc)
+                  102548c4    0000000c     --HOLE-- [fill = 0]
+                  102548d0    000000c2                               : gtrack_math.oer5f (.text.gtrack_matrixPrint)
+                  10254992    0000000e     --HOLE-- [fill = 0]
+                  102549a0    00000098                               : gtrack_listlib.oer5f (.text.gtrack_listRemoveElement)
+                  10254a38    00000008     --HOLE-- [fill = 0]
+                  10254a40    00000096                               : gtrack_module.oer5f (.text.gtrack_moduleUpdate)
+                  10254ad6    0000000a     --HOLE-- [fill = 0]
+                  10254ae0    00000090                               : gtrack_math.oer5f (.text.gtrack_sincosd)
+                  10254b70    00000086                               : gtrack_utilities_2d.oer5f (.text.gtrack_computeMahalanobis)
+                  10254bf6    0000000a     --HOLE-- [fill = 0]
+                  10254c00    00000086                               : gtrack_math.oer5f (.text.gtrack_vectorInit)
+                  10254c86    0000000a     --HOLE-- [fill = 0]
+                  10254c90    00000084                               : gtrack_utilities_2d.oer5f (.text.gtrack_calcMeasurementLimits)
+                  10254d14    0000000c     --HOLE-- [fill = 0]
+                  10254d20    00000068                               : gtrack_utilities_2d.oer5f (.text.gtrack_calcMeasurementSpread)
+                  10254d88    00000008     --HOLE-- [fill = 0]
+                  10254d90    00000068                               : gtrack_utilities.oer5f (.text.gtrack_unrollRadialVelocity)
+                  10254df8    00000008     --HOLE-- [fill = 0]
+                  10254e00    00000066                               : gtrack_module.oer5f (.text.gtrack_modulePredict)
+                  10254e66    0000000a     --HOLE-- [fill = 0]
+                  10254e70    00000064                               : gtrack_utilities_2d.oer5f (.text.gtrack_isPointBehindTarget)
+                  10254ed4    0000000c     --HOLE-- [fill = 0]
+                  10254ee0    00000062                               : gtrack_unit_report.oer5f (.text.gtrack_unitReport)
+                  10254f42    0000000e     --HOLE-- [fill = 0]
+                  10254f50    0000005c                               : gtrack_module.oer5f (.text.gtrack_moduleReport)
+                  10254fac    00000004     --HOLE-- [fill = 0]
+                  10254fb0    0000005a                               : gtrack_utilities_2d.oer5f (.text.gtrack_cart2sph)
+                  1025500a    00000006     --HOLE-- [fill = 0]
+                  10255010    00000058                               : gtrack_utilities_2d.oer5f (.text.gtrack_calcDistance)
+                  10255068    00000008     --HOLE-- [fill = 0]
+                  10255070    00000056                               : gtrack_unit_stop.oer5f (.text.gtrack_unitStop)
+                  102550c6    0000000a     --HOLE-- [fill = 0]
+                  102550d0    0000004c                               : gtrack_module.oer5f (.text.gtrack_moduleAssociate)
+                  1025511c    00000004     --HOLE-- [fill = 0]
+                  10255120    0000004a                               : gtrack_utilities_2d.oer5f (.text.gtrack_isPointInsideBox)
+                  1025516a    00000006     --HOLE-- [fill = 0]
+                  10255170    00000042                               : gtrack_utilities_2d.oer5f (.text.gtrack_computeMahalanobisPartial)
+                  102551b2    0000000e     --HOLE-- [fill = 0]
+                  102551c0    00000040                               : gtrack_utilities_2d.oer5f (.text.gtrack_sph2cart)
+                  10255200    00000034                               : gtrack_utilities_2d.oer5f (.text.gtrack_calcDim)
+                  10255234    0000000c     --HOLE-- [fill = 0]
+                  10255240    0000002c                               : gtrack_listlib.oer5f (.text.gtrack_listDequeue)
+                  1025526c    00000004     --HOLE-- [fill = 0]
+                  10255270    0000002c                               : gtrack_math.oer5f (.text.gtrack_matrixAdd)
+                  1025529c    00000004     --HOLE-- [fill = 0]
+                  102552a0    0000002c                               : gtrack_math.oer5f (.text.gtrack_matrixSub)
+                  102552cc    00000004     --HOLE-- [fill = 0]
+                  102552d0    00000024                               : gtrack_utilities_2d.oer5f (.text.gtrack_isInsideSolidAngle)
+                  102552f4    0000000c     --HOLE-- [fill = 0]
+                  10255300    00000022                               : gtrack_listlib.oer5f (.text.gtrack_listEnqueue)
+                  10255322    0000000e     --HOLE-- [fill = 0]
+                  10255330    0000001e                               : gtrack_math.oer5f (.text.gtrack_matrixInit)
+                  1025534e    00000002     --HOLE-- [fill = 0]
+                  10255350    00000010                               : gtrack_unit_get.oer5f (.text.gtrack_unitGetC)
+                  10255360    00000010                               : gtrack_unit_get.oer5f (.text.gtrack_unitGetSpread)
+                  10255370    0000000a                               : gtrack_utilities_2d.oer5f (.text.gtrack_censor2world)
+                  1025537a    00000006     --HOLE-- [fill = 0]
+                  10255380    0000000a                               : gtrack_listlib.oer5f (.text.gtrack_listInit)
+                  1025538a    00000006     --HOLE-- [fill = 0]
+                  10255390    0000000a                               : gtrack_unit_get.oer5f (.text.gtrack_unitGetMCenter)
+                  1025539a    00000006     --HOLE-- [fill = 0]
+                  102553a0    00000008                               : gtrack_unit_delete.oer5f (.text.gtrack_unitDelete)
+                  102553a8    00000008     --HOLE-- [fill = 0]
+                  102553b0    00000004                               : gtrack_listlib.oer5f (.text.gtrack_listGetFirst)
+                  102553b4    0000000c     --HOLE-- [fill = 0]
+                  102553c0    00000004                               : gtrack_listlib.oer5f (.text.gtrack_listGetNext)
+                  102553c4    00000004     --HOLE-- [fill = 0]
+                  102553c8    000005a0                               : gtrack_math.oer5f (.rodata.cosTable)
+                  10255968    000005a0                               : gtrack_math.oer5f (.rodata.sinTable)
+                  10255f08    000003b7                               : gtrack_unit_update.oer5f (.rodata.str1.1)
+                  102562bf    00000125                               : gtrack_module.oer5f (.rodata.str1.1)
+                  102563e4    000000b5                               : gtrack_unit_event.oer5f (.rodata.str1.1)
+                  10256499    00000007     --HOLE-- [fill = 0]
+                  102564a0    0000007c                               : gtrack_create.oer5f (.rodata.defaultSceneryParams)
+                  1025651c    0000007c                               : gtrack_unit_predict.oer5f (.rodata.str1.1)
+                  10256598    00000051                               : gtrack_unit_start.oer5f (.rodata.str1.1)
+                  102565e9    00000035                               : gtrack_unit_stop.oer5f (.rodata.str1.1)
+                  1025661e    00000026                               : gtrack_math.oer5f (.rodata.str1.1)
+                  10256644    00000021                               : gtrack_unit_score.oer5f (.rodata.str1.1)
+                  10256665    00000003     --HOLE-- [fill = 0]
+                  10256668    00000018                               : gtrack_create.oer5f (.rodata.defaultAllocationParams)
+                  10256680    00000018                               : gtrack_utilities_2d.oer5f (.rodata.pInit)
+                  10256698    00000014                               : gtrack_create.oer5f (.rodata.defaultGatingParams)
+                  102566ac    00000004     --HOLE-- [fill = 0]
+                  102566b0    0000000c                               : gtrack_create.oer5f (.rodata.defaultStateParams)
+                  102566bc    0000000c                               : gtrack_utilities_2d.oer5f (.rodata.spreadMin)
+
+.MCPILogBuffer 
+*          0    88000000    00002400     UNINITIALIZED
+                  88000000    00002400     main_mss.oer5f (.MCPILogBuffer)
+
+MODULE SUMMARY
+
+       Module                                 code    ro data   rw data
+       ------                                 ----    -------   -------
+    obj_awr29442D/
+       gtrackApp.oer5f                        2444    1613      69136  
+       main_mss.oer5f                         158     172       58516  
+       gtrackAlloc.oer5f                      80      0         4      
+       gtrackLog.oer5f                        36      0         0      
+    +--+--------------------------------------+-------+---------+---------+
+       Total:                                 2718    1785      127656 
+                                                                       
+    obj_awr29442D/mssgenerated/
+       ti_dpl_config.oer5f                    74      132       24     
+       ti_pinmux_config.oer5f                 14      0         128    
+       ti_power_clock_config.oer5f            112     0         16     
+       ti_drivers_config.oer5f                26      0         0      
+       ti_board_open_close.oer5f              6       0         0      
+       ti_board_config.oer5f                  2       0         0      
+       ti_drivers_open_close.oer5f            2       0         0      
+    +--+--------------------------------------+-------+---------+---------+
+       Total:                                 236     132       168    
+                                                                       
+    /home/gtbldadm/nightlybuilds/mmwave_app_sdk/scripts/jenkins/../../ti/utils/testlogger/lib/libtestlogger_awr2944.aer5f
+       logger.oer5f                           770     144       12     
+    +--+--------------------------------------+-------+---------+---------+
+       Total:                                 770     144       12     
+                                                                       
+    /opt/ti/ccs1220/ccs/tools/compiler/ti-cgt-armllvm_2.1.2.LTS/lib/armv7r-ti-none-eabihf/c/libc.a
+       _printfi.c.obj                         6516    34        0      
+       k_rem_pio2.c.obj                       1792    344       0      
+       e_powf.c.obj                           1592    24        0      
+       memory.c.obj                           1172    0         5      
+       fopen.c.obj                            784     0         1      
+       s_tanf.c.obj                           696     0         0      
+       e_logf.c.obj                           532     0         0      
+       fputs.c.obj                            472     2         0      
+       e_sqrt.c.obj                           472     0         0      
+       s_atanf.c.obj                          428     32        0      
+       defs.c.obj                             0       0         404    
+       fread.c.obj                            396     0         0      
+       s_floor.c.obj                          348     0         0      
+       setvbuf.c.obj                          324     0         0      
+       s_scalbn.c.obj                         320     0         0      
+       getdevice.c.obj                        308     0         0      
+       s_scalbnf.c.obj                        276     0         0      
+       _io_perm.c.obj                         272     0         0      
+       aeabi_ctype.S.obj                      0       257       0      
+       fclose.c.obj                           256     0         0      
+       snprintf.c.obj                         256     0         0      
+       _bufread.c.obj                         232     0         0      
+       fputc.c.obj                            232     0         0      
+       e_sqrtf.c.obj                          224     0         0      
+       fseek.c.obj                            184     0         0      
+       printf.c.obj                           160     0         0      
+       sprintf.c.obj                          152     0         0      
+       vprintf.c.obj                          140     0         0      
+       _ltoa.c.obj                            136     0         0      
+       fflush.c.obj                           136     0         0      
+       s_frexp.c.obj                          124     0         0      
+       atoi.c.obj                             112     0         0      
+       exit.c.obj                             92      0         8      
+       autoinit.c.obj                         80      0         0      
+       memccpy.c.obj                          72      0         0      
+       wcslen.c.obj                           32      0         0      
+       aeabi_portable.c.obj                   12      0         4      
+       _lock.c.obj                            4       0         8      
+    +--+--------------------------------------+-------+---------+---------+
+       Total:                                 19336   693       430    
+                                                                       
+    /opt/ti/ccs1220/ccs/tools/compiler/ti-cgt-armllvm_2.1.2.LTS/lib/armv7r-ti-none-eabihf/c/libsysbm.a
+       trgmsg.c.obj                           176     0         288    
+       open.c.obj                             288     0         1      
+       hostrename.c.obj                       208     0         0      
+       host_device.c.obj                      0       0         200    
+       hostopen.c.obj                         148     0         8      
+       hostlseek.c.obj                        152     0         0      
+       close.c.obj                            140     0         0      
+       hostread.c.obj                         132     0         0      
+       hostwrite.c.obj                        132     0         0      
+       hostunlink.c.obj                       108     0         0      
+       hostclose.c.obj                        96      0         0      
+       unlink.c.obj                           72      0         0      
+       lseek.c.obj                            52      0         0      
+       read.c.obj                             52      0         0      
+       write.c.obj                            52      0         0      
+       memcpy32.S.obj                         28      0         0      
+       memset32.S.obj                         24      0         0      
+       remove.c.obj                           4       0         0      
+    +--+--------------------------------------+-------+---------+---------+
+       Total:                                 1864    0         497    
+                                                                       
+    /opt/ti/ccs1220/ccs/tools/compiler/ti-cgt-armllvm_2.1.2.LTS/lib/clang/14.0.6/lib/armv7r-ti-none-eabihf/libclang_rt.builtins.a
+       udivsi3.S.obj                          464     0         0      
+       udivmoddi4.S.obj                       280     0         0      
+       floatundisf.S.obj                      84      0         0      
+       divsi3.S.obj                           44      0         0      
+       aeabi_uldivmod.S.obj                   36      0         0      
+       aeabi_memset.S.obj                     28      0         0      
+       aeabi_memcpy.S.obj                     12      0         0      
+       aeabi_div0.c.obj                       8       0         0      
+    +--+--------------------------------------+-------+---------+---------+
+       Total:                                 956     0         0      
+                                                                       
+    /opt/ti/mcu_plus_sdk_awr294x_08_06_00_28/source/drivers/lib/drivers.awr294x.r5f.ti-arm-clang.release.lib
+       soc_rcm.obj                            1792    2719      0      
+       soc.obj                                258     0         0      
+       pinmux.obj                             46      0         0      
+    +--+--------------------------------------+-------+---------+---------+
+       Total:                                 2096    2719      0      
+                                                                       
+    /opt/ti/mcu_plus_sdk_awr294x_08_06_00_28/source/kernel/freertos/lib/freertos.awr294x.r5f.ti-arm-clang.release.lib
+       tasks.obj                              3244    1979      812    
+       port.obj                               336     93        5420   
+       HwiP_armv7r_vim.obj                    818     0         4108   
+       queue.obj                              2766    1878      256    
+       printf.obj                             3658    98        0      
+       timers.obj                             1068    700       396    
+       CacheP_armv7r_asm.obj                  848     0         0      
+       HeapP_internal.obj                     504     332       0      
+       TimerP_rti.obj                         376     204       0      
+       ClockP_freertos_r5.obj                 304     270       0      
+       SemaphoreP_freertos.obj                226     218       80     
+       portASM.obj                            492     0         0      
+       HwiP_armv7r_handlers_freertos.obj      424     0         4      
+       TaskP_freertos.obj                     232     0         168    
+       MpuP_armv7r.obj                        384     0         0      
+       DebugP_freertos.obj                    104     0         153    
+       boot_armv7r_asm.obj                    252     0         0      
+       ClockP_freertos.obj                    180     0         56     
+       CacheP_armv7r.obj                      216     8         0      
+       DebugP_log.obj                         146     45        4      
+       HeapP_freertos.obj                     106     88        0      
+       HwiP_armv7r_asm.obj                    144     0         0      
+       list.obj                               136     0         0      
+       MpuP_armv7r_asm.obj                    128     0         0      
+       PmuP_armv7r.obj                        92      0         8      
+       HwiP_armv7r_vectors_freertos_asm.obj   64      0         0      
+       PmuP_armv7r_asm.obj                    56      0         0      
+       heap_3.obj                             26      0         0      
+       boot_armv7r.obj                        24      0         0      
+    +--+--------------------------------------+-------+---------+---------+
+       Total:                                 17354   5913      11465  
+                                                                       
+    lib/libgtrack2D_awr2944.aer5f
+       gtrack_math.oer5f                      5366    2918      0      
+       gtrack_unit_update.oer5f               5278    951       0      
+       gtrack_module.oer5f                    2494    293       0      
+       gtrack_create.oer5f                    1882    180       0      
+       gtrack_utilities_2d.oer5f              1676    36        0      
+       gtrack_utilities.oer5f                 1330    0         0      
+       gtrack_unit_score.oer5f                1020    33        0      
+       gtrack_unit_event.oer5f                698     181       0      
+       gtrack_step.oer5f                      824     0         0      
+       gtrack_unit_create.oer5f               492     0         0      
+       gtrack_unit_predict.oer5f              368     124       0      
+       gtrack_unit_start.oer5f                328     81        0      
+       gtrack_listlib.oer5f                   248     0         0      
+       gtrack_delete.oer5f                    228     0         0      
+       gtrack_unit_stop.oer5f                 86      53        0      
+       gtrack_unit_report.oer5f               98      0         0      
+       gtrack_unit_get.oer5f                  42      0         0      
+       gtrack_unit_delete.oer5f               8       0         0      
+    +--+--------------------------------------+-------+---------+---------+
+       Total:                                 22466   4850      0      
+                                                                       
+       Heap:                                  0       0         4096   
+       Stack:                                 0       0         8192   
+    +--+--------------------------------------+-------+---------+---------+
+       Grand Total:                           67796   16236     152516 
+
+VENEERS
+
+callee name               veneer name
+   callee addr  veneer addr  call addr  call info
+--------------  -----------  ---------  ----------------
+HwiP_enableFIQ            $Ven$TA$L$PI$$HwiP_enableFIQ
+   10256dc8     10256e08     102569da   freertos.awr294x.r5f.ti-arm-clang.release.lib : HwiP_armv7r_vim.obj (.text.hwi)
+CacheP_invL1d             $Ven$TA$L$PI$$CacheP_invL1d
+   10256e80     10257228     10257224   freertos.awr294x.r5f.ti-arm-clang.release.lib : CacheP_armv7r.obj (.text.cache)
+CacheP_enableL1p          $Ven$TA$L$PI$$CacheP_enableL1p
+   10256e68     10257230     102571fe   freertos.awr294x.r5f.ti-arm-clang.release.lib : CacheP_armv7r.obj (.text.cache)
+HwiP_restore              $Ven$TA$L$PI$$HwiP_restore
+   10256dd8     10257238     102571de   freertos.awr294x.r5f.ti-arm-clang.release.lib : CacheP_armv7r.obj (.text.cache)
+HwiP_restore              $Ven$TA$L$PI$$HwiP_restore
+   10256dd8     10257438     10257322   freertos.awr294x.r5f.ti-arm-clang.release.lib : MpuP_armv7r.obj (.text.mpu)
+                             1025735c                                                 : MpuP_armv7r.obj (.text.mpu)
+MpuP_isEnableAsm          $Ven$TA$L$PI$$MpuP_isEnableAsm
+   10257410     10257440     102572f2   freertos.awr294x.r5f.ti-arm-clang.release.lib : MpuP_armv7r.obj (.text.mpu)
+__aeabi_memcpy            $Ven$TA$L$PI$$__aeabi_memcpy
+   1024cd4c     1024cd54     1024c832   freertos.awr294x.r5f.ti-arm-clang.release.lib : queue.obj (.text.prvCopyDataFromQueue)
+HwiP_enable               $Ven$TA$L$PI$$HwiP_enable
+   10256db8     1024cd64     1024c396   ti_dpl_config.oer5f (.text.Dpl_init)
+PmuP_enableCounters       $Ven$TA$L$PI$$PmuP_enableCounters
+   1024c5e8     1024cd74     1024b9d8   freertos.awr294x.r5f.ti-arm-clang.release.lib : PmuP_armv7r.obj (.text.pmu)
+
+[9 trampolines]
+[10 trampoline calls]
+
+
+GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
+
+address   name                               
+-------   ----                               
+1024cd81  Board_driversClose                 
+1024cd51  Board_driversOpen                  
+1024cd91  Board_init                         
+10257580  C$$EXIT                            
+1024bbb4  C$$IO$$                            
+10257120  CacheP_configForceWrThru           
+102571a9  CacheP_disable                     
+10256e10  CacheP_disableL1d                  
+10256e38  CacheP_disableL1p                  
+102571e3  CacheP_enable                      
+10256e50  CacheP_enableL1d                   
+10256e68  CacheP_enableL1p                   
+10257114  CacheP_getCacheLevelInfo           
+102570dc  CacheP_getEnabled                  
+10257151  CacheP_init                        
+10257203  CacheP_inv                         
+10256e80  CacheP_invL1d                      
+10256ef4  CacheP_invL1dAll                   
+10256eb8  CacheP_invL1p                      
+10256efc  CacheP_invL1pAll                   
+10257140  CacheP_setDLFO                     
+10256f04  CacheP_wb                          
+10256f7c  CacheP_wbAll                       
+10256f40  CacheP_wbInv                       
+10257024  CacheP_wbInvAll                    
+1025703c  CacheP_wbInvAllAsm                 
+1024c25d  ClockP_getTimeUsec                 
+102444bd  ClockP_getTimerCount               
+102486d1  ClockP_init                        
+10246015  ClockP_timerClearOverflowInt       
+1024c6cd  ClockP_timerTickIsr                
+1024cc69  ClockP_usecToTicks                 
+1024c40d  ClockP_usleep                      
+1024c5d8  CycleCounterP_getCount32           
+1024b9a9  CycleCounterP_init                 
+1024b9dd  CycleCounterP_nsToTicks            
+1024b9b9  CycleCounterP_reset                
+1024c935  DebugP_logZoneEnable               
+1024c361  Dpl_init                           
+1024cda1  Drivers_open                       
+10257920  FreeRTOS_errno                     
+1024b88c  HOSTclose                          
+1024a42c  HOSTlseek                          
+1024a55c  HOSTopen                           
+1024ac80  HOSTread                           
+1024a248  HOSTrename                         
+1024b610  HOSTunlink                         
+1024ad04  HOSTwrite                          
+1024c995  HeapP_alloc                        
+1024c441  HeapP_construct                    
+1024cb1d  HeapP_free                         
+1025677d  HwiP_Params_init                   
+10256735  HwiP_clearInt                      
+10256791  HwiP_construct                     
+10256d73  HwiP_data_abort_handler            
+102568b9  HwiP_destruct                      
+10256d98  HwiP_disable                       
+10256da8  HwiP_disableFIQ                    
+102566f9  HwiP_disableInt                    
+10256df0  HwiP_disableVIC                    
+10256db8  HwiP_enable                        
+10256dc8  HwiP_enableFIQ                     
+102566d1  HwiP_enableInt                     
+10256de0  HwiP_enableVIC                     
+10256c81  HwiP_fiq_handler                   
+10256e00  HwiP_getCPSR                       
+102569f1  HwiP_inISR                         
+10256931  HwiP_init                          
+10256aac  HwiP_irq_handler                   
+10256bf1  HwiP_irq_handler_c                 
+10256755  HwiP_post                          
+10256d4d  HwiP_prefetch_abort_handler        
+10256d01  HwiP_reserved_handler              
+10256dd8  HwiP_restore                       
+10256729  HwiP_restoreInt                    
+10256a3c  HwiP_svc_handler                   
+10256d27  HwiP_undefined_handler             
+102579c4  MCPI_FailSignature                 
+1024c9b1  MCPI_Initialize                    
+102579c0  MCPI_Result                        
+88000000  MCPI_logMessage                    
+10245a81  MCPI_setFeatureTestResult          
+1024cc81  MCPI_setTestResult                 
+10257241  MpuP_RegionAttrs_init              
+102572f7  MpuP_disable                       
+102573c0  MpuP_disableAsm                    
+102573d8  MpuP_disableBRAsm                  
+10257329  MpuP_enable                        
+102573e8  MpuP_enableAsm                     
+10257400  MpuP_enableBRAsm                   
+10257361  MpuP_init                          
+102572f3  MpuP_isEnable                      
+10257410  MpuP_isEnableAsm                   
+1025724f  MpuP_setRegion                     
+10257424  MpuP_setRegionAsm                  
+1024c639  Pinmux_config                      
+1024ccf1  Pinmux_init                        
+1024c600  PmuP_clearOverflowStatus           
+1024c5f0  PmuP_disableCounters               
+1024c5e8  PmuP_enableCounters                
+1024c5f8  PmuP_getOverflowStatus             
+1024c5e0  PmuP_setup                         
+1024b4c1  PowerClock_init                    
+1024b755  SOC_controlModuleLockMMR           
+1024ad89  SOC_controlModuleUnlockMMR         
+1024c667  SOC_getSelfCpuClk                  
+10246b05  SOC_moduleClockEnable              
+10243b29  SOC_moduleSetClockFrequency        
+1024c9e9  SOC_rcmGetR5Clock                  
+10247a75  SOC_rcmSetPeripheralClock          
+1024c191  SemaphoreP_constructMutex          
+1024bd19  SemaphoreP_pend                    
+1024bfe1  SemaphoreP_post                    
+1024cb41  System_init                        
+1024cae4  TI_memcpy_small                    
+1024cc38  TI_memset_small                    
+10249efd  TaskP_loadUpdateAll                
+10243b31  Test_initTask                      
+1024c7a5  TimerP_Params_init                 
+10245a79  TimerP_clearOverflowInt            
+1024cb8f  TimerP_getCount                    
+1024cb37  TimerP_getReloadCount              
+102487f9  TimerP_setup                       
+1024cd31  TimerP_start                       
+1023f328  _CIOBUF_                           
+1024ba61  _DebugP_assert                     
+1025754d  _DebugP_assertNoLog                
+1024b7bd  _DebugP_logZone                    
+10258d28  __ABORT_STACK_END                  
+00000100  __ABORT_STACK_SIZE                 
+10258c28  __ABORT_STACK_START                
+1023fb40  __BSS_END                          
+10220000  __BSS_START                        
+1023f328  __CIOBUF_                          
+10257c28  __FIQ_STACK_END                    
+00000100  __FIQ_STACK_SIZE                   
+10257b28  __FIQ_STACK_START                  
+10257b28  __IRQ_STACK_END                    
+00000100  __IRQ_STACK_SIZE                   
+10257a28  __IRQ_STACK_START                  
+10242b40  __STACK_END                        
+00002000  __STACK_SIZE                       
+10258c28  __SVC_STACK_END                    
+00001000  __SVC_STACK_SIZE                   
+10257c28  __SVC_STACK_START                  
+00001000  __SYSMEM_SIZE                      
+UNDEFED   __TI_CINIT_Base                    
+UNDEFED   __TI_CINIT_Limit                   
+UNDEFED   __TI_Handler_Table_Base            
+UNDEFED   __TI_Handler_Table_Limit           
+1024be14  __TI_auto_init_nobinit_nopinit     
+10249160  __TI_buff_read                     
+1024bab8  __TI_cleanup                       
+102579d4  __TI_cleanup_ptr                   
+10249d94  __TI_closefile                     
+1024a94c  __TI_doflush                       
+102579d8  __TI_dtors_ptr                     
+102579dc  __TI_ft_end                        
+1024a9d4  __TI_ltoa                          
+ffffffff  __TI_pprof_out_hndl                
+10242b40  __TI_printfi                       
+ffffffff  __TI_prof_data_size                
+ffffffff  __TI_prof_data_start               
+1024b3cc  __TI_rd_ok                         
+1024bb10  __TI_readmsg                       
+00000000  __TI_static_base__                 
+1023f648  __TI_tmpnams                       
+1024bb68  __TI_writemsg                      
+1024a390  __TI_wrt_ok                        
+10258e28  __UNDEFINED_STACK_END              
+00000100  __UNDEFINED_STACK_SIZE             
+10258d28  __UNDEFINED_STACK_START            
+1024f140  __aeabi_ctype_table_               
+1024f140  __aeabi_ctype_table_C              
+102579f0  __aeabi_errno                      
+1024cd00  __aeabi_errno_addr                 
+1024c728  __aeabi_idiv                       
+1024cd60  __aeabi_idiv0                      
+1024cd70  __aeabi_ldiv0                      
+1024cb10  __aeabi_memclr                     
+1024cb10  __aeabi_memclr4                    
+1024cb10  __aeabi_memclr8                    
+1024cd4c  __aeabi_memcpy                     
+1024cd4c  __aeabi_memcpy4                    
+1024cd4c  __aeabi_memcpy8                    
+1024cb00  __aeabi_memset                     
+1024cb00  __aeabi_memset4                    
+1024cb00  __aeabi_memset8                    
+10246ce0  __aeabi_uidiv                      
+1024bdc0  __aeabi_ul2f                       
+1024c8ec  __aeabi_uldivmod                   
+ffffffff  __binit__                          
+1024c728  __divsi3                           
+1024bdc0  __floatundisf                      
+102444c0  __kernel_rem_pio2                  
+10257571  __mpu_init                         
+10240b40  __stack                            
+10248a38  __udivmoddi4                       
+10246ce0  __udivsi3                          
+10257474  _c_int00                           
+10257450  _c_int00_sbl                       
+10257774  _device                            
+10257588  _ftable                            
+102566c8  _gtrackLibEnd                      
+1024fa50  _gtrackLibStart                    
+102579f4  _lock                              
+10248454  _nop                               
+102578cc  _stream                            
+1023fb40  _sys_memory                        
+UNDEFED   _system_post_cinit                 
+1024cba9  _system_pre_init                   
+102579f8  _unlock                            
+00000000  _vectors                           
+10257580  abort                              
+10247070  aligned_alloc                      
+1025780c  appAllocationParams                
+102577f8  appGatingParams                    
+10257824  appPresenceDetectionParams         
+102576f8  appSceneryParams                   
+102577ec  appStateParams                     
+102473e0  atanf                              
+1024b530  atoi                               
+ffffffff  binit                              
+1024a834  close                              
+10256668  defaultAllocationParams            
+10256698  defaultGatingParams                
+102564a0  defaultSceneryParams               
+102566b0  defaultStateParams                 
+1024a5f1  eTaskGetState                      
+1024bd6c  exit                               
+1024beb0  fclose                             
+1024b67c  finddevice                         
+10247f18  floor                              
+10247f18  floorl                             
+10248e84  fopen                              
+10249248  fputc                              
+1024758c  fputs                              
+10247c08  fread                              
+10247228  free                               
+1024af90  frexp                              
+1024af90  frexpl                             
+1024cc7c  fseek                              
+10249e48  fseeko                             
+1023fb30  gAppTask                           
+1023f938  gAppTaskObj                        
+10220000  gAppTskStackMain                   
+1024fa34  gCacheConfig                       
+1024fa3c  gCacheL1dCacheLineSize             
+1024fa40  gCacheL1pCacheLineSize             
+1025798c  gClockConfig                       
+1023fae8  gClockCtrl                         
+102579fc  gDebugLogZone                      
+1022c000  gHeapMem                           
+1023f9c4  gHeapObj                           
+10257a00  gHwiConfig                         
+1023cca0  gHwiCtrl                           
+10257a04  gMCPILogMessageSize                
+1024f134  gMpuConfig                         
+1024f524  gMpuRegionConfig                   
+1023fa94  gRovDummyQueue                     
+102579b0  gSocModules                        
+102579b4  gSocModulesClockFrequency          
+1023f6e8  gTaskP_ctrl                        
+10249790  getdevice                          
+1024c671  gtrack_alloc                       
+10255201  gtrack_calcDim                     
+10255011  gtrack_calcDistance                
+10254c91  gtrack_calcMeasurementLimits       
+10254d21  gtrack_calcMeasurementSpread       
+10254fb1  gtrack_cart2sph                    
+102539e1  gtrack_cartesian2spherical         
+10255371  gtrack_censor2world                
+10252e51  gtrack_computeJacobian             
+10254b71  gtrack_computeMahalanobis          
+10255171  gtrack_computeMahalanobisPartial   
+10250ef1  gtrack_create                      
+102543a1  gtrack_delete                      
+1024c911  gtrack_free                        
+102552d1  gtrack_isInsideSolidAngle          
+10254e71  gtrack_isPointBehindTarget         
+10255121  gtrack_isPointInsideBox            
+10255241  gtrack_listDequeue                 
+10255301  gtrack_listEnqueue                 
+102553b1  gtrack_listGetFirst                
+102553c1  gtrack_listGetNext                 
+10255381  gtrack_listInit                    
+102549a1  gtrack_listRemoveElement           
+1024c7f1  gtrack_log                         
+10255271  gtrack_matrixAdd                   
+10253e21  gtrack_matrixComputePJT            
+10254801  gtrack_matrixCovAcc                
+102530c1  gtrack_matrixCovFilter             
+102534f1  gtrack_matrixCovNormalize          
+10254491  gtrack_matrixGetDiag               
+10255331  gtrack_matrixInit                  
+102536c1  gtrack_matrixInv                   
+102526f1  gtrack_matrixMakeSymmetrical       
+10252971  gtrack_matrixMultiply              
+102548d1  gtrack_matrixPrint                 
+10253f71  gtrack_matrixPrint2                
+102540b1  gtrack_matrixSetDiag               
+102552a1  gtrack_matrixSub                   
+10252be1  gtrack_matrixTransposeMultiply     
+10251651  gtrack_moduleAllocate              
+102550d1  gtrack_moduleAssociate             
+10254e01  gtrack_modulePredict               
+10253861  gtrack_modulePresence              
+10254f51  gtrack_moduleReport                
+10254a41  gtrack_moduleUpdate                
+10254ae1  gtrack_sincosd                     
+102551c1  gtrack_sph2cart                    
+102542b1  gtrack_spherical2cartesian         
+102520f1  gtrack_step                        
+10253301  gtrack_unitCreate                  
+102553a1  gtrack_unitDelete                  
+10252431  gtrack_unitEvent                   
+10255351  gtrack_unitGetC                    
+10255391  gtrack_unitGetMCenter              
+10255361  gtrack_unitGetSpread               
+10253b61  gtrack_unitPredict                 
+10254ee1  gtrack_unitReport                  
+10251cf1  gtrack_unitScore                   
+10253cd1  gtrack_unitStart                   
+10255071  gtrack_unitStop                    
+1024fa51  gtrack_unitUpdate                  
+10254d91  gtrack_unrollRadialVelocity        
+10254571  gtrack_vectorAdd                   
+10254c01  gtrack_vectorInit                  
+10254731  gtrack_vectorScalarMul             
+102541b1  gtrack_vectorScalarMulAcc          
+10254651  gtrack_vectorSub                   
+10248458  ldexp                              
+10248c68  ldexpf                             
+10248458  ldexpl                             
+102466f0  logf                               
+1024c4a8  lseek                              
+1024a2f1  main                               
+1024cd0c  malloc                             
+10247070  memalign                           
+1024c02c  memccpy                            
+10257a08  memoryBytesUsed                    
+10248918  open                               
+10256680  pInit                              
+1023fb20  parmbuf                            
+10238e20  pointCloud                         
+10244bc0  powf                               
+1024a4c4  printf                             
+1024cdb1  putchar_                           
+1024c4dc  puts                               
+10249071  pvHeapMalloc                       
+1024cbd9  pvTaskIncrementMutexHeldCount      
+1025791c  pxCurrentTCB                       
+1024ab71  pxPortInitialiseStack              
+1024c510  read                               
+1024ccec  remove                             
+10248458  scalbn                             
+10248c68  scalbnf                            
+10248458  scalbnl                            
+10248310  setvbuf                            
+1024b180  snprintf                           
+102566bc  spreadMin                          
+1024bc18  sprintf                            
+10246b08  sqrt                               
+10249418  sqrtf                              
+10246b08  sqrtl                              
+102464c0  tanf                               
+10234000  targetDescr                        
+1024c359  uiPortGetRunTimeCounterValue       
+102579a0  ulCriticalNesting                  
+102579a8  ulPortInterruptNesting             
+102579ac  ulPortSchedularRunning             
+10257a10  ulPortTaskHasFPUContext            
+102579a4  ulPortYieldRequired                
+1024c074  unlink                             
+1024c85d  uxListRemove                       
+1024fa44  uxTopUsedPriority                  
+1024ca59  vApplicationGetIdleTaskMemory      
+1024ca75  vApplicationGetTimerTaskMemory     
+1024cd3b  vApplicationIdleHook               
+1024c3d5  vApplicationLoadHook               
+1024c77d  vApplicationStackOverflowHook      
+1024c105  vHeapCreateStatic                  
+1024abf9  vHeapFree                          
+1024cc51  vListInitialise                    
+1024cd45  vListInitialiseItem                
+1024c69f  vListInsert                        
+1024cb5b  vListInsertEnd                     
+1024a38f  vPortConfigTimerForRunTimeStats    
+1024cb75  vPortFree                          
+10256a04  vPortRestoreTaskContext            
+1024c881  vPortTimerTickHandler              
+1024b26f  vPortValidateInterruptPriority     
+1024ccbd  vPortYeildFromISR                  
+1024c8a5  vQueueAddToRegistry                
+1024c14b  vQueueWaitForMessageRestricted     
+1024bf49  vTaskDelay                         
+1024a685  vTaskDelete                        
+1024cbf1  vTaskEnterCritical                 
+1024c8c9  vTaskExitCritical                  
+1024b089  vTaskGetInfo                       
+1024cccd  vTaskInternalSetTimeOutState       
+1024cd19  vTaskMissedYield                   
+1024c2dd  vTaskPlaceOnEventList              
+1024bf95  vTaskPlaceOnEventListRestricted    
+1024a059  vTaskPriorityDisinheritAfterTimeout
+1024a719  vTaskStartScheduler                
+1024ccdd  vTaskSuspendAll                    
+10249331  vTaskSwitchContext                 
+1024ae0c  vprintf                            
+1024ca91  vprintf_                           
+1024c974  wcslen                             
+1024c544  write                              
+1024cc09  xPortStartScheduler                
+1024caad  xQueueCreateMutexStatic            
+102496b9  xQueueGenericCreateStatic          
+1024b441  xQueueGenericReset                 
+10247d95  xQueueGenericSend                  
+10248f7d  xQueueGenericSendFromISR           
+102494f9  xQueueGiveFromISR                  
+1024c0bd  xQueueGiveMutexRecursive           
+10248075  xQueueReceive                      
+10249859  xQueueReceiveFromISR               
+1023f548  xQueueRegistry                     
+10247731  xQueueSemaphoreTake                
+1024c219  xQueueTakeMutexRecursive           
+1024a8c1  xTaskCheckForTimeOut               
+10249b61  xTaskCreateStatic                  
+1024cd25  xTaskGetCurrentTaskHandle          
+1024c609  xTaskGetIdleTaskHandle             
+1024cac9  xTaskGetSchedulerState             
+1024cc21  xTaskGetTickCount                  
+102495d9  xTaskIncrementTick                 
+1024a1a5  xTaskPriorityDisinherit            
+1024ae91  xTaskPriorityInherit               
+1024b105  xTaskRemoveFromEventList           
+1024991d  xTaskResumeAll                     
+1024b5a1  xTimerCreateTimerTask              
+1024b6e9  xTimerGenericCommand               
+
+
+GLOBAL SYMBOLS: SORTED BY Symbol Address 
+
+address   name                               
+-------   ----                               
+00000000  __TI_static_base__                 
+00000000  _vectors                           
+00000100  __ABORT_STACK_SIZE                 
+00000100  __FIQ_STACK_SIZE                   
+00000100  __IRQ_STACK_SIZE                   
+00000100  __UNDEFINED_STACK_SIZE             
+00001000  __SVC_STACK_SIZE                   
+00001000  __SYSMEM_SIZE                      
+00002000  __STACK_SIZE                       
+10220000  __BSS_START                        
+10220000  gAppTskStackMain                   
+1022c000  gHeapMem                           
+10234000  targetDescr                        
+10238e20  pointCloud                         
+1023cca0  gHwiCtrl                           
+1023f328  _CIOBUF_                           
+1023f328  __CIOBUF_                          
+1023f548  xQueueRegistry                     
+1023f648  __TI_tmpnams                       
+1023f6e8  gTaskP_ctrl                        
+1023f938  gAppTaskObj                        
+1023f9c4  gHeapObj                           
+1023fa94  gRovDummyQueue                     
+1023fae8  gClockCtrl                         
+1023fb20  parmbuf                            
+1023fb30  gAppTask                           
+1023fb40  __BSS_END                          
+1023fb40  _sys_memory                        
+10240b40  __stack                            
+10242b40  __STACK_END                        
+10242b40  __TI_printfi                       
+10243b29  SOC_moduleSetClockFrequency        
+10243b31  Test_initTask                      
+102444bd  ClockP_getTimerCount               
+102444c0  __kernel_rem_pio2                  
+10244bc0  powf                               
+10245a79  TimerP_clearOverflowInt            
+10245a81  MCPI_setFeatureTestResult          
+10246015  ClockP_timerClearOverflowInt       
+102464c0  tanf                               
+102466f0  logf                               
+10246b05  SOC_moduleClockEnable              
+10246b08  sqrt                               
+10246b08  sqrtl                              
+10246ce0  __aeabi_uidiv                      
+10246ce0  __udivsi3                          
+10247070  aligned_alloc                      
+10247070  memalign                           
+10247228  free                               
+102473e0  atanf                              
+1024758c  fputs                              
+10247731  xQueueSemaphoreTake                
+10247a75  SOC_rcmSetPeripheralClock          
+10247c08  fread                              
+10247d95  xQueueGenericSend                  
+10247f18  floor                              
+10247f18  floorl                             
+10248075  xQueueReceive                      
+10248310  setvbuf                            
+10248454  _nop                               
+10248458  ldexp                              
+10248458  ldexpl                             
+10248458  scalbn                             
+10248458  scalbnl                            
+102486d1  ClockP_init                        
+102487f9  TimerP_setup                       
+10248918  open                               
+10248a38  __udivmoddi4                       
+10248c68  ldexpf                             
+10248c68  scalbnf                            
+10248e84  fopen                              
+10248f7d  xQueueGenericSendFromISR           
+10249071  pvHeapMalloc                       
+10249160  __TI_buff_read                     
+10249248  fputc                              
+10249331  vTaskSwitchContext                 
+10249418  sqrtf                              
+102494f9  xQueueGiveFromISR                  
+102495d9  xTaskIncrementTick                 
+102496b9  xQueueGenericCreateStatic          
+10249790  getdevice                          
+10249859  xQueueReceiveFromISR               
+1024991d  xTaskResumeAll                     
+10249b61  xTaskCreateStatic                  
+10249d94  __TI_closefile                     
+10249e48  fseeko                             
+10249efd  TaskP_loadUpdateAll                
+1024a059  vTaskPriorityDisinheritAfterTimeout
+1024a1a5  xTaskPriorityDisinherit            
+1024a248  HOSTrename                         
+1024a2f1  main                               
+1024a38f  vPortConfigTimerForRunTimeStats    
+1024a390  __TI_wrt_ok                        
+1024a42c  HOSTlseek                          
+1024a4c4  printf                             
+1024a55c  HOSTopen                           
+1024a5f1  eTaskGetState                      
+1024a685  vTaskDelete                        
+1024a719  vTaskStartScheduler                
+1024a834  close                              
+1024a8c1  xTaskCheckForTimeOut               
+1024a94c  __TI_doflush                       
+1024a9d4  __TI_ltoa                          
+1024ab71  pxPortInitialiseStack              
+1024abf9  vHeapFree                          
+1024ac80  HOSTread                           
+1024ad04  HOSTwrite                          
+1024ad89  SOC_controlModuleUnlockMMR         
+1024ae0c  vprintf                            
+1024ae91  xTaskPriorityInherit               
+1024af90  frexp                              
+1024af90  frexpl                             
+1024b089  vTaskGetInfo                       
+1024b105  xTaskRemoveFromEventList           
+1024b180  snprintf                           
+1024b26f  vPortValidateInterruptPriority     
+1024b3cc  __TI_rd_ok                         
+1024b441  xQueueGenericReset                 
+1024b4c1  PowerClock_init                    
+1024b530  atoi                               
+1024b5a1  xTimerCreateTimerTask              
+1024b610  HOSTunlink                         
+1024b67c  finddevice                         
+1024b6e9  xTimerGenericCommand               
+1024b755  SOC_controlModuleLockMMR           
+1024b7bd  _DebugP_logZone                    
+1024b88c  HOSTclose                          
+1024b9a9  CycleCounterP_init                 
+1024b9b9  CycleCounterP_reset                
+1024b9dd  CycleCounterP_nsToTicks            
+1024ba61  _DebugP_assert                     
+1024bab8  __TI_cleanup                       
+1024bb10  __TI_readmsg                       
+1024bb68  __TI_writemsg                      
+1024bbb4  C$$IO$$                            
+1024bc18  sprintf                            
+1024bd19  SemaphoreP_pend                    
+1024bd6c  exit                               
+1024bdc0  __aeabi_ul2f                       
+1024bdc0  __floatundisf                      
+1024be14  __TI_auto_init_nobinit_nopinit     
+1024beb0  fclose                             
+1024bf49  vTaskDelay                         
+1024bf95  vTaskPlaceOnEventListRestricted    
+1024bfe1  SemaphoreP_post                    
+1024c02c  memccpy                            
+1024c074  unlink                             
+1024c0bd  xQueueGiveMutexRecursive           
+1024c105  vHeapCreateStatic                  
+1024c14b  vQueueWaitForMessageRestricted     
+1024c191  SemaphoreP_constructMutex          
+1024c219  xQueueTakeMutexRecursive           
+1024c25d  ClockP_getTimeUsec                 
+1024c2dd  vTaskPlaceOnEventList              
+1024c359  uiPortGetRunTimeCounterValue       
+1024c361  Dpl_init                           
+1024c3d5  vApplicationLoadHook               
+1024c40d  ClockP_usleep                      
+1024c441  HeapP_construct                    
+1024c4a8  lseek                              
+1024c4dc  puts                               
+1024c510  read                               
+1024c544  write                              
+1024c5d8  CycleCounterP_getCount32           
+1024c5e0  PmuP_setup                         
+1024c5e8  PmuP_enableCounters                
+1024c5f0  PmuP_disableCounters               
+1024c5f8  PmuP_getOverflowStatus             
+1024c600  PmuP_clearOverflowStatus           
+1024c609  xTaskGetIdleTaskHandle             
+1024c639  Pinmux_config                      
+1024c667  SOC_getSelfCpuClk                  
+1024c671  gtrack_alloc                       
+1024c69f  vListInsert                        
+1024c6cd  ClockP_timerTickIsr                
+1024c728  __aeabi_idiv                       
+1024c728  __divsi3                           
+1024c77d  vApplicationStackOverflowHook      
+1024c7a5  TimerP_Params_init                 
+1024c7f1  gtrack_log                         
+1024c85d  uxListRemove                       
+1024c881  vPortTimerTickHandler              
+1024c8a5  vQueueAddToRegistry                
+1024c8c9  vTaskExitCritical                  
+1024c8ec  __aeabi_uldivmod                   
+1024c911  gtrack_free                        
+1024c935  DebugP_logZoneEnable               
+1024c974  wcslen                             
+1024c995  HeapP_alloc                        
+1024c9b1  MCPI_Initialize                    
+1024c9e9  SOC_rcmGetR5Clock                  
+1024ca59  vApplicationGetIdleTaskMemory      
+1024ca75  vApplicationGetTimerTaskMemory     
+1024ca91  vprintf_                           
+1024caad  xQueueCreateMutexStatic            
+1024cac9  xTaskGetSchedulerState             
+1024cae4  TI_memcpy_small                    
+1024cb00  __aeabi_memset                     
+1024cb00  __aeabi_memset4                    
+1024cb00  __aeabi_memset8                    
+1024cb10  __aeabi_memclr                     
+1024cb10  __aeabi_memclr4                    
+1024cb10  __aeabi_memclr8                    
+1024cb1d  HeapP_free                         
+1024cb37  TimerP_getReloadCount              
+1024cb41  System_init                        
+1024cb5b  vListInsertEnd                     
+1024cb75  vPortFree                          
+1024cb8f  TimerP_getCount                    
+1024cba9  _system_pre_init                   
+1024cbd9  pvTaskIncrementMutexHeldCount      
+1024cbf1  vTaskEnterCritical                 
+1024cc09  xPortStartScheduler                
+1024cc21  xTaskGetTickCount                  
+1024cc38  TI_memset_small                    
+1024cc51  vListInitialise                    
+1024cc69  ClockP_usecToTicks                 
+1024cc7c  fseek                              
+1024cc81  MCPI_setTestResult                 
+1024ccbd  vPortYeildFromISR                  
+1024cccd  vTaskInternalSetTimeOutState       
+1024ccdd  vTaskSuspendAll                    
+1024ccec  remove                             
+1024ccf1  Pinmux_init                        
+1024cd00  __aeabi_errno_addr                 
+1024cd0c  malloc                             
+1024cd19  vTaskMissedYield                   
+1024cd25  xTaskGetCurrentTaskHandle          
+1024cd31  TimerP_start                       
+1024cd3b  vApplicationIdleHook               
+1024cd45  vListInitialiseItem                
+1024cd4c  __aeabi_memcpy                     
+1024cd4c  __aeabi_memcpy4                    
+1024cd4c  __aeabi_memcpy8                    
+1024cd51  Board_driversOpen                  
+1024cd60  __aeabi_idiv0                      
+1024cd70  __aeabi_ldiv0                      
+1024cd81  Board_driversClose                 
+1024cd91  Board_init                         
+1024cda1  Drivers_open                       
+1024cdb1  putchar_                           
+1024f134  gMpuConfig                         
+1024f140  __aeabi_ctype_table_               
+1024f140  __aeabi_ctype_table_C              
+1024f524  gMpuRegionConfig                   
+1024fa34  gCacheConfig                       
+1024fa3c  gCacheL1dCacheLineSize             
+1024fa40  gCacheL1pCacheLineSize             
+1024fa44  uxTopUsedPriority                  
+1024fa50  _gtrackLibStart                    
+1024fa51  gtrack_unitUpdate                  
+10250ef1  gtrack_create                      
+10251651  gtrack_moduleAllocate              
+10251cf1  gtrack_unitScore                   
+102520f1  gtrack_step                        
+10252431  gtrack_unitEvent                   
+102526f1  gtrack_matrixMakeSymmetrical       
+10252971  gtrack_matrixMultiply              
+10252be1  gtrack_matrixTransposeMultiply     
+10252e51  gtrack_computeJacobian             
+102530c1  gtrack_matrixCovFilter             
+10253301  gtrack_unitCreate                  
+102534f1  gtrack_matrixCovNormalize          
+102536c1  gtrack_matrixInv                   
+10253861  gtrack_modulePresence              
+102539e1  gtrack_cartesian2spherical         
+10253b61  gtrack_unitPredict                 
+10253cd1  gtrack_unitStart                   
+10253e21  gtrack_matrixComputePJT            
+10253f71  gtrack_matrixPrint2                
+102540b1  gtrack_matrixSetDiag               
+102541b1  gtrack_vectorScalarMulAcc          
+102542b1  gtrack_spherical2cartesian         
+102543a1  gtrack_delete                      
+10254491  gtrack_matrixGetDiag               
+10254571  gtrack_vectorAdd                   
+10254651  gtrack_vectorSub                   
+10254731  gtrack_vectorScalarMul             
+10254801  gtrack_matrixCovAcc                
+102548d1  gtrack_matrixPrint                 
+102549a1  gtrack_listRemoveElement           
+10254a41  gtrack_moduleUpdate                
+10254ae1  gtrack_sincosd                     
+10254b71  gtrack_computeMahalanobis          
+10254c01  gtrack_vectorInit                  
+10254c91  gtrack_calcMeasurementLimits       
+10254d21  gtrack_calcMeasurementSpread       
+10254d91  gtrack_unrollRadialVelocity        
+10254e01  gtrack_modulePredict               
+10254e71  gtrack_isPointBehindTarget         
+10254ee1  gtrack_unitReport                  
+10254f51  gtrack_moduleReport                
+10254fb1  gtrack_cart2sph                    
+10255011  gtrack_calcDistance                
+10255071  gtrack_unitStop                    
+102550d1  gtrack_moduleAssociate             
+10255121  gtrack_isPointInsideBox            
+10255171  gtrack_computeMahalanobisPartial   
+102551c1  gtrack_sph2cart                    
+10255201  gtrack_calcDim                     
+10255241  gtrack_listDequeue                 
+10255271  gtrack_matrixAdd                   
+102552a1  gtrack_matrixSub                   
+102552d1  gtrack_isInsideSolidAngle          
+10255301  gtrack_listEnqueue                 
+10255331  gtrack_matrixInit                  
+10255351  gtrack_unitGetC                    
+10255361  gtrack_unitGetSpread               
+10255371  gtrack_censor2world                
+10255381  gtrack_listInit                    
+10255391  gtrack_unitGetMCenter              
+102553a1  gtrack_unitDelete                  
+102553b1  gtrack_listGetFirst                
+102553c1  gtrack_listGetNext                 
+102564a0  defaultSceneryParams               
+10256668  defaultAllocationParams            
+10256680  pInit                              
+10256698  defaultGatingParams                
+102566b0  defaultStateParams                 
+102566bc  spreadMin                          
+102566c8  _gtrackLibEnd                      
+102566d1  HwiP_enableInt                     
+102566f9  HwiP_disableInt                    
+10256729  HwiP_restoreInt                    
+10256735  HwiP_clearInt                      
+10256755  HwiP_post                          
+1025677d  HwiP_Params_init                   
+10256791  HwiP_construct                     
+102568b9  HwiP_destruct                      
+10256931  HwiP_init                          
+102569f1  HwiP_inISR                         
+10256a04  vPortRestoreTaskContext            
+10256a3c  HwiP_svc_handler                   
+10256aac  HwiP_irq_handler                   
+10256bf1  HwiP_irq_handler_c                 
+10256c81  HwiP_fiq_handler                   
+10256d01  HwiP_reserved_handler              
+10256d27  HwiP_undefined_handler             
+10256d4d  HwiP_prefetch_abort_handler        
+10256d73  HwiP_data_abort_handler            
+10256d98  HwiP_disable                       
+10256da8  HwiP_disableFIQ                    
+10256db8  HwiP_enable                        
+10256dc8  HwiP_enableFIQ                     
+10256dd8  HwiP_restore                       
+10256de0  HwiP_enableVIC                     
+10256df0  HwiP_disableVIC                    
+10256e00  HwiP_getCPSR                       
+10256e10  CacheP_disableL1d                  
+10256e38  CacheP_disableL1p                  
+10256e50  CacheP_enableL1d                   
+10256e68  CacheP_enableL1p                   
+10256e80  CacheP_invL1d                      
+10256eb8  CacheP_invL1p                      
+10256ef4  CacheP_invL1dAll                   
+10256efc  CacheP_invL1pAll                   
+10256f04  CacheP_wb                          
+10256f40  CacheP_wbInv                       
+10256f7c  CacheP_wbAll                       
+10257024  CacheP_wbInvAll                    
+1025703c  CacheP_wbInvAllAsm                 
+102570dc  CacheP_getEnabled                  
+10257114  CacheP_getCacheLevelInfo           
+10257120  CacheP_configForceWrThru           
+10257140  CacheP_setDLFO                     
+10257151  CacheP_init                        
+102571a9  CacheP_disable                     
+102571e3  CacheP_enable                      
+10257203  CacheP_inv                         
+10257241  MpuP_RegionAttrs_init              
+1025724f  MpuP_setRegion                     
+102572f3  MpuP_isEnable                      
+102572f7  MpuP_disable                       
+10257329  MpuP_enable                        
+10257361  MpuP_init                          
+102573c0  MpuP_disableAsm                    
+102573d8  MpuP_disableBRAsm                  
+102573e8  MpuP_enableAsm                     
+10257400  MpuP_enableBRAsm                   
+10257410  MpuP_isEnableAsm                   
+10257424  MpuP_setRegionAsm                  
+10257450  _c_int00_sbl                       
+10257474  _c_int00                           
+1025754d  _DebugP_assertNoLog                
+10257571  __mpu_init                         
+10257580  C$$EXIT                            
+10257580  abort                              
+10257588  _ftable                            
+102576f8  appSceneryParams                   
+10257774  _device                            
+102577ec  appStateParams                     
+102577f8  appGatingParams                    
+1025780c  appAllocationParams                
+10257824  appPresenceDetectionParams         
+102578cc  _stream                            
+1025791c  pxCurrentTCB                       
+10257920  FreeRTOS_errno                     
+1025798c  gClockConfig                       
+102579a0  ulCriticalNesting                  
+102579a4  ulPortYieldRequired                
+102579a8  ulPortInterruptNesting             
+102579ac  ulPortSchedularRunning             
+102579b0  gSocModules                        
+102579b4  gSocModulesClockFrequency          
+102579c0  MCPI_Result                        
+102579c4  MCPI_FailSignature                 
+102579d4  __TI_cleanup_ptr                   
+102579d8  __TI_dtors_ptr                     
+102579dc  __TI_ft_end                        
+102579f0  __aeabi_errno                      
+102579f4  _lock                              
+102579f8  _unlock                            
+102579fc  gDebugLogZone                      
+10257a00  gHwiConfig                         
+10257a04  gMCPILogMessageSize                
+10257a08  memoryBytesUsed                    
+10257a10  ulPortTaskHasFPUContext            
+10257a28  __IRQ_STACK_START                  
+10257b28  __FIQ_STACK_START                  
+10257b28  __IRQ_STACK_END                    
+10257c28  __FIQ_STACK_END                    
+10257c28  __SVC_STACK_START                  
+10258c28  __ABORT_STACK_START                
+10258c28  __SVC_STACK_END                    
+10258d28  __ABORT_STACK_END                  
+10258d28  __UNDEFINED_STACK_START            
+10258e28  __UNDEFINED_STACK_END              
+88000000  MCPI_logMessage                    
+ffffffff  __TI_pprof_out_hndl                
+ffffffff  __TI_prof_data_size                
+ffffffff  __TI_prof_data_start               
+ffffffff  __binit__                          
+ffffffff  binit                              
+UNDEFED   __TI_CINIT_Base                    
+UNDEFED   __TI_CINIT_Limit                   
+UNDEFED   __TI_Handler_Table_Base            
+UNDEFED   __TI_Handler_Table_Limit           
+UNDEFED   _system_post_cinit                 
+
+[438 symbols]

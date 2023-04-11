@@ -1,0 +1,14 @@
+/**
+ * These arguments were used when this file was generated. They will be automatically applied on subsequent loads
+ * via the GUI or CLI. Run CLI with '--help' for additional information on how to override these arguments.
+ * @cliArgs --device "AM273x" --package "ZCE" --part "Default" --context "c66ss0" --product "MCU_PLUS_SDK_AM273x.evmAM273x@08.02.00"
+ * @versions {"tool":"1.11.0+2225"}
+ */
+
+
+/**
+ * Import the modules used in this configuration.
+ */
+const cache_c6x = scripting.addModule("/kernel/dpl/cache_c6x");
+const clock     = scripting.addModule("/kernel/dpl/clock");
+const debug_log = scripting.addModule("/kernel/dpl/debug_log");
