@@ -34,19 +34,21 @@ def gtrack_cppyy_create(use3D=True):
     advParams=gbl.GTRACK_advancedParameters()
 
     # Mandatory Configuration Parameters
-    config.maxNumPoints = 250
-    config.maxNumTracks = 20
+    config.maxNumPoints = 500
+    config.maxNumTracks = 50
     if use3D:
         config.stateVectorType = gbl.GTRACK_STATE_VECTORS_3DA # Track three dimensions with acceleration 
     else:
         config.stateVectorType = gbl.GTRACK_STATE_VECTORS_2DA # Track two dimensions with acceleration 
     config.initialRadialVelocity = 0 # Expected target radial velocity at the moment of detection, m/s
     config.maxAcceleration=np.array([# Maximum targets acceleration in 
-                                0.1, # lateral direction
-                                0.1, # longitudinal direction
-                                0.1  # vertical direction. For 2D options, the vertical component is ignored
+                                  1, # lateral direction
+                                  1, # longitudinal direction
+                                  1  # vertical direction. For 2D options, the vertical component is ignored
                             ],dtype=np.float32)
     config.verbose = gbl.GTRACK_VERBOSE_MAXIMUM
+    # config.verbose = gbl.GTRACK_VERBOSE_DEBUG
+    # config.verbose = gbl.GTRACK_VERBOSE_NONE
     
     ## This shall match sensor chirp configuration
     config.deltaT = 0.05                    # 50ms per frame
@@ -59,7 +61,7 @@ def gtrack_cppyy_create(use3D=True):
     sceneryParams.sensorPosition=gbl.GTRACK_sensorPosition(0,0,0) # sensor position, (X,Y,Z), is in cartesian space relative to the [3-dimentional] world.
     sceneryParams.sensorOrientation=gbl.GTRACK_sensorOrientation(0,0)# sensor orientation, boresight (azumuthal,elevation) tilt, negative left/up, positive right/down, in degrees
 
-    sceneryParams.numBoundaryBoxes=0   # Number of scene boundary boxes. If defined (numBoundaryBoxes > 0), only points within the boundary box(s) can be associated with tracks
+    sceneryParams.numBoundaryBoxes=1   # Number of scene boundary boxes. If defined (numBoundaryBoxes > 0), only points within the boundary box(s) can be associated with tracks
     sceneryParams.boundaryBox[0].x1=-4 # Left boundary, m
     sceneryParams.boundaryBox[0].x2=4  # Right boundary, m
     sceneryParams.boundaryBox[0].y1=0.5# Near boundary, m
@@ -73,7 +75,7 @@ def gtrack_cppyy_create(use3D=True):
     sceneryParams.boundaryBox[1].z1=0  # Bottom boundary, m
     sceneryParams.boundaryBox[1].z2=0  # Top boundary, m
 
-    sceneryParams.numStaticBoxes=0   # Number of scene static boxes. If defined (numStaticBoxes > 0), only targets within the static box(s) can persist as static
+    sceneryParams.numStaticBoxes=1   # Number of scene static boxes. If defined (numStaticBoxes > 0), only targets within the static box(s) can persist as static
     sceneryParams.staticBox[0].x1=-3 # Left boundary, m
     sceneryParams.staticBox[0].x2=3  # Right boundary, m
     sceneryParams.staticBox[0].y1=2  # Near boundary, m
@@ -172,7 +174,7 @@ def gtrack_cppyy_step(hTrackModule,use3D=True):
     pointCloud[40].array=np.array(	[3.93,0.03,0.21,-0.66 ],dtype=np.float32)[:dim];    pointCloud[40].snr=15.51
     pointCloud[41].array=np.array(	[3.83,0.05,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[41].snr=15.53
     pointCloud[42].array=np.array(	[3.83,0.07,0.28,-0.55 ],dtype=np.float32)[:dim];    pointCloud[42].snr=15.08
-    mNum=43 # Number of input measurements
+    mNum=int(np.array(43,dtype=np.uint16)) # Number of input measurements
     targetDescr=gbl.targetDescr# Pointer to an array of GTRACK_targetDesc. This function populates the descritions for each of the tracked target 
     tNum=np.zeros(1,dtype=np.uint16)# Function returns a number of populated target descriptos 
     mIndex=np.zeros(((mNum-1)>>3)+1,dtype=np.uint8)#This function populates target indices, indicating which tracking ID was assigned to each measurment.

@@ -6,7 +6,7 @@
 
 ## Introduction
 
-* 该模块分为两部分，mmwave和fpga_udp:
+* 该模块主要分为两部分，mmwave和fpga_udp:
   * mmwave修改自[OpenRadar](https://github.com/PreSenseRadar/OpenRadar)，用于配置文件读取、串口数据发送与接收、原始数据解析等。
   * fpga_udp修改自[pybind11 example](https://github.com/pybind/python_example)以及[mmWave-DFP-2G](https://www.ti.com/tool/MMWAVE-DFP)，用于通过C语言编写的socket代码从网口接收DCA1000发回的高速的原始数据。对于AWR2243这种没有片上DSP及ARM核的型号，还实现了利用FTDI通过USB发送指令用SPI控制AWR2243的固件写入、参数配置等操作。
 * TI的毫米波雷达主要分两类，只有射频前端的和自带片上ARM及DSP/HWA的。前者型号有[AWR1243](https://www.ti.com/product/AWR1243)、[AWR2243](https://www.ti.com/product/AWR2243)等，后者型号有[xWR1443](https://www.ti.com/product/IWR1443)、[xWR6443](https://www.ti.com/product/IWR6443)、[xWR1843](https://www.ti.com/product/IWR1843)、[xWR6843](https://www.ti.com/product/IWR6843)、[AWR2944](https://www.ti.com/product/AWR2944)等。
@@ -218,6 +218,28 @@ IWR1843毫米波雷达配置参数合理性校验，需要用Jupyter(推荐VS Co
  - 计算Doppler-FFT
  - 1D-CA-CFAR Detector on Range-FFT
  - 计算Azimuth-FFT
+
+### ***testGtrack.py***
+利用cppyy测试C语言写的gTrack算法。该算法为TI的群目标跟踪算法，输入点云，输出轨迹。
+
+The algorithm is designed to track multiple targets, where each target is represented by a set of measurement points.
+Each measurement point carries detection informations, for example, range, azimuth, elevation (for 3D option), and radial velocity.
+
+Instead of tracking individual reflections, the algorithm predicts and updates the location and dispersion properties of the group.
+
+The group is defined as the set of measurements (typically, few tens; sometimes few hundreds) associated with a real life target.
+
+Algorithm supports tracking targets in two or three dimensional spaces as a build time option:
+ - When built with 2D option, algorithm inputs range/azimuth/doppler information and tracks targets in 2D cartesian space.
+ - When built with 3D option, algorithm inputs range/azimuth/elevation/doppler information and tracks targets in 3D cartesian space.
+#### Input/output
+ - Algorithm inputs the Point Cloud. For example, few hundreds of individual measurements (reflection points).
+ - Algorithm outputs a Target List. For example, an array of few tens of target descriptors. Each descriptor carries a set of properties for a given target.
+ - Algorithm optionally outputs a Target Index. If requested, this is an array of target IDs associated with each measurement.
+#### Features
+ - Algorithm uses extended Kalman Filter to model target motion in Cartesian coordinates.
+ - Algorithm supports constant velocity and constant acceleartion models.
+ - Algorithm uses 3D/4D Mahalanobis distances as gating function and Max-likelihood criterias as scoring function to associate points with an existing track.
 
 
 ## Software Architecture
