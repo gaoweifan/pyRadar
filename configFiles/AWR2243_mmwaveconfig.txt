@@ -135,7 +135,7 @@ numAdcSamples=256;
 digOutSampleRate=15000;
 hpfCornerFreq1=0;
 hpfCornerFreq2=0;
-rxGain=30;
+rxGain=160;#32+2<<6
 #END
 
 #
