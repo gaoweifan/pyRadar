@@ -26,15 +26,20 @@ BLUE = (255, 0, 0)
 
 font = cv2.FONT_HERSHEY_SIMPLEX
 
-smiley = cv2.imread('./smiley.png')
-smiley_mask = np.zeros(smiley.shape)
-smiley_width = smiley.shape[1]
-smiley_height = smiley.shape[0]
+picTag = {}
+def readPicWithTag(path,tag):
+    if tag not in picTag:
+        smiley = cv2.imread(path+tag+'.png')
+        # smiley_mask = np.zeros(smiley.shape)
+        # smiley_width = smiley.shape[1]
+        # smiley_height = smiley.shape[0]
 
-cv2.circle(smiley_mask, (smiley_width // 2, smiley_height // 2), 200, WHITE, -1)
-smiley[smiley_mask != 255] = 0
-smiley = smiley[smiley_width // 2 - 200:smiley_width // 2 + 200, smiley_width // 2 - 200:smiley_width // 2 + 200]
-smiley = cv2.resize(smiley, (radius * 2, radius * 2))
+        # cv2.circle(smiley_mask, (smiley_width // 2, smiley_height // 2), 200, WHITE, -1)
+        # smiley[smiley_mask != 255] = 0
+        # smiley = smiley[smiley_width // 2 - 200:smiley_width // 2 + 200, smiley_width // 2 - 200:smiley_width // 2 + 200]
+        smiley = cv2.resize(smiley, (radius * 2, radius * 2))
+        
+        picTag[tag]=smiley
 
 
 def norm_y(y):
@@ -88,34 +93,47 @@ def view_x(x):
     """
     return int(inner_area * norm_x(x)) + radius
 
+def set_frame_size(win_size_l = 950,radius_l = 50,win_name_l = 'track',min_x_l = -6,min_y_l = 0,max_x_l = 6,max_y_l = 12):
+    global win_name,win_size,radius,inner_area
+    win_name = win_name_l
+    win_size = win_size_l
+    radius = radius_l
+    inner_area = win_size - (2 * radius)
 
-# Generate base frame
-base_frame = np.ones((win_size, win_size, 3), dtype=np.uint8) * 255
-mx = radius + inner_area
-# Grid lines
-cv2.putText(base_frame, 'y\\x', (5, 20), font, 1, BLACK, 1, cv2.LINE_AA)
-for line_y in range(int(max_y + 1)):
-    cv2.line(base_frame, (radius, view_y(line_y)), (mx, view_y(line_y)), LIGHT_GREY, 3)
-    cv2.putText(base_frame, f'{line_y}[m]', (5, view_y(line_y) + 5), font, .5, BLACK, 1, cv2.LINE_AA)
+    global min_x,min_y,max_x,max_y
+    min_x = min_x_l
+    min_y = min_y_l
+    max_x = max_x_l
+    max_y = max_y_l
 
-for line_x in range(int(min_x), int(max_x + 1)):
-    cv2.line(base_frame, (view_x(line_x), radius), (view_x(line_x), mx), LIGHT_GREY, 3)
-    cv2.putText(base_frame, f'{line_x}[m]', (view_x(line_x) - 20, radius - 10), font, .5, BLACK, 1, cv2.LINE_AA)
+def create_base_frame():
+    global base_frame
+    # Generate base frame
+    base_frame = np.ones((win_size, win_size, 3), dtype=np.uint8) * 255
+    mx = radius + inner_area
+    # Grid lines
+    cv2.putText(base_frame, 'y\\x(m)', (5, 20), font, 1, BLACK, 1, cv2.LINE_AA)
+    for line_y in range(int(max_y + 1)):
+        cv2.line(base_frame, (radius, view_y(line_y)), (mx, view_y(line_y)), LIGHT_GREY, 3)
+        cv2.putText(base_frame, f'{line_y}', (5, view_y(line_y) + 5), font, .5, BLACK, 1, cv2.LINE_AA)
 
-# Borders
-cv2.line(base_frame, (radius, radius), (radius, mx), BLACK, 7)
-cv2.line(base_frame, (radius, mx), (mx, mx), BLACK, 7)
-cv2.line(base_frame, (mx, mx), (mx, radius), BLACK, 7)
-cv2.line(base_frame, (mx, radius), (radius, radius), BLACK, 7)
+    for line_x in range(int(min_x), int(max_x + 1)):
+        cv2.line(base_frame, (view_x(line_x), radius), (view_x(line_x), mx), LIGHT_GREY, 3)
+        cv2.putText(base_frame, f'{line_x}', (view_x(line_x) - 20, radius - 10), font, .5, BLACK, 1, cv2.LINE_AA)
 
-# Radar azimuth view
-cv2.line(base_frame, (view_x(0), view_y(0)), (view_x(max_x), view_y(3.46)), BLACK, 3)
-cv2.line(base_frame, (view_x(0), view_y(0)), (view_x(min_x), view_y(3.46)), BLACK, 3)
+    # Borders
+    cv2.line(base_frame, (radius, radius), (radius, mx), BLACK, 7)
+    cv2.line(base_frame, (radius, mx), (mx, mx), BLACK, 7)
+    cv2.line(base_frame, (mx, mx), (mx, radius), BLACK, 7)
+    cv2.line(base_frame, (mx, radius), (radius, radius), BLACK, 7)
 
-c_fill = np.copy(base_frame)
-cv2.circle(c_fill, (view_x(0), view_y(0)), view_y(min_y) - view_y(max_y) - 100, BLACK, 3)
-base_frame[:, view_x(min_x):view_x(max_x)] = c_fill[:, view_x(min_x):view_x(max_x)]
+    # Radar azimuth view
+    cv2.line(base_frame, (view_x(0), view_y(0)), (view_x(max_x), view_y(3.46)), BLACK, 3)
+    cv2.line(base_frame, (view_x(0), view_y(0)), (view_x(min_x), view_y(3.46)), BLACK, 3)
 
+    c_fill = np.copy(base_frame)
+    cv2.circle(c_fill, (view_x(0), view_y(0)), view_y(min_y) - view_y(max_y) - 100, BLACK, 3)
+    base_frame[:, view_x(min_x):view_x(max_x)] = c_fill[:, view_x(min_x):view_x(max_x)]
 
 def get_empty_frame():
     """Generate a copy of the base frame
@@ -128,25 +146,24 @@ def get_empty_frame():
     return np.copy(base_frame)
 
 
-def draw_points(points, m_num, frame=None):
+def draw_points(points, frame=None):
     """Draw raw data points onto the frame
 
     Args:
         points (list): List of point objects detected
-        m_num (int): Number of points detected
         frame (ndarray): Frame to modify
 
     Returns:
         ndarray: Modified frame
 
     """
-    for point, _ in zip(points, range(m_num)):
-        r = point.range
-        a = point.angle
+    for point in points:
+        r = point[0]
+        a = point[1]
         x_pos = -np.sin(a) * r
         y_pos = np.cos(a) * r
         try:
-            cv2.circle(frame, (view_x(x_pos), view_y(y_pos)), 3, (0, 0, 255), -1)
+            cv2.circle(frame, (view_x(x_pos), view_y(y_pos)), 2, (0, 0, 255), -1)
         except:
             pass
     return frame
@@ -202,23 +219,73 @@ def update_frame(target_desc, num_trackers, frame=None):
         x_pos, y_pos, x_vel, y_vel = t.S[:4]
         x_pos = -x_pos
         try:
-            draw_img(frame, view_x(x_pos), view_y(y_pos), smiley)
-            cv2.putText(frame, f'ID:{tid}', (view_x(x_pos) - 30, view_y(y_pos) - 60), font, 1, BLACK, 2, cv2.LINE_AA)
+            if min_x<x_pos and x_pos<max_x and min_y<y_pos and y_pos<max_y:
+                readPicWithTag("./","smiley")
+                draw_img(frame, view_x(x_pos), view_y(y_pos), picTag["smiley"])
+                cv2.putText(frame, f'ID:{tid}', (view_x(x_pos) - 30, view_y(y_pos) - 60), font, 1, BLACK, 2, cv2.LINE_AA)
 
-            vec_mag = np.sqrt(x_vel ** 2 + y_vel ** 2)
-            if vec_mag < .3:
-                continue
-            x_unit = int((x_vel / vec_mag) * vec_scaling)
-            y_unit = int((y_vel / vec_mag) * vec_scaling)
-            cv2.arrowedLine(frame, (view_x(x_pos), view_y(y_pos)),
-                            (view_x(x_pos) - x_unit, view_y(y_pos) - y_unit),
-                            BLUE, 3)
+                vec_mag = np.sqrt(x_vel ** 2 + y_vel ** 2)
+                # if vec_mag < .3:
+                #     continue
+                # x_unit = int((x_vel / vec_mag) * vec_scaling)
+                # y_unit = int((y_vel / vec_mag) * vec_scaling)
+                x_unit = int(x_vel * vec_scaling)
+                y_unit = int(y_vel * vec_scaling)
+                cv2.arrowedLine(frame, (view_x(x_pos), view_y(y_pos)),
+                                (view_x(x_pos) - x_unit, view_y(y_pos) - y_unit),
+                                BLUE, 2)
         except Exception as e:
             print(e)
             pass
 
     return frame
 
+def update_frame_with_tag(target_desc,path, frame=None, use3D=False):
+    """Draw the detected objects onto the frame
+
+    Args:
+        target_desc (list): List of target objects
+        num_trackers (int): Number of detected objects
+        frame (ndarray): Frame to modify
+
+    Returns:
+        ndarray: Modified frame
+
+    """
+    global min_x, min_y, min_vx, min_vy
+    global max_x, max_y, max_vx, max_vy
+    if frame is None:
+        frame = np.zeros((win_size, win_size, 3), dtype=np.uint8)
+
+    for t in target_desc:
+        if use3D:
+            x_pos, y_pos = t["S"][:2]
+            x_vel, y_vel = t["S"][3:5]
+        else:
+            x_pos, y_pos, x_vel, y_vel = t["S"][:4]
+        tid=int(t["S"][-1])
+        tag=t["tag"]
+        try:
+            if min_x<x_pos and x_pos<max_x and min_y<y_pos and y_pos<max_y:
+                readPicWithTag(path,tag)
+                draw_img(frame, view_x(x_pos), view_y(y_pos), picTag[tag])
+                cv2.putText(frame, f'tID:{tid},{tag}', (view_x(x_pos) - 60, view_y(y_pos) - 60), font, 1, BLACK, 2, cv2.LINE_AA)
+
+                # vec_mag = np.sqrt(x_vel ** 2 + y_vel ** 2)
+                # if vec_mag < .3:
+                #     continue
+                # x_unit = int((x_vel / vec_mag) * vec_scaling)
+                # y_unit = int((y_vel / vec_mag) * vec_scaling)
+                x_unit = int(-x_vel* vec_scaling)
+                y_unit = int(y_vel * vec_scaling)
+                cv2.arrowedLine(frame, (view_x(x_pos), view_y(y_pos)),
+                                (view_x(x_pos) - x_unit, view_y(y_pos) - y_unit),
+                                BLUE, 2)
+        except Exception as e:
+            print(e)
+            pass
+
+    return frame
 
 def draw_img(frame, x, y, img):
     """Draw an image onto a frame
