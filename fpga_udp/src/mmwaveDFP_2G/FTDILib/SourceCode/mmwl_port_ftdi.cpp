@@ -1227,6 +1227,7 @@ static int rlsStartIrqPollingThread( rlsDevCtx_t* pDevCtx )
                                         &pDevCtx->hostIntrThread.threadID);
         #elif __linux__
         pDevCtx->hostIntrThread.thread = std::thread(rlsPollingThreadEntrySpi,pDevCtx);
+        pDevCtx->hostIntrThread.threadID = pDevCtx->hostIntrThread.thread.get_id();
         pDevCtx->hostIntrThread.threadHdl = 1;
         #endif
         
@@ -1250,6 +1251,7 @@ static int rlsStartIrqPollingThread( rlsDevCtx_t* pDevCtx )
                                         &pDevCtx->hostIntrThread.threadID );
         #elif __linux__
         pDevCtx->hostIntrThread.thread = std::thread(rlsPollingThreadEntrySpi,pDevCtx);
+        pDevCtx->hostIntrThread.threadID = pDevCtx->hostIntrThread.thread.get_id();
         pDevCtx->hostIntrThread.threadHdl = 1;
         #endif
         rlsUnlockDevice(pDevCtx);
@@ -1278,6 +1280,9 @@ static int rlsStopIrqPollingThread( rlsDevCtx_t* pDevCtx )
     if( pDevCtx->hostIntrThread.threadHdl && (pDevCtx->hostIntrThread.threadID \
         != currThread ))
     {
+        #ifdef __linux__
+            pDevCtx->hostIntrThread.thread.join();
+        #endif
         /* Wait for polling thread to terminate */
         while(rls_hostIntrExitThread == 1)
         {
