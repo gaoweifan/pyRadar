@@ -13,9 +13,9 @@ import datetime
 5. 通过网口udp发送配置record数据包指令(config_record)
 6. (optional)启动串口接收进程（只进行缓存清零）(start_read_process)
 7. 通过网口udp发送开始采集指令(stream_start)
-8. 启动UDP数据包接收线程(fastRead_in_Cpp_async_start)
+8. (optional)启动UDP数据包接收线程(fastRead_in_Cpp_async_start)
 9. 通过串口启动雷达（理论上通过FTDI(USB转SPI)也能控制，目前只在AWR2243上实现）(startSensor)
-10. 等待UDP数据包接收线程结束+解析出原始数据(fastRead_in_Cpp_async_wait)
+10. 等待UDP数据包接收线程结束+解析出原始数据(fastRead_in_Cpp_async_wait/fastRead_in_Cpp)
 11. 保存原始数据到文件离线处理(tofile)
 12. (optional)通过网口udp发送停止采集指令(stream_stop)
 13. 通过串口关闭雷达(stopSensor) 或 通过网口发送重置雷达命令(reset_radar)
@@ -86,7 +86,7 @@ try:
     # 7. 通过网口udp发送开始采集指令
     dca.stream_start()
     # 8. 启动UDP数据包接收线程
-    numframes_out,sortInC_out = dca.fastRead_in_Cpp_async_start(numframes,sortInC=True)
+    # numframes_out,sortInC_out = dca.fastRead_in_Cpp_async_start(numframes,sortInC=True) # 异步调用
 
     # 9. 通过串口启动雷达
     startTime = datetime.datetime.now()
@@ -94,7 +94,8 @@ try:
     radar.startSensor()
 
     # 10. 等待UDP数据包接收线程结束+解析出原始数据
-    data_buf = dca.fastRead_in_Cpp_async_wait(numframes=numframes_out,sortInC=sortInC_out)
+    # data_buf = dca.fastRead_in_Cpp_async_wait(numframes=numframes_out,sortInC=sortInC_out) # 等待异步线程结束
+    data_buf = dca.fastRead_in_Cpp(numframes=numframes,sortInC=True) # 同步调用
     end = time.time()
     print("time elapsed(s):",end-start)
     # 11. 保存原始数据到文件

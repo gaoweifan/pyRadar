@@ -48,7 +48,7 @@ ext_modules = [
         library_dirs = ["src/FTDI_D2XX/"+platform.system()+"/"+platform.machine()],
         libraries=['ftd2xx'],
         # extra_compile_args=['-g'],
-        extra_compile_args=["-std=c++17"],
+        # extra_compile_args=["-std=c++17"],
         # Example: passing in the version to the compiled code
         define_macros = [('VERSION_INFO', __version__)],
     ),
