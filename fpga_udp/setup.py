@@ -5,7 +5,7 @@ import platform
 from glob import glob
 import os
 
-__version__ = "1.0.3"
+__version__ = "1.1.9"
 
 # The main interface is through Pybind11Extension.
 # * You can add cxx_std=11/14/17, and then build_ext can be removed.
@@ -48,6 +48,7 @@ ext_modules = [
         library_dirs = ["src/FTDI_D2XX/"+platform.system()+"/"+platform.machine()],
         libraries=['ftd2xx'],
         # extra_compile_args=['-g'],
+        extra_compile_args=["-std=c++17"],
         # Example: passing in the version to the compiled code
         define_macros = [('VERSION_INFO', __version__)],
     ),

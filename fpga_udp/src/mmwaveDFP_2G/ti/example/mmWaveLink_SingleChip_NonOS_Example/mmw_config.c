@@ -2222,7 +2222,9 @@ int MMWL_openConfigFile(const char *filename)
 void MMWL_closeConfigFile()
 {
     /* Close config file */
-    fclose(mmwl_configfPtr);
-    mmwl_configfPtr = NULL;
+    if(mmwl_configfPtr != NULL){
+        fclose(mmwl_configfPtr);
+        mmwl_configfPtr = NULL;
+    }
 }
 
