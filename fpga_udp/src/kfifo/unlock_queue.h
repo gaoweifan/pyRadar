@@ -41,8 +41,10 @@ public:
   }
 
   uint32_t Put(const T *buffer, uint32_t len) {
-    len = std::min(len, _size - (_in - _out.load(std::memory_order_acq_rel)));
-    //len = std::min(len, _size - (_in - _out));
+    if(len>_size - (_in - _out.load(std::memory_order_acq_rel)))//allow override
+      _out.fetch_add(len, std::memory_order_acq_rel);
+    // len = std::min(len, _size - (_in - _out.load(std::memory_order_acq_rel)));//not allow
+    // len = std::min(len, _size - (_in - _out));
     // 通用内存屏障，保证out读到正确的值，可能另外一个线程在修改out
     // 用smp_mb是因为上面读out，下面写_buffer
     // smp_mb();

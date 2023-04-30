@@ -5,6 +5,7 @@
 #include <future>
 #include <mutex>
 #include <cmath>
+#include <chrono>
 #ifdef _WIN32
     #include <Winsock2.h>
     #include <ws2tcpip.h>
@@ -46,7 +47,7 @@ uint32_t receivedPacketNum_g=0,firstPacketNum_g=0,lastPacketNum_g=0,expectedPack
 PACK(typedef struct {
     uint32_t seqNum;
     uint8_t byteCnt[6];
-    uint8_t payload[packetSize_d];
+    uint8_t payload[packetSize_d-10];
 }) packet_t;
 UnlockQueue<packet_t> *udp_queue_g;
 std::thread udp_thread_g;
@@ -279,19 +280,19 @@ void _udp_read_thread(int sock_fd){
         n = recvfrom(sockfd, (char *)&buffer, packetSize_d,
                      0, (sockaddr*)&src, &src_len);
         if (n > 0) { // Data received
-            if(n!=packetSize_d){
-                printf("[fpga_udp]received packet length error: %d",n);
-            }
+            // if(n!=packetSize_d){
+            //     printf("[fpga_udp]received packet length error: %d",n);
+            // }
             udp_queue_g->Put(&buffer, 1);
         }else{ // No data available
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            // std::this_thread::sleep_for(std::chrono::microseconds(10));
         }
     }
 
     udp_mutex.unlock();
 }
 
-py::array_t<uint8_t> udp_read_thread_get_frames(uint32_t frameNum, int bytesInFrame, int timeout_s){
+py::array_t<uint8_t> udp_read_thread_get_frames(uint32_t frameNum, int bytesInFrame, int timeout_s, bool sort){
     uint32_t maxPacketNum = ((frameNum+1)*bytesInFrame)/(packetSize_d-10)+1;
     /* No pointer is passed, so NumPy will allocate the buffer */
     auto result = py::array_t<uint8_t>(maxPacketNum*packetSize_d);
@@ -323,7 +324,8 @@ py::array_t<uint8_t> udp_read_thread_get_frames(uint32_t frameNum, int bytesInFr
     if (ret < expectedPacketNum_g-1)
         printf("[fpga_udp]udp time out\n");
 
-    return postProc_packet_sort(result,frameNum,bytesInFrame,packetSize_d,lastFrameRemainBytes,receivedPacketNum_g,firstPacketNum_g,lastPacketNum_g);
+    if(sort) return postProc_packet_sort(result,frameNum,bytesInFrame,packetSize_d,lastFrameRemainBytes,receivedPacketNum_g,firstPacketNum_g,lastPacketNum_g);
+    return result;
 }
 
 PYBIND11_MODULE(fpga_udp, m) {
@@ -416,9 +418,10 @@ PYBIND11_MODULE(fpga_udp, m) {
     m.def("get_firstPacketNum", []() {return firstPacketNum_g;});
     m.def("get_lastPacketNum", []() {return lastPacketNum_g;});
     m.def("get_expectedPacketNum", []() {return expectedPacketNum_g;});
-    m.def("udp_read_thread_init", [](int bytesInFrame, int packetSize, int frameNumInBuf=2) {
-        udp_queue_g = new UnlockQueue<packet_t>(bytesInFrame*packetSize*frameNumInBuf);
-        return udp_queue_g->size()>=bytesInFrame*packetSize*frameNumInBuf;
+    m.def("udp_read_thread_init", [](int bytesInFrame, int frameNumInBuf) {
+        uint32_t maxPacketNum = ((frameNumInBuf+1)*bytesInFrame)/(packetSize_d-10)+1;
+        udp_queue_g = new UnlockQueue<packet_t>(maxPacketNum);
+        return udp_queue_g->size();
     });
     m.def("udp_read_thread_start", [](int sock_fd) {
         udp_continue_g = true;
@@ -428,6 +431,27 @@ PYBIND11_MODULE(fpga_udp, m) {
     m.def("udp_read_thread_stop", []() {
         udp_continue_g = false;
         udp_thread_g.join();
+        delete udp_queue_g;
+    });
+    m.def("kfifo_benchmark", [](uint32_t loopTime,uint32_t maxPacketNum) {
+        udp_queue_g = new UnlockQueue<packet_t>(maxPacketNum);
+        packet_t buffer;
+        auto start = std::chrono::system_clock::now();
+        uint32_t realCnt=0;
+        for(uint32_t i=0;i<loopTime;i++){
+            buffer.seqNum=i;
+            uint32_t ret=udp_queue_g->Put(&buffer, 1);
+            if(ret!=1){
+                printf("%d\n",ret);
+                break;
+            }
+            realCnt++;
+        }
+        auto end   = std::chrono::system_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        auto dur_s=double(duration.count()) * std::chrono::microseconds::period::num / std::chrono::microseconds::period::den;
+        std::cout<<realCnt<<" loops cost "<<dur_s<<"sec, "<< realCnt*sizeof(packet_t)/dur_s/1024/1024 <<"MB/s"<<std::endl;
+
         delete udp_queue_g;
     });
 
