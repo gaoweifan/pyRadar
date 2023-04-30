@@ -3,9 +3,8 @@ from pybind11.setup_helpers import Pybind11Extension, build_ext
 from setuptools import setup
 import platform
 from glob import glob
-import os
 
-__version__ = "1.1.9"
+__version__ = "1.3.0"
 
 # The main interface is through Pybind11Extension.
 # * You can add cxx_std=11/14/17, and then build_ext can be removed.
@@ -44,13 +43,16 @@ ext_modules = [
                        # mmwave DFP firmware
                        ["src/mmwaveDFP_2G/firmware/"]+
                        # pevents Library
-                       ["src/pevents/"],
+                       ["src/pevents/"]+
+                       # kfifo Library
+                       ["src/kfifo/"],
         library_dirs = ["src/FTDI_D2XX/"+platform.system()+"/"+platform.machine()],
         libraries=['ftd2xx'],
         # extra_compile_args=['-g'],
-        # extra_compile_args=["-std=c++17"],
         # Example: passing in the version to the compiled code
-        define_macros = [('VERSION_INFO', __version__)],
+        define_macros = [('VERSION_INFO', __version__),('NOMINMAX',1)],
+        language='c++',
+        cxx_std=11
     ),
 ]
 
@@ -66,7 +68,7 @@ setup(
     extras_require={"test": "pytest"},
     # Currently, build_ext only provides an optional "highest supported C++
     # level" feature, but in the future it may provide more features.
-    cmdclass={"build_ext": build_ext},
+    # cmdclass={"build_ext": build_ext},
     zip_safe=False,
     python_requires=">=3.7",
 )

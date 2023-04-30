@@ -15,6 +15,15 @@
 #endif
 #include "WzSerialportPlus.h"
 #include "mmw_example_nonos.h"
+#include "unlock_queue.h"
+
+#ifdef __GNUC__
+#define PACK( __Declaration__ ) __Declaration__ __attribute__((__packed__))
+#endif
+
+#ifdef _MSC_VER
+#define PACK( __Declaration__ ) __pragma( pack(push, 1) ) __Declaration__ __pragma( pack(pop) )
+#endif
 
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
@@ -24,14 +33,23 @@ namespace py = pybind11;
 WzSerialportPlus radar_serial_port;
 int memidx=0;
 int overflowCnt=0;
-int packetSize_g=1456;
+int packetSize_g=1466;
 uint32_t packetNum_g=1000;
 uint8_t *serial_buf_ptr=NULL;
 std::mutex serial_buf_mutex;
 std::mutex udp_mutex;
+std::atomic<bool> udp_continue_g=true;
 std::mutex udp_async_mutex;
 std::future<pybind11::array_t<uint8_t>> udp_val;
 uint32_t receivedPacketNum_g=0,firstPacketNum_g=0,lastPacketNum_g=0,expectedPacketNum_g=0;
+#define packetSize_d 1466
+PACK(typedef struct {
+    uint32_t seqNum;
+    uint8_t byteCnt[6];
+    uint8_t payload[packetSize_d];
+}) packet_t;
+UnlockQueue<packet_t> *udp_queue_g;
+std::thread udp_thread_g;
 // py::array_t<uint8_t> doubleBuffer[2];
 // bool firstBufFull=false;
 
@@ -233,6 +251,81 @@ py::array_t<uint8_t> read_data_udp_async_wait(){
     return udp_val.get();
 }
 
+void _udp_read_thread(int sock_fd){
+    udp_mutex.lock();
+
+    #ifdef __linux__
+        int sockfd = sock_fd;
+        int status = fcntl(sockfd, F_SETFL, fcntl(sockfd, F_GETFL, 0) | O_NONBLOCK); // non-blocking
+        if(status == -1)
+            throw std::runtime_error("[fpga_udp]error calling fcntl to set O_NONBLOCK");
+    #elif _WIN32
+        SOCKET sockfd = (SOCKET)sock_fd;
+        unsigned long mode = 1; // 1 to enable non-blocking socket
+        int status = ioctlsocket(sockfd, FIONBIO, &mode);
+        if(status != 0)
+            throw std::runtime_error("[fpga_udp]ioctlsocket failed:"+std::to_string(WSAGetLastError()));
+    #endif
+
+    struct sockaddr_in src;
+    socklen_t src_len = sizeof(src);
+    memset(&src, 0, sizeof(src));
+
+    int n;
+    packet_t buffer;
+
+    while (udp_continue_g) {
+        // Try to receive data in non-blocking mode
+        n = recvfrom(sockfd, (char *)&buffer, packetSize_d,
+                     0, (sockaddr*)&src, &src_len);
+        if (n > 0) { // Data received
+            if(n!=packetSize_d){
+                printf("[fpga_udp]received packet length error: %d",n);
+            }
+            udp_queue_g->Put(&buffer, 1);
+        }else{ // No data available
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+    }
+
+    udp_mutex.unlock();
+}
+
+py::array_t<uint8_t> udp_read_thread_get_frames(uint32_t frameNum, int bytesInFrame, int timeout_s){
+    uint32_t maxPacketNum = ((frameNum+1)*bytesInFrame)/(packetSize_d-10)+1;
+    /* No pointer is passed, so NumPy will allocate the buffer */
+    auto result = py::array_t<uint8_t>(maxPacketNum*packetSize_d);
+    py::buffer_info buf_info = result.request();
+    packet_t *buf_ptr = static_cast<packet_t *>(buf_info.ptr);
+
+    int lastFrameRemainBytes=0;
+    uint32_t ret;
+    uint64_t bytesCnt;
+    int receivePacketLen=0,lastFrameTransferedBytes;
+
+    // Wait for start of next frame
+    do{
+        ret = udp_queue_g->Get_wait(buf_ptr, 1, timeout_s*1000);
+        if (ret < 1){
+            printf("[fpga_udp]udp time out\n");
+            lastFrameRemainBytes=-1;
+            return result;
+        }
+        bytesCnt = (buf_ptr->seqNum-1)*(packetSize_d-10);
+        lastFrameTransferedBytes = bytesCnt % bytesInFrame;
+        lastFrameRemainBytes = (bytesInFrame-lastFrameTransferedBytes) % bytesInFrame;
+    }while(lastFrameRemainBytes>=packetSize_d-10);
+    
+    expectedPacketNum_g = ceil((lastFrameRemainBytes + frameNum*bytesInFrame)/((double)(packetSize_d-10)));
+
+    // Read in the rest of the frame
+    ret = udp_queue_g->Get_wait(buf_ptr+1, expectedPacketNum_g-1, timeout_s*1000);
+    if (ret < expectedPacketNum_g-1)
+        printf("[fpga_udp]udp time out\n");
+
+    return postProc_packet_sort(result,frameNum,bytesInFrame,packetSize_d,lastFrameRemainBytes,receivedPacketNum_g,firstPacketNum_g,lastPacketNum_g);
+}
+
 PYBIND11_MODULE(fpga_udp, m) {
     m.doc() = R"pbdoc(
         FPGA UDP reader & mmwavelink API plugin
@@ -259,6 +352,10 @@ PYBIND11_MODULE(fpga_udp, m) {
            get_firstPacketNum
            get_lastPacketNum
            get_expectedPacketNum
+           udp_read_thread_init
+           udp_read_thread_start
+           udp_read_thread_get_frames
+           udp_read_thread_stop
 
            AWR2243_firmwareDownload
            AWR2243_init
@@ -319,6 +416,20 @@ PYBIND11_MODULE(fpga_udp, m) {
     m.def("get_firstPacketNum", []() {return firstPacketNum_g;});
     m.def("get_lastPacketNum", []() {return lastPacketNum_g;});
     m.def("get_expectedPacketNum", []() {return expectedPacketNum_g;});
+    m.def("udp_read_thread_init", [](int bytesInFrame, int packetSize, int frameNumInBuf=2) {
+        udp_queue_g = new UnlockQueue<packet_t>(bytesInFrame*packetSize*frameNumInBuf);
+        return udp_queue_g->size()>=bytesInFrame*packetSize*frameNumInBuf;
+    });
+    m.def("udp_read_thread_start", [](int sock_fd) {
+        udp_continue_g = true;
+        udp_thread_g = std::thread(_udp_read_thread, sock_fd);
+    });
+    m.def("udp_read_thread_get_frames", &udp_read_thread_get_frames);
+    m.def("udp_read_thread_stop", []() {
+        udp_continue_g = false;
+        udp_thread_g.join();
+        delete udp_queue_g;
+    });
 
     m.def("AWR2243_firmwareDownload",[](){
         return MMWL_App_firmwareDownload(RL_DEVICE_MAP_CASCADED_1);
