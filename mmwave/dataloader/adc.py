@@ -794,6 +794,46 @@ class DCA1000:
         # print("first Packet Num:%d,last Packet Num:%d"%(firstPacketNum,lastPacketNum))
         # print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(receivedPacketNum,expectedPacketNum,(expectedPacketNum-receivedPacketNum)/expectedPacketNum*100))
         return recvData
+    
+    def fastRead_in_Cpp_thread_start(self,frameNumInBuf=2):
+        ret = fpga_udp.udp_read_thread_init(BYTES_IN_FRAME,frameNumInBuf)
+        print("allocated udp buffer length:",ret,"size(MB):",ret*BYTES_OF_PACKET/1024/1024)
+        fpga_udp.udp_read_thread_start(self.data_socket.fileno())
+        print("udp thread started")
+
+    def fastRead_in_Cpp_thread_stop(self):
+        fpga_udp.udp_read_thread_stop()
+        print("udp thread stopped")
+
+    def fastRead_in_Cpp_thread_get(self,numframes=1,timeOut=2,verbose=True,sortInC=True):
+        minPacketNum = math.ceil(PACKETS_IN_FRAME*numframes)
+        if verbose:
+            print("min Packet Num:",minPacketNum)
+        recvData = fpga_udp.udp_read_thread_get_frames(numframes,BYTES_IN_FRAME,timeOut,sortInC)
+        if sortInC: # sort packet using C code (True) or python (False)
+            recvData = np.ndarray(shape=-1,dtype=np.int16, buffer=recvData) # convert to int16
+            if verbose:
+                receivedPacketNum=fpga_udp.get_receivedPacketNum()
+                expectedPacketNum=fpga_udp.get_expectedPacketNum()
+                firstPacketNum=fpga_udp.get_firstPacketNum()
+                lastPacketNum=fpga_udp.get_lastPacketNum()
+                print("first Packet Num:%d,last Packet Num:%d"%(firstPacketNum,lastPacketNum))
+                print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(receivedPacketNum,expectedPacketNum,(expectedPacketNum-receivedPacketNum)/expectedPacketNum*100))
+            return recvData
+        else:
+            if verbose:
+                print("all received, post processing packets...")
+
+            recvData = np.reshape(recvData,(-1,BYTES_OF_PACKET))
+            recvQueue = list(map(lambda x:bytes(x),recvData))
+            
+            receivedData,firstPacketNum,receivedPacketNum=self.postProcPacket(recvQueue,minPacketNum)
+            databuf=receivedData[0:numframes*UINT16_IN_FRAME]
+            # np.save("test",receivedPacketNum)
+            if verbose:
+                print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(len(receivedPacketNum),minPacketNum,(minPacketNum-len(receivedPacketNum))/minPacketNum*100))
+
+            return databuf
         
     def fastRead_in_Cpp_async_start(self,numframes=1,timeOut=2,sortInC=True):
         fpga_udp.read_data_udp_async_start(self.data_socket.fileno(),numframes,BYTES_IN_FRAME,BYTES_OF_PACKET,timeOut,sortInC)
