@@ -80,7 +80,7 @@ try:
     radar_config_file = "configFiles/AWR2243_mmwaveconfig.txt"  # laneEn=15则LVDS为4 lane模式
     dca_config_file = "configFiles/cf.json"  # 若LVDS设置为4 lane模式，记得将cf.json中的lvdsMode设为1
     radar.AWR2243_init(radar_config_file)
-    numframes=10
+    numframes=50
     radar.AWR2243_setFrameCfg(0)  # Valid Range 0 to 65535 (0 for infinite frames)
     
     # 检查LVDS参数
@@ -96,13 +96,13 @@ try:
     print("Config fpga:",dca.config_fpga(dca_config_file))
     # 4. 通过网口udp发送配置record数据包指令
     print("Config record packet delay:",dca.config_record(dca_config_file))
-    dca.fastRead_in_Cpp_thread_start(100) # 启动udp采集线程
+
     # 按回车开始采集
     input("press ENTER to start capture...")
 
     # 5. 通过网口udp发送开始采集指令
-    
     dca.stream_start()
+    dca.fastRead_in_Cpp_thread_start(4) # 启动udp采集线程
 
     # 6. 通过SPI启动雷达
     radar.AWR2243_sensorStart()

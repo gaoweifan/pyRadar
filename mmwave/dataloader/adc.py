@@ -805,7 +805,7 @@ class DCA1000:
         fpga_udp.udp_read_thread_stop()
         print("udp thread stopped")
 
-    def fastRead_in_Cpp_thread_get(self,numframes=1,timeOut=2,verbose=True,sortInC=True):
+    def fastRead_in_Cpp_thread_get(self,numframes=1,timeOut=2,verbose=False,sortInC=True):
         minPacketNum = math.ceil(PACKETS_IN_FRAME*numframes)
         if verbose:
             print("min Packet Num:",minPacketNum)
@@ -832,7 +832,13 @@ class DCA1000:
             # np.save("test",receivedPacketNum)
             if verbose:
                 print("received packet num:%d,expected packet num:%d,loss:%.2f%%"%(len(receivedPacketNum),minPacketNum,(minPacketNum-len(receivedPacketNum))/minPacketNum*100))
-
+                if(minPacketNum!=len(receivedPacketNum)):
+                    # print("receivedPacketNum",receivedPacketNum)
+                    gaplist=[]
+                    for i in range(len(receivedPacketNum)-1):
+                        if receivedPacketNum[i+1]-receivedPacketNum[i]!=1:
+                            gaplist.append((receivedPacketNum[i],receivedPacketNum[i+1]))
+                    print("gaplist",gaplist)
             return databuf
         
     def fastRead_in_Cpp_async_start(self,numframes=1,timeOut=2,sortInC=True):
