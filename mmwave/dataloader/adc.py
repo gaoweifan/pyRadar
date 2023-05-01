@@ -796,6 +796,7 @@ class DCA1000:
         return recvData
     
     def fastRead_in_Cpp_thread_start(self,frameNumInBuf=2):
+        self.frameNumInBuf=frameNumInBuf
         ret = fpga_udp.udp_read_thread_init(BYTES_IN_FRAME,frameNumInBuf)
         print("allocated udp buffer length:",ret,"size(MB):",ret*BYTES_OF_PACKET/1024/1024)
         fpga_udp.udp_read_thread_start(self.data_socket.fileno())
@@ -806,6 +807,8 @@ class DCA1000:
         print("udp thread stopped")
 
     def fastRead_in_Cpp_thread_get(self,numframes=1,timeOut=2,verbose=False,sortInC=True):
+        if self.frameNumInBuf<numframes:
+            raise ValueError(f"frameNumInBuf={self.frameNumInBuf} must bigger than numframes={numframes}")
         minPacketNum = math.ceil(PACKETS_IN_FRAME*numframes)
         if verbose:
             print("min Packet Num:",minPacketNum)

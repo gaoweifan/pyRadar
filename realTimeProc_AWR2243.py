@@ -80,7 +80,9 @@ try:
     radar_config_file = "configFiles/AWR2243_mmwaveconfig.txt"  # laneEn=15则LVDS为4 lane模式
     dca_config_file = "configFiles/cf.json"  # 若LVDS设置为4 lane模式，记得将cf.json中的lvdsMode设为1
     radar.AWR2243_init(radar_config_file)
-    numframes=50
+    numLoops=50
+    frameNumInBuf=16
+    numframes=16 # numframes必须大于frameNumInBuf
     radar.AWR2243_setFrameCfg(0)  # Valid Range 0 to 65535 (0 for infinite frames)
     
     # 检查LVDS参数
@@ -102,28 +104,30 @@ try:
 
     # 5. 通过网口udp发送开始采集指令
     dca.stream_start()
-    dca.fastRead_in_Cpp_thread_start(4) # 启动udp采集线程
+    dca.fastRead_in_Cpp_thread_start(frameNumInBuf) # 启动udp采集线程
 
     # 6. 通过SPI启动雷达
     radar.AWR2243_sensorStart()
 
     # 7. UDP接收数据包+解析出原始数据+数据实时处理
     start = time.time()
-    for i in range(numframes):
-        print("current frame:",i)
+    for i in range(numLoops):
+        print("current loop:",i)
         # start1 = time.time()
         # data_buf = dca.fastRead_in_Cpp(1,sortInC=True)
         # data_buf = dca.fastRead_in_Cpp_noDisp(1)
-        data_buf = dca.fastRead_in_Cpp_thread_get(numframes=1,verbose=True,sortInC=True)
+        data_buf = dca.fastRead_in_Cpp_thread_get(numframes,verbose=True,sortInC=True)
         # end1 = time.time()
         # print("capture time elapsed(s):",end1-start1)
+        # print("capture performance: %.2f FPS"%(numframes/(end1-start1)))
 
         # start2 = time.time()
         postProc(data_buf,ADC_PARAMS_l)
         # end2 = time.time()
         # print("postProc time elapsed(s):",end2-start2)
+        # print("postProc performance: %.2f FPS"%(numframes/(end2-start2)))
     end = time.time()
-    print("Performance: %.2f FPS"%(numframes/(end-start)))
+    print("Performance: %.2f Loops per Sec"%(numLoops/(end-start)))
 
     # 8.1 通过SPI停止雷达
     radar.AWR2243_sensorStop()
