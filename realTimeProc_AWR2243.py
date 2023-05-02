@@ -129,19 +129,17 @@ try:
     end = time.time()
     print("Performance: %.2f Loops per Sec"%(numLoops/(end-start)))
 
+except Exception as e:
+    traceback.print_exc()
+finally:
     # 8.1 通过SPI停止雷达
     radar.AWR2243_sensorStop()
     # 8.2 等待雷达采集结束
     radar.AWR2243_waitSensorStop()
-    
-    # 9. 通过网口udp发送停止采集指令
-    dca.fastRead_in_Cpp_thread_stop() # 停止udp采集线程(必须先于stream_stop调用，即UDP接收时不能同时发送)
-    dca.stream_stop()  # DCA停止采集
-
-except Exception as e:
-    traceback.print_exc()
-finally:
     if dca is not None:
+        # 9. 通过网口udp发送停止采集指令
+        dca.fastRead_in_Cpp_thread_stop() # 停止udp采集线程(必须先于stream_stop调用，即UDP接收时不能同时发送)
+        dca.stream_stop()  # DCA停止采集
         dca.close()
     # 10. 通过SPI关闭雷达电源与配置文件
     radar.AWR2243_poweroff()
