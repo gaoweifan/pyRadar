@@ -188,6 +188,7 @@ int MMWL_App_setFrameCfg(unsigned char deviceMap, rlUInt16_t numFrames);
 int MMWL_App_startCont(unsigned char deviceMap);
 int MMWL_App_stopCont(unsigned char deviceMap);
 int MMWL_App_startSensor(unsigned char deviceMap);
+unsigned char MMWL_App_isSensorStarted();
 int MMWL_App_waitSensorStop(unsigned char deviceMap);
 int MMWL_App_stopSensor(unsigned char deviceMap);
 int MMWL_App_poweroff(unsigned char deviceMap);

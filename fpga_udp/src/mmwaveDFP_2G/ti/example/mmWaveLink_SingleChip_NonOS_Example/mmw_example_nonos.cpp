@@ -4347,6 +4347,17 @@ int MMWL_App_waitSensorStop(unsigned char deviceMap)
     return retVal;
 }
 
+/** @fn int MMWL_App_isSensorStarted()
+*
+*   @brief mmWaveLink Application API to test if sensor is started
+*
+*   @return uint8_t started - 1, stopped - 0
+*/
+unsigned char MMWL_App_isSensorStarted()
+{
+    return mmwl_bSensorStarted;
+}
+
 /** @fn int MMWL_App_stopSensor(unsigned char deviceMap)
 *
 *   @brief mmWaveLink Application API to stop radar sensor.

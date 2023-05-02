@@ -363,6 +363,7 @@ PYBIND11_MODULE(fpga_udp, m) {
            AWR2243_init
            AWR2243_setFrameCfg
            AWR2243_sensorStart
+           AWR2243_isSensorStarted
            AWR2243_waitSensorStop
            AWR2243_sensorStop
            AWR2243_sensorStartCont
@@ -428,10 +429,13 @@ PYBIND11_MODULE(fpga_udp, m) {
         udp_thread_g = std::thread(_udp_read_thread, sock_fd);
     });
     m.def("udp_read_thread_get_frames", &udp_read_thread_get_frames);
+    m.def("udp_read_thread_isStarted", [](){return udp_continue_g.load();});
     m.def("udp_read_thread_stop", []() {
-        udp_continue_g = false;
-        udp_thread_g.join();
-        delete udp_queue_g;
+        if(udp_continue_g){
+            udp_continue_g = false;
+            udp_thread_g.join();
+            delete udp_queue_g;
+        }
     });
     m.def("kfifo_benchmark", [](uint32_t loopTime,uint32_t maxPacketNum) {
         udp_queue_g = new UnlockQueue<packet_t>(maxPacketNum);
@@ -473,6 +477,9 @@ PYBIND11_MODULE(fpga_udp, m) {
     });
     m.def("AWR2243_sensorStart",[](){
         return MMWL_App_startSensor(RL_DEVICE_MAP_CASCADED_1);
+    });
+    m.def("AWR2243_isSensorStarted",[](){
+        return MMWL_App_isSensorStarted();
     });
     m.def("AWR2243_waitSensorStop",[](){
         return MMWL_App_waitSensorStop(RL_DEVICE_MAP_CASCADED_1);
