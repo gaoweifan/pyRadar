@@ -733,7 +733,7 @@ extern void gtrack_free(void *pFree, uint32_t sizeInBytes);
 #endif
 
 /* This is inline implementation of gtrack_assert */
-#ifdef _WIN32
+#if defined (_WIN32) || defined (__linux__)
 #include <assert.h>
 #define gtrack_assert(expression) assert(expression)
 #endif
@@ -745,10 +745,18 @@ extern void gtrack_free(void *pFree, uint32_t sizeInBytes);
 #endif
 
 /* This is inline implementation of getCycleCount */
+#if defined (_WIN32) || defined (__linux__)
 #ifdef _WIN32
 #include <intrin.h>
+#endif
 static __inline uint32_t gtrack_getCycleCount(void){
+  #ifdef __aarch64__
+  uint64_t tsc;
+  asm volatile("mrs %0, cntvct_el0" : "=r" (tsc));
+  return (uint32_t)tsc;
+  #else
   return (uint32_t)__rdtsc();
+  #endif
 }
 #endif
 

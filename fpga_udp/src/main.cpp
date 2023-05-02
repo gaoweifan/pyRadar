@@ -13,6 +13,7 @@
 #elif __linux__
     #include <sys/socket.h>
     #include <netinet/in.h>
+    #include <fcntl.h>
 #endif
 #include "WzSerialportPlus.h"
 #include "mmw_example_nonos.h"
