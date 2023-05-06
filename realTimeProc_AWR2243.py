@@ -82,7 +82,7 @@ try:
     radar.AWR2243_init(radar_config_file)
     numLoops=50
     frameNumInBuf=16
-    numframes=16 # numframes必须大于frameNumInBuf
+    numframes=16 # numframes必须<=frameNumInBuf
     radar.AWR2243_setFrameCfg(0)  # Valid Range 0 to 65535 (0 for infinite frames)
     
     # 检查LVDS参数
