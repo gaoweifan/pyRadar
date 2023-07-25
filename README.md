@@ -36,8 +36,12 @@
 
 ### Software
 #### Windows
- - Microsoft Visual C++ 14.0 or greater is required. Get it with "[Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)" and choose "Desktop development with C++"
- - FTDI D2XX driver and DLL is needed. Download version [2.12.36.4](https://www.ftdichip.com/Drivers/CDM/CDM%20v2.12.36.4%20WHQL%20Certified.zip) or newer from [official website](https://ftdichip.com/drivers/d2xx-drivers/) and install `ftdibus.inf`.
+ - Microsoft Visual C++ 14.0 or greater is required.
+   - Get it with "[Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)"(Standalone MSVC compiler) or "[Visual Studio](https://visualstudio.microsoft.com/downloads/)"(IDE) and choose "Desktop development with C++"
+ - FTDI D2XX driver and DLL is needed. 
+   - Download version [2.12.36.4](https://www.ftdichip.com/Drivers/CDM/CDM%20v2.12.36.4%20WHQL%20Certified.zip) or newer from [official website](https://ftdichip.com/drivers/d2xx-drivers/).
+   - Unzip it and install `.\ftdibus.inf` by right-clicking this file.
+   - Copy `.\amd64\ftd2xx64.dll` to `C:\Windows\System32\` and rename it to `ftd2xx.dll`. For 32-bit system, just copy `.\i386\ftd2xx.dll` to that directory.
 #### Linux
  - `sudo apt install python3-dev`
  - FTDI D2XX driver and .so lib is needed. Download version 1.4.27 or newer from [official website](https://ftdichip.com/drivers/d2xx-drivers/) based on your architecture, e.g. [X86](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_32-1.4.27.tgz), [X64](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-x86_64-1.4.27.tgz), [armv7](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v7-hf-1.4.27.tgz), [aarch64](https://ftdichip.com/wp-content/uploads/2022/07/libftd2xx-arm-v8-1.4.27.tgz), etc.
