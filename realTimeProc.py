@@ -1,27 +1,30 @@
 import traceback
 import time
 from mmwave.dataloader import DCA1000
-import fpga_udp as radar
+from mmwave.dataloader.radars import TI
 import numpy as np
 import datetime
 '''
 # AWR2243采集原始数据的一般流程
 1. 重置雷达与DCA1000(reset_radar、reset_fpga)
-2. 通过SPI初始化雷达并配置相应参数(AWR2243_init、AWR2243_setFrameCfg)(linux下需要root权限)
+2. 通过UART初始化雷达并配置相应参数(TI、setFrameCfg)
 3. 通过网口udp发送配置fpga指令(config_fpga)
 4. 通过网口udp发送配置record数据包指令(config_record)
 5. 通过网口udp发送开始采集指令(stream_start)
-6. 通过SPI启动雷达(AWR2243_sensorStart)
+6. 通过UART启动雷达（理论上通过FTDI(USB转SPI)也能控制，目前只在AWR2243上实现）(startSensor)
 7. UDP循环接收数据包+解析出原始数据+数据实时处理(fastRead_in_Cpp、postProc)
-8.1. (optional, 若numFrame==0则必须有)通过SPI停止雷达(AWR2243_sensorStop)
-8.2. (optional, 若numFrame==0则不能有)等待雷达采集结束(AWR2243_waitSensorStop)
-9. (optional, 若numFrame==0则必须有)通过网口udp发送停止采集指令(stream_stop)
-10. 通过SPI关闭雷达电源与配置文件(AWR2243_poweroff)
+8. 通过UART停止雷达(stopSensor)
+9. 通过网口udp发送停止采集指令(fastRead_in_Cpp_thread_stop、stream_stop)
 
-# "mmwaveconfig.txt"毫米波雷达配置文件要求
-TBD
+# "*.cfg"毫米波雷达配置文件要求
+Default profile in Visualizer disables the LVDS streaming.
+To enable it, please export the chosen profile and set the appropriate enable bits.
+adcbufCfg需如下设置，lvdsStreamCfg的第三个参数需设置为1，具体参见mmwave_sdk_user_guide.pdf
+1. adcbufCfg -1 0 1 1 1
+2. lvdsStreamCfg -1 0 1 0 
 
 # "cf.json"数据采集卡配置文件要求
+使用xWR1843时需将lvdsMode设为2，xWR1843只支持2路LVDS lanes
 具体信息请查阅TI_DCA1000EVM_CLI_Software_UserGuide.pdf
 lvds Mode:
 LVDS mode specifies the lane config for LVDS. This field is valid only when dataTransferMode is "LVDSCapture".
@@ -37,18 +40,20 @@ The user can change the Ethernet packet delay from 5 µs to 500 µs to achieve d
 "packetDelay_us": 50 (us)   ~   193 (Mbps)
 '''
 dca = None
+radar = None
 
 def postProc(adc_data,ADC_PARAMS_l):
-    adc_data=np.reshape(adc_data,(-1,ADC_PARAMS_l['chirps'],ADC_PARAMS_l['tx'],ADC_PARAMS_l['samples'],ADC_PARAMS_l['IQ'],ADC_PARAMS_l['rx']))
-    #100Frames*128Chirps*3TX*256Samples*2IQ*4RX(Lanes)
+    adc_data=np.reshape(adc_data,(-1,ADC_PARAMS_l['chirps'],ADC_PARAMS_l['tx'],ADC_PARAMS_l['rx'],ADC_PARAMS_l['samples']//2,ADC_PARAMS_l['IQ'],2))
+    #100Frames*16Chirps*2TX*4RX*32(Samples//2)*2IQ(Lanes)*2Samples
     # print(adc_data.shape)
 
-    adc_data=np.transpose(adc_data,(0,1,2,5,3,4))
-    #100Frames*128Chirps*3TX*4RX(Lanes)*256Samples*2IQ
+    adc_data=np.transpose(adc_data,(0,1,2,3,4,6,5))
+    adc_data=np.reshape(adc_data,(-1,ADC_PARAMS_l['chirps'],ADC_PARAMS_l['tx'],ADC_PARAMS_l['rx'],ADC_PARAMS_l['samples'],ADC_PARAMS_l['IQ']))
+    #100Frames*16Chirps*2TX*4RX*64Samples*2IQ(Lanes)
     # print(adc_data.shape)
 
-    adc_data = (1j * adc_data[...,1] + adc_data[...,0]).astype(np.complex64) # I first
-    #100Frames*128Chirps*3TX*4RX*256Samples复数形式
+    adc_data = (1j * adc_data[...,0] + adc_data[...,1]).astype(np.complex64) # Q first
+    #100Frames*16Chirps*2TX*4RX*64Samples复数形式
     # print(adc_data.shape)
 
     # Range-FFT
@@ -57,7 +62,7 @@ def postProc(adc_data,ADC_PARAMS_l):
     # Cluster Removal
     range_fft_avg = np.mean(range_fft,1)#沿chirp计算均值
     range_fft_avg=range_fft-np.tile(np.expand_dims(range_fft_avg,1),(1,ADC_PARAMS_l['chirps'],1,1,1))#与均值相消
-
+    
     # Doppler-FFT
     range_doppler = np.fft.fft(range_fft_avg, axis=1)
     range_doppler = np.fft.fftshift(range_doppler, axes=1)
@@ -71,47 +76,43 @@ try:
     print("wait for reset")
     time.sleep(1)
     
-    # 2. 通过SPI初始化雷达并配置相应参数
-    radar_config_file = "configFiles/AWR2243_mmwaveconfig.txt"  # laneEn=15则LVDS为4 lane模式
-    dca_config_file = "configFiles/cf.json"  # 若LVDS设置为4 lane模式，记得将cf.json中的lvdsMode设为1
-    radar.AWR2243_init(radar_config_file)
+    # 2. 通过UART初始化雷达并配置相应参数
+    dca_config_file = "configFiles/cf.json" # 记得将cf.json中的lvdsMode设为2，xWR1843只支持2路LVDS lanes
+    radar_config_file = "configFiles/xWR1843_profile_3D.cfg" # 记得将lvdsStreamCfg的第三个参数设置为1开启LVDS数据传输
+    # 记得改端口号,verbose=True会显示向毫米波雷达板子发送的所有串口指令及响应
+    radar = TI(cli_loc='COM4', data_loc='COM5',data_baud=921600,config_file=radar_config_file,verbose=True)
     numLoops=50
     frameNumInBuf=16
     numframes=16 # numframes必须<=frameNumInBuf
-    radar.AWR2243_setFrameCfg(0)  # Valid Range 0 to 65535 (0 for infinite frames)
+    radar.setFrameCfg(0) # 0 for infinite frames
     
-    # 检查LVDS参数
-    LVDSDataSizePerChirp_l,maxSendBytesPerChirp_l,ADC_PARAMS_l,CFG_PARAMS_l=dca.AWR2243_read_config(radar_config_file)
-    dca.refresh_parameter()
-    print(ADC_PARAMS_l)
-    print(CFG_PARAMS_l)
-    print("LVDSDataSizePerChirp:%d must <= maxSendBytesPerChirp:%d"%(LVDSDataSizePerChirp_l,maxSendBytesPerChirp_l))
-    # 检查fpga是否连通正常工作
-    print("System connection check:",dca.sys_alive_check())
-    print(dca.read_fpga_version())
-    # 3. 通过网口udp发送配置fpga指令
-    print("Config fpga:",dca.config_fpga(dca_config_file))
-    # 4. 通过网口udp发送配置record数据包指令
-    print("Config record packet delay:",dca.config_record(dca_config_file))
+    # 3. 通过网口UDP发送配置FPGA指令
+    # 4. 通过网口UDP发送配置record数据包指令
+    '''
+    dca.sys_alive_check()             # 检查FPGA是否连通正常工作
+    dca.config_fpga(dca_config_file)  # 配置FPGA参数
+    dca.config_record(dca_config_file)# 配置record参数
+    '''
+    ADC_PARAMS_l,_=dca.configure(dca_config_file,radar_config_file)  # 此函数完成上述所有操作
 
     # 按回车开始采集
     input("press ENTER to start capture...")
 
     # 5. 通过网口udp发送开始采集指令
     dca.stream_start()
-    dca.fastRead_in_Cpp_thread_start(frameNumInBuf) # 启动udp采集线程
+    dca.fastRead_in_Cpp_thread_start(frameNumInBuf) # 启动udp采集线程，方法一（推荐）
 
-    # 6. 通过SPI启动雷达
-    radar.AWR2243_sensorStart()
+    # 6. 通过UART启动雷达
+    radar.startSensor()
 
     # 7. UDP接收数据包+解析出原始数据+数据实时处理
     start = time.time()
     for i in range(numLoops):
         print("current loop:",i)
         # start1 = time.time()
-        # data_buf = dca.fastRead_in_Cpp(1,sortInC=True)
-        # data_buf = dca.fastRead_in_Cpp_noDisp(1)
-        data_buf = dca.fastRead_in_Cpp_thread_get(numframes,verbose=True,sortInC=True)
+        data_buf = dca.fastRead_in_Cpp_thread_get(numframes,verbose=True,sortInC=True) # 方法一（推荐）
+        # data_buf = dca.fastRead_in_Cpp(1,sortInC=True) # 方法二
+        # data_buf = dca.fastRead_in_Cpp_noDisp(1) # 方法三
         # end1 = time.time()
         # print("capture time elapsed(s):",end1-start1)
         # print("capture performance: %.2f FPS"%(numframes/(end1-start1)))
@@ -127,14 +128,11 @@ try:
 except Exception as e:
     traceback.print_exc()
 finally:
-    # 8.1 通过SPI停止雷达
-    radar.AWR2243_sensorStop()
-    # 8.2 等待雷达采集结束
-    radar.AWR2243_waitSensorStop()
+    if radar is not None:
+        # 8. 通过UART停止雷达
+        radar.stopSensor()
     if dca is not None:
         # 9. 通过网口udp发送停止采集指令
         dca.fastRead_in_Cpp_thread_stop() # 停止udp采集线程(必须先于stream_stop调用，即UDP接收时不能同时发送)
         dca.stream_stop()  # DCA停止采集
         dca.close()
-    # 10. 通过SPI关闭雷达电源与配置文件
-    radar.AWR2243_poweroff()

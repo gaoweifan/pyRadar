@@ -652,7 +652,7 @@ class DCA1000:
         """Initializes and connects to the FPGA
 
         Returns:
-            None
+            ADC_PARAMS_l,CFG_PARAMS_l
 
         """
         LVDSDataSizePerChirp_l,maxSendBytesPerChirp_l,ADC_PARAMS_l,CFG_PARAMS_l=self.read_config(IWRcfgFilePath)
@@ -664,6 +664,8 @@ class DCA1000:
         print(self.read_fpga_version())
         print("Config fpga:",self.config_fpga(FPGAjsonFilePath))
         print("Config record packet delay:",self.config_record(FPGAjsonFilePath))
+
+        return ADC_PARAMS_l,CFG_PARAMS_l
 
     def close(self):
         """Closes the sockets that are used for receiving and sending data

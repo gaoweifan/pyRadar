@@ -156,14 +156,31 @@
 #### 3."cf.json"数据采集卡配置文件要求
  - 同上
 
+### ***realTimeProc.py***
+实时循环采集原始ADC采样的IQ数据并在线处理的示例代码（仅xWR1843）。
+#### 1.采集原始数据的一般流程
+ 1. 重置雷达与DCA1000(reset_radar、reset_fpga)
+ 2. 通过UART初始化雷达并配置相应参数(TI、setFrameCfg)
+ 3. 通过网口udp发送配置fpga指令(config_fpga)
+ 4. 通过网口udp发送配置record数据包指令(config_record)
+ 5. 通过网口udp发送开始采集指令(stream_start)
+ 6. 通过UART启动雷达（理论上通过FTDI(USB转SPI)也能控制，目前只在AWR2243上实现）(startSensor)
+ 7. UDP**循环**接收数据包+解析出原始数据+数据实时处理(fastRead_in_Cpp、postProc)
+ 8. 通过UART停止雷达(stopSensor)
+ 9. 通过网口udp发送停止采集指令(fastRead_in_Cpp_thread_stop、stream_stop)
+#### 2."mmwaveconfig.txt"毫米波雷达配置文件要求
+ - 略
+#### 3."cf.json"数据采集卡配置文件要求
+ - 略
+
 ### ***realTimeProc_AWR2243.py***
-实时采集原始ADC采样的IQ数据并在线处理的示例代码（仅AWR2243）。
+实时循环采集原始ADC采样的IQ数据并在线处理的示例代码（仅AWR2243）。
 #### 1.AWR2243采集原始数据的一般流程
- - 同上（numFrame=0）
+ - 略
 #### 2."mmwaveconfig.txt"毫米波雷达配置文件要求
  - TBD
 #### 3."cf.json"数据采集卡配置文件要求
- - 同上
+ - 略
 
 ### ***testDecode.ipynb***
 解析原始ADC采样数据及串口数据（仅IWR1843）的示例代码，需要用Jupyter(推荐VS Code安装Jupyter插件)打开。
