@@ -86,7 +86,7 @@ try:
     # 7. 通过网口UDP发送开始采集指令
     dca.stream_start()
     # 8. 启动UDP数据包接收线程
-    numframes_out,sortInC_out = dca.fastRead_in_Cpp_async_start(numframes,sortInC=True) # 【方法一】异步调用
+    # numframes_out,sortInC_out = dca.fastRead_in_Cpp_async_start(numframes,sortInC=True) # 【采集方法一】1、异步调用(需要C++17及以上编译器支持)
 
     # 9. 通过串口启动雷达
     startTime = datetime.datetime.now()
@@ -94,8 +94,8 @@ try:
     radar.startSensor()
 
     # 10. 等待UDP数据包接收线程结束+解析出原始数据
-    data_buf = dca.fastRead_in_Cpp_async_wait(numframes_out,sortInC_out) # 【方法一】等待异步线程结束
-    # data_buf = dca.fastRead_in_Cpp(numframes,sortInC=True) # 【方法二】同步调用(会丢失开始采集前的包)
+    # data_buf = dca.fastRead_in_Cpp_async_wait(numframes_out,sortInC_out) # 【采集方法一】2、等待异步线程结束
+    data_buf = dca.fastRead_in_Cpp(numframes,sortInC=True) # 【采集方法二】同步调用(会丢失开始采集前的包，但兼容性更好)
     end = time.time()
     print("time elapsed(s):",end-start)
 
