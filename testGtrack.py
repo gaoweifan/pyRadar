@@ -44,9 +44,9 @@ def gtrack_cppyy_create(use3D=True):
         config.stateVectorType = gbl.GTRACK_STATE_VECTORS_2DA # Track two dimensions with acceleration 
     config.initialRadialVelocity = 0 # Expected target radial velocity at the moment of detection, m/s
     config.maxAcceleration=np.array([# Maximum targets acceleration in 
-                                  1, # lateral direction
-                                  1, # longitudinal direction
-                                  1  # vertical direction. For 2D options, the vertical component is ignored
+                                  1, # lateral direction (m/s2)
+                                  1, # longitudinal direction (m/s2)
+                                  1  # vertical direction (m/s2). For 2D options, the vertical component is ignored
                             ],dtype=np.float32)
     config.verbose = gbl.GTRACK_VERBOSE_MAXIMUM
     # config.verbose = gbl.GTRACK_VERBOSE_DEBUG
@@ -128,83 +128,87 @@ def gtrack_cppyy_create(use3D=True):
     return hTrackModule
 
 def gtrack_cppyy_step(hTrackModule,pointCloudList,use3D=True):
-    pointCloud=gbl.pointCloud# Pointer to an array of input measurments. Each measurement has range/angle/radial velocity information
-
-    if use3D:
-        dim=4
-    else:
-        dim=3
-
+    mNum = len(pointCloudList) # Number of input measurements
+    maxNum = cppyy.macro("GTRACK_NUM_POINTS_MAX")
+    if(mNum > maxNum):
+        raise ValueError(f"point num: {mNum}, exceed maximum supported num: {maxNum}")
+    
+    dim = 4 if use3D else 3
+    pointCloud = gbl.pointCloud # Pointer to an array of input measurments. Each measurement has range/angle/radial velocity information
     for idx, pointInfo in enumerate(pointCloudList):
         pointCloud[idx].array = np.array(pointInfo[0],dtype=np.float32)[:dim]
         pointCloud[idx].snr = pointInfo[1]
+    
+    var = cppyy.nullptr # Pointer to an array of input measurment variances. Shall be set to NULL if variances are unknown
+    targetDescr = gbl.targetDescr # Pointer to an array of GTRACK_targetDesc. gtrack_step populates the descritions for each of the tracked target 
+    tNum = np.zeros(1,dtype=np.uint16) # gtrack_step returns a number of populated target descriptos 
+    mIndex = np.zeros(((mNum-1)>>3)+1,dtype=np.uint8) # gtrack_step populates target indices, indicating which tracking ID was assigned to each measurment.
+    uIndex = np.zeros(mNum,dtype=np.uint8) # gtrack_step populates the bit array. The unique-ness of measurement N is represented by a bit = (N & 0xFF) in (N-1)>>3 byte.
+    presence = np.zeros(1,dtype=np.uint8) # Pointer to boolean presence indication.
+    bench = cppyy.nullptr # Pointer to an array of benchmarking results. Shall be set to NULL when benchmarking isn't required.
 
-    mNum=int(np.array(43,dtype=np.uint16)) # Number of input measurements
-    targetDescr=gbl.targetDescr # Pointer to an array of GTRACK_targetDesc. This function populates the descritions for each of the tracked target 
-    tNum=np.zeros(1,dtype=np.uint16) # Function returns a number of populated target descriptos 
-    mIndex=np.zeros(((mNum-1)>>3)+1,dtype=np.uint8) # This function populates target indices, indicating which tracking ID was assigned to each measurment.
-    uIndex=np.zeros(mNum,dtype=np.uint8) # This function populates the bit array. The unique-ness of measurement N is represented by a bit = (N & 0xFF) in (N-1)>>3 byte.
-    presence=np.zeros(1,dtype=np.uint8) # Pointer to boolean presence indication.
-    gbl.gtrack_step(hTrackModule, pointCloud[0], cppyy.nullptr, mNum, targetDescr[0], tNum, mIndex, uIndex, presence, cppyy.nullptr)
+    gbl.gtrack_step(hTrackModule, pointCloud[0], var, mNum, targetDescr[0], tNum, mIndex, uIndex, presence, bench)
+    
     return targetDescr,tNum[0],mIndex,uIndex,presence[0]
 
 def gtrack_cppyy_delete(hTrackModule):
     gbl.gtrack_delete(hTrackModule)
 
 
+test3DPointCloudDataList = [
+#   ([Range,Azimuth,Elevation,velocity], snr )
+#       m     rad      rad       m/s
+    ([3.83,  -0.12,   0.28,    -0.55],  15.32),
+    ([3.83,  -0.10,   0.28,    -0.55],  15.92),
+    ([3.78,  -0.09,   0.23,    -0.99],  15.21),
+    ([3.83,  -0.09,   0.28,    -0.55],  16.55),
+    ([3.78,  -0.07,   0.23,    -0.99],  15.85),
+    ([3.83,  -0.07,   0.28,    -0.55],  17.10),
+    ([3.78,  -0.05,   0.23,    -0.99],  16.49),
+    ([3.83,  -0.05,   0.28,    -0.55],  17.44),
+    ([3.88,  -0.05,   0.33,    -0.55],  15.57),
+    ([3.93,  -0.05,   0.21,    -0.66],  15.31),
+    ([3.98,  -0.05,   0.21,    -0.66],  15.91),
+    ([4.03,  -0.05,   0.19,    -0.66],  15.36),
+    ([3.78,  -0.03,   0.23,    -0.99],  16.87),
+    ([3.83,  -0.03,   0.28,    -0.55],  17.45),
+    ([3.88,  -0.03,   0.33,    -0.55],  15.94),
+    ([3.93,  -0.03,   0.21,    -0.66],  16.52),
+    ([3.98,  -0.03,   0.21,    -0.66],  17.33),
+    ([4.08,  -0.03,   0.19,    -0.66],  15.57),
+    ([4.13,  -0.03,   0.21,    -0.66],  16.51),
+    ([3.78,  -0.02,   0.23,    -0.99],  16.70),
+    ([3.83,  -0.02,   0.28,    -0.55],  17.20),
+    ([3.88,  -0.02,   0.33,    -0.55],  16.00),
+    ([3.93,  -0.02,   0.21,    -0.66],  18.22),
+    ([3.98,  -0.02,   0.21,    -0.66],  18.78),
+    ([4.08,  -0.02,   0.19,    -0.66],  15.83),
+    ([4.13,  -0.02,   0.21,    -0.66],  17.79),
+    ([3.78,   0.00,   0.23,    -0.99],  16.12),
+    ([3.83,   0.00,   0.28,    -0.55],  16.83),
+    ([3.88,   0.00,   0.33,    -0.55],  15.70),
+    ([3.93,   0.00,   0.21,    -0.66],  18.46),
+    ([3.98,   0.00,   0.21,    -0.66],  17.56),
+    ([4.13,   0.00,   0.21,    -0.66],  16.73),
+    ([4.28,   0.00,   0.10,    -6.51],  15.39),
+    ([3.78,   0.02,   0.23,    -0.99],  15.46),
+    ([3.83,   0.02,   0.28,    -0.55],  16.42),
+    ([3.88,   0.02,   0.33,    -0.55],  15.21),
+    ([3.93,   0.02,   0.21,    -0.66],  16.76),
+    ([3.98,   0.02,   0.21,    -0.66],  16.03),
+    ([4.13,   0.02,   0.21,    -0.66],  15.29),
+    ([3.83,   0.03,   0.28,    -0.55],  15.98),
+    ([3.93,   0.03,   0.21,    -0.66],  15.51),
+    ([3.83,   0.05,   0.28,    -0.55],  15.53),
+    ([3.83,   0.07,   0.28,    -0.55],  15.08)
+]
+
 if __name__ == '__main__':
     use3D=True
-    # ( [Range,Azimuth,Elevation,velocity], snr )
-    #      m     rad      rad       m/s
-    pointCloudList3D = [
-        ([3.83,-0.12,0.28,-0.55], 15.32),
-        ([3.83,-0.10,0.28,-0.55], 15.92),
-        ([3.78,-0.09,0.23,-0.99], 15.21),
-        ([3.83,-0.09,0.28,-0.55], 16.55),
-        ([3.78,-0.07,0.23,-0.99], 15.85),
-        ([3.83,-0.07,0.28,-0.55], 17.10),
-        ([3.78,-0.05,0.23,-0.99], 16.49),
-        ([3.83,-0.05,0.28,-0.55], 17.44),
-        ([3.88,-0.05,0.33,-0.55], 15.57),
-        ([3.93,-0.05,0.21,-0.66], 15.31),
-        ([3.98,-0.05,0.21,-0.66], 15.91),
-        ([4.03,-0.05,0.19,-0.66], 15.36),
-        ([3.78,-0.03,0.23,-0.99], 16.87),
-        ([3.83,-0.03,0.28,-0.55], 17.45),
-        ([3.88,-0.03,0.33,-0.55], 15.94),
-        ([3.93,-0.03,0.21,-0.66], 16.52),
-        ([3.98,-0.03,0.21,-0.66], 17.33),
-        ([4.08,-0.03,0.19,-0.66], 15.57),
-        ([4.13,-0.03,0.21,-0.66], 16.51),
-        ([3.78,-0.02,0.23,-0.99], 16.70),
-        ([3.83,-0.02,0.28,-0.55], 17.20),
-        ([3.88,-0.02,0.33,-0.55], 16.00),
-        ([3.93,-0.02,0.21,-0.66], 18.22),
-        ([3.98,-0.02,0.21,-0.66], 18.78),
-        ([4.08,-0.02,0.19,-0.66], 15.83),
-        ([4.13,-0.02,0.21,-0.66], 17.79),
-        ([3.78,0.00,0.23,-0.99 ], 16.12),
-        ([3.83,0.00,0.28,-0.55 ], 16.83),
-        ([3.88,0.00,0.33,-0.55 ], 15.70),
-        ([3.93,0.00,0.21,-0.66 ], 18.46),
-        ([3.98,0.00,0.21,-0.66 ], 17.56),
-        ([4.13,0.00,0.21,-0.66 ], 16.73),
-        ([4.28,0.00,0.10,-6.51 ], 15.39),
-        ([3.78,0.02,0.23,-0.99 ], 15.46),
-        ([3.83,0.02,0.28,-0.55 ], 16.42),
-        ([3.88,0.02,0.33,-0.55 ], 15.21),
-        ([3.93,0.02,0.21,-0.66 ], 16.76),
-        ([3.98,0.02,0.21,-0.66 ], 16.03),
-        ([4.13,0.02,0.21,-0.66 ], 15.29),
-        ([3.83,0.03,0.28,-0.55 ], 15.98),
-        ([3.93,0.03,0.21,-0.66 ], 15.51),
-        ([3.83,0.05,0.28,-0.55 ], 15.53),
-        ([3.83,0.07,0.28,-0.55 ], 15.08)
-    ]
     gtrack_cppyy_init(gtrackRootPath="gtrack",use3D=use3D)
     hTrackModule=gtrack_cppyy_create(use3D)
     if hTrackModule is not cppyy.nullptr:
-        targetDescr,tNum,mIndex,uIndex,presence=gtrack_cppyy_step(hTrackModule,pointCloudList3D,use3D)
+        targetDescr,tNum,mIndex,uIndex,presence=gtrack_cppyy_step(hTrackModule,test3DPointCloudDataList,use3D)
         print(f"Detected Target Number: {tNum}")
         for i in range(tNum):
             print(f"  Target index: {i}")
