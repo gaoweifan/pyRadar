@@ -133,10 +133,10 @@ def gtrack_cppyy_step(hTrackModule,pointCloudList,use3D=True):
     if(mNum > maxNum):
         raise ValueError(f"point num: {mNum}, exceed maximum supported num: {maxNum}")
     
-    dim = 4 if use3D else 3
+    dim = 3 if use3D else 2
     pointCloud = gbl.pointCloud # Pointer to an array of input measurments. Each measurement has range/angle/radial velocity information
     for idx, pointInfo in enumerate(pointCloudList):
-        pointCloud[idx].array = np.array(pointInfo[0],dtype=np.float32)[:dim]
+        pointCloud[idx].array = np.array(pointInfo[0][:dim]+pointInfo[0][-1:],dtype=np.float32)
         pointCloud[idx].snr = pointInfo[1]
     
     var = cppyy.nullptr # Pointer to an array of input measurment variances. Shall be set to NULL if variances are unknown
